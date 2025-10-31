@@ -422,11 +422,17 @@
             const popupElement = document.getElementById("queue-message");
             const popupHTML = popupElement.innerHTML;
 
-            // Printing logic
-            const printWindow = window.open('', '', 'width=800,height=600');
-            printWindow.document.write('<html><head><title>Queue Ticket</title>');
-            printWindow.document.write('<style>');
-            printWindow.document.write(`
+            console.log("=== PRINT QUEUE FUNCTION CALLED ===");
+            console.log("Queue message HTML:", popupHTML);
+            console.log("Timestamp:", new Date().toISOString());
+
+            try {
+                const printWindow = window.open('', '', 'width=800,height=600');
+                console.log("Print window opened successfully");
+                
+                printWindow.document.write('<html><head><title>Queue Ticket</title>');
+                printWindow.document.write('<style>');
+                printWindow.document.write(`
                             @media print {
                                 @page {
                                     size: auto;
@@ -460,18 +466,37 @@
                                 margin-bottom: 10px;
                             }
                         `);
-            printWindow.document.write('</style>');
-            printWindow.document.write('</head><body>');
-            printWindow.document.write(popupHTML);
-            printWindow.document.write('</body></html>');
+                printWindow.document.write('</style>');
+                printWindow.document.write('</head><body>');
+                printWindow.document.write(popupHTML);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                
+                console.log("Print window document prepared");
+                
+                printWindow.focus();
+                console.log("Print window focused");
+                
+                setTimeout(() => {
+                    printWindow.print();
+                    console.log("Print dialog triggered");
+                    
+                    setTimeout(() => {
+                        printWindow.close();
+                        console.log("Print window closed");
+                    }, 500);
+                }, 100);
+                
+                console.log("Print process initiated successfully");
+            } catch (error) {
+                console.error("Error during print process:", error);
+                console.error("Error details:", error.message);
+                console.error("Error stack:", error.stack);
+            }
 
-            printWindow.document.close();
-            printWindow.focus();
-            printWindow.print();
-            printWindow.close();
-
-            // 🎯 ITO ANG DINAGDAG NA LINYA: Awtomatikong isara ang popup pagkatapos ng print
             closeQueuePopup();
+            console.log("Queue popup closed");
+            console.log("=== PRINT QUEUE FUNCTION COMPLETED ===");
         }
 
         // Functions na tinatawag ng Generate buttons

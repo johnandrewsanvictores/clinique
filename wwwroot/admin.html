@@ -1614,7 +1614,10 @@
             <div style="margin-top:15px;">
                 <input type="hidden" id="edit-id">
                 <input type="text" id="edit-username" placeholder="Username">
-                <input type="password" id="edit-password" placeholder="New Password">
+                <div style="position: relative;">
+                    <input type="password" id="edit-password" placeholder="New Password" style="padding-right: 40px;">
+                    <span onclick="togglePasswordVisibility()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none;" id="toggle-password-icon">👁️</span>
+                </div>
                 <button class="action-btn edit-btn" onclick="updateAccount()">Update</button>
             </div>
         </div>
@@ -1657,9 +1660,6 @@
             <button class="popup-close-btn" onclick="closeLoginHistoryPopup()">×</button>
             <div style="display:flex; align-items:center; gap: 15px; margin-bottom: 10px; flex-shrink: 0;">
                 <h3>Login History</h3>
-                <button class="action-btn delete-btn" onclick="clearLoginHistoryFromPopup()" style="width:150px;">
-                    Clear Login History
-                </button>
             </div>
             <div id="login-history-content"></div>
         </div>
@@ -2589,6 +2589,19 @@
             document.getElementById("edit-popup").style.display = "none";
         }
 
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById("edit-password");
+            const toggleIcon = document.getElementById("toggle-password-icon");
+            
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleIcon.textContent = "🙈";
+            } else {
+                passwordInput.type = "password";
+                toggleIcon.textContent = "👁️";
+            }
+        }
+
         function openDeletePopup(id) {
             document.getElementById("delete-id").value = id;
             document.getElementById("delete-popup").style.display = "flex";
@@ -3032,7 +3045,7 @@
 
                                 ${acc.Role !== 'admin' ? `<button class="action-btn delete-btn" onclick="openDeletePopup(${acc.Id})">Delete</button>` : ''}
 
-                                <button class="action-btn view-btn" onclick="showActivityPopup('${acc.Username}',${acc.Id})">View Activity</button>
+                                ${acc.Role !== 'admin' ? `<button class="action-btn view-btn" onclick="showActivityPopup('${acc.Username}',${acc.Id})">View Activity</button>` : ''}
                             </td>
                         </tr>`;
                 });
