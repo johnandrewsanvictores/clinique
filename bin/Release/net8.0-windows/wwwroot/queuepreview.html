@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Preview </title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fb;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+            width: 90%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+        }
+
+        .left {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #eaf2ff;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .right {
+            flex: 1;
+            background: #007bff;
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start;
+        }
+
+        .header-time {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 30px;
+        }
+
+        .now-serving-label {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .now-serving-box {
+            font-size: 100px;
+            font-weight: 900;
+            color: white;
+            background-color: #007bff;
+            padding: 40px 60px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            min-width: 300px;
+            text-align: center;
+            transition: transform 0.4s;
+        }
+
+            .now-serving-box.flash {
+                animation: flashEffect 1s ease-in-out 4;
+            }
+
+        @keyframes flashEffect {
+            0%, 100% {
+                background-color: #007bff;
+                transform: scale(1);
+            }
+
+            50% {
+                background-color: #0056b3;
+                transform: scale(1.1);
+            }
+        }
+
+        .next-title {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 2px solid white;
+            padding-bottom: 10px;
+        }
+
+        .next-item {
+            background: rgba(255,255,255,0.2);
+            margin: 10px 0;
+            padding: 15px;
+            font-size: 26px;
+            border-radius: 8px;
+            width: 80%;
+        }
+
+            .next-item.na {
+                color: #cccccc;
+            }
+
+        audio {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <div class="header-time" id="live-time">--:--:--</div>
+            <div class="now-serving-label">NOW SERVING</div>
+            <div class="now-serving-box" id="nowServing">--</div>
+        </div>
+
+        <div class="right">
+            <div class="next-title">NEXT IN LINE</div>
+            <div id="next1" class="next-item na">---</div>
+            <div id="next2" class="next-item na">---</div>
+            <div id="next3" class="next-item na">---</div>
+        </div>
+    </div>
+
+    <!-- ✅ Corrected path to your sound file -->
+    <audio id="beepSound" src="Sound Effect/beepbeep.mp3" preload="auto"></audio>
+
+    <script>
+        const nowBox = document.getElementById("nowServing");
+        const beepSound = document.getElementById("beepSound");
+        let lastCalledTime = null;
+        let lastNow = null;
+
+        // --- Unlock sound playback when user clicks anywhere once ---
+        document.body.addEventListener("click", () => {
+            beepSound.play().then(() => {
+                beepSound.pause();
+                beepSound.currentTime = 0;
+            }).catch(() => { });
+        }, { once: true });
+
+        function updateClock() {
+            const now = new Date();
+            let hrs = now.getHours();
+            const mins = now.getMinutes().toString().padStart(2, "0");
+            const secs = now.getSeconds().toString().padStart(2, "0");
+            const ampm = hrs >= 12 ? "PM" : "AM";
+            hrs = hrs % 12 || 12;
+            document.getElementById("live-time").textContent = `${hrs}:${mins}:${secs} ${ampm}`;
+        }
+
+        function playBeep() {
+            beepSound.currentTime = 0;
+            beepSound.play().catch(() => { });
+        }
+
+
+        function updateQueue() {
+            const calledNow = localStorage.getItem("calledNow");
+            if (!calledNow || calledNow === lastCalledTime) return;
+
+            lastCalledTime = calledNow;
+
+            const queueList = JSON.parse(localStorage.getItem("queueList") || "[]");
+            const currentIndex = parseInt(localStorage.getItem("currentIndex") || "-1");
+
+            const nowServing = queueList[currentIndex] || "--";
+            const next1 = queueList[currentIndex + 1] || "---";
+            const next2 = queueList[currentIndex + 2] || "---";
+            const next3 = queueList[currentIndex + 3] || "---";
+
+            if (nowServing !== lastNow && nowServing !== "--") {
+                playBeep();
+                nowBox.classList.add("flash");
+                setTimeout(() => nowBox.classList.remove("flash"), 3000);
+                lastNow = nowServing;
+            }
+
+            nowBox.textContent = nowServing;
+            document.getElementById("next1").textContent = next1;
+            document.getElementById("next2").textContent = next2;
+            document.getElementById("next3").textContent = next3;
+        }
+
+        setInterval(updateQueue, 500);
+        setInterval(updateClock, 1000);
+        updateQueue();
+        updateClock();
+    </script>
+</body>
+</html>

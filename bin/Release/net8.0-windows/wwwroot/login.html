@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        let currentRole = ""; // store role temporarily
+        let currentUserId = null; // store user ID temporarily
+
+        function login() {
+            const user = document.getElementById("username").value;
+            const pass = document.getElementById("password").value;
+            const role = document.getElementById("role").value;
+
+            currentRole = role; // save role for redirection later
+            currentUserId = null; // Reset userId before login attempt
+
+            // Send username, password, and role to C#
+            window.chrome.webview.postMessage(`login:${user}:${pass}:${role}`);
+        }
+
+        // This listener handles ALL messages from C#
+        window.chrome.webview.addEventListener("message", event => {
+            const data = event.data;
+            console.log("Message from C#: ", data); // Good for debugging
+
+            if (data.startsWith("setUser:")) {
+                // Message format from C# should be "setUser:ID:Username:Role"
+                const parts = data.split(':');
+                if (parts.length >= 2) {
+                    currentUserId = parts[1]; // Store the actual ID (index 1)
+                    console.log("User ID received:", currentUserId);
+                } else {
+                    console.error("Received setUser message in unexpected format:", data);
+                }
+            }
+            else if (data.toLowerCase().includes("login successful")) {
+                // Only show popup on successful login message
+                showPopup(data, true);  // isSuccess = true
+            }
+            else if (data.startsWith("error:")) {
+                // Handle specific error messages
+                showPopup(data, false); // isSuccess = false
+            }
+            else if (data.toLowerCase().includes("invalid credentials")) {
+                // Handle generic error message if needed
+                showPopup(data, false); // isSuccess = false
+            }
+            // Ignore other messages like "accounts:", "activity:", "loginHistory:" etc.
+        });
+
+        function showPopup(message, isSuccess) {
+            const popup = document.getElementById("popup");
+            const popupMessage = document.getElementById("popup-message");
+            const popupBox = document.getElementById("popup-box");
+
+            // Clean up prefix if it exists
+            if (message.startsWith("success:")) {
+                message = message.substring("success:".length);
+            } else if (message.startsWith("error:")) {
+                message = message.substring("error:".length);
+            }
+
+            popupMessage.innerText = message;
+
+            // Reset classes first
+            popupBox.classList.remove("success", "error");
+
+            // Add correct class
+            popupBox.classList.add(isSuccess ? "success" : "error");
+
+            popup.style.display = "flex"; // show popup
+        }
+
+        function closePopup() {
+            const popup = document.getElementById("popup");
+            const popupBox = document.getElementById("popup-box");
+
+            // Check if the popup is currently displayed before proceeding
+            if (popup.style.display !== "flex") {
+                return; // Do nothing if popup isn't visible
+            }
+
+            popup.style.display = "none"; // Hide popup first
+
+            // Only redirect and save if login was successful
+            if (popupBox.classList.contains("success")) {
+                const user = document.getElementById("username").value; // Get username again just in case
+
+                // Ensure currentUserId has been set correctly
+                if (currentUserId !== null && currentUserId !== "") {
+                    localStorage.setItem("loggedInUser", user);
+                    localStorage.setItem("userRole", currentRole);
+                    localStorage.setItem("userId", currentUserId); // ✅ Save the CORRECT ID
+
+                    console.log("Saved to localStorage:", { user: user, role: currentRole, userId: currentUserId });
+
+                    // Send role message to C# to load module AFTER saving
+                    window.chrome.webview.postMessage(`goModule:${currentRole}`);
+                } else {
+                    // This case should ideally not happen if login was successful
+                    console.error("Login successful, but User ID was not received correctly. Cannot proceed.");
+                    alert("Login Error: User ID missing. Please try logging in again.");
+                    // Optionally navigate back to login or show an error state
+                }
+            }
+            // No else needed - if it wasn't a success, just closing the popup is enough.
+        }
+    </script>
+</head>
+<body class="login-body">
+    <div class="login-box">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username"><br>
+        <input type="password" id="password" placeholder="Password"><br>
+
+        <!-- Role dropdown -->
+        <select id="role">
+            <option value="admin">Admin</option>
+            <option value="staff">Staff</option>
+        </select><br><br>
+
+        <button onclick="login()">Login</button>
+    </div>
+
+    <!-- Custom Popup Modal -->
+    <div id="popup" class="popup-overlay">
+        <div id="popup-box" class="popup-box">
+            <p id="popup-message"></p>
+            <button onclick="closePopup()">OK</button>
+        </div>
+    </div>
+</body>
+</html>

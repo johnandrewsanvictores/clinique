@@ -1,0 +1,2734 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+                body {
+                        font-family: Arial, sans-serif;
+                        background-image: url("Images/Adminaccessbg.png");
+                        background-size: cover;
+                        margin: 0;
+                        position: relative;
+                        min-height: 100vh;
+
+        }
+
+                h1 {
+                        color: white;
+                        text-align: center;
+                        margin-top: 50px;
+
+        }
+
+
+
+        /* User Display Position */
+                #user-display {
+                        position: absolute;
+                        top: 15px;
+                        right: 25px;
+                        font-weight: bold;
+                        font-size: 20px;
+                        color: white;
+
+        }
+
+
+
+        /* Top Buttons */
+                #btn-logout {
+                        position: absolute;
+                        top: -5px;
+                        left: 25px;
+
+        }
+
+
+
+        /* Top Buttons Container for better centering and layout */
+                .top-buttons-container {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        gap: 20px;
+                        margin-top: 45px;
+                        margin-bottom: 20px;
+
+            /* Space before role-container */
+
+            /* Absolute positioning for logout, etc. will remain, but the main 4 buttons can use flex for spacing */
+
+        }
+
+
+
+        /* Specific Button Colors/Styles */
+                    .top-buttons-container button {
+                            padding: 12px 25px;
+                            font-size: 16px;
+                            border-radius: 100px;
+                            border: none;
+                            color: white;
+                            cursor: pointer;
+                            font-weight: bold;
+                            transition: background-color 0.3s;
+                            position: static;
+
+            /* Remove absolute positioning inside container */
+
+        }
+
+                #btn-queue-selection {
+                        background-color: #73C8D2;
+                        position: absolute;
+                        top: 330px;
+                        left: 50px;
+                        padding: 27px 90px;
+                        font-size: 25px;
+                        z-index: 1000;
+
+        }
+
+                    #btn-queue-selection:hover {
+                            background-color: #0056b3;
+
+        }
+
+                #btn-history,
+                #btn-manage,
+                #btn-create {
+                        background-color: #4CAF50;
+
+        }
+
+                    #btn-history:hover,
+                    #btn-manage:hover,
+                    #btn-create:hover {
+                            background-color: #45a049;
+
+        }
+
+
+
+        /* Patient Record Button - Now below the main row */
+                #btn-patient-record {
+                        background-color: #FF9B00;
+                        position: absolute;
+
+            /* or 'fixed' if you want it to stay while scrolling */
+                        top: 470px;
+
+            /* starting position */
+                        left: 50px;
+
+            /* starting position */
+                        padding: 27px 95px;
+                        font-size: 25px;
+                        z-index: 1000;
+
+        }
+
+                    #btn-patient-record:hover {
+                            background-color: #e68a00;
+
+        }
+
+                button {
+                        padding: 10px 30px;
+                        font-size: 16px;
+                        border-radius: 100px;
+                        border: none;
+                        background-color: #4CAF50;
+                        color: white;
+                        cursor: pointer;
+
+        }
+
+                    button:hover {
+                            background-color: #45a049;
+
+        }
+
+
+
+        /* Role Boxes */
+                .role-container {
+                        display: flex;
+                        justify-content: center;
+                        gap: 50px;
+                        flex-wrap: wrap;
+                        margin-top: 50px;
+
+            /* Adjusted margin since buttons are no longer absolute here */
+
+        }
+
+                .role-box {
+                        width: 250px;
+                        text-align: center;
+                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                        cursor: pointer;
+                        background: #fff;
+                        transition: transform 0.2s;
+                        position: relative;
+                        overflow: visible;
+
+        }
+
+                    .role-box:hover {
+                            transform: translateY(-5px);
+
+        }
+
+                    .role-box img {
+                            width: 100%;
+                            height: 200px;
+                            object-fit: cover;
+
+        }
+
+                .role-title {
+                        background-color: #0057e7;
+                        color: white;
+                        font-weight: bold;
+                        padding: 12px 0;
+                        font-size: 20px;
+
+        }
+
+                .role-desc {
+                        background-color: #0057e7;
+                        color: white;
+                        font-size: 14px;
+                        padding: 8px 0;
+
+        }
+
+
+
+        /* Dropdowns */
+                .role-dropdown-bottom {
+                        max-height: 0;
+                        overflow: hidden;
+                        position: absolute;
+                        top: 100%;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: 220px;
+                        background-color: #fff;
+                        border: 1px solid #ccc;
+                        border-top: none;
+                        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+                        padding: 0;
+                        text-align: center;
+                        transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+                        z-index: 999;
+
+        }
+
+                .role-box:hover .role-dropdown-bottom {
+                        max-height: 220px;
+                        padding: 15px;
+
+        }
+
+                .role-dropdown-bottom button {
+                        width: 90%;
+                        margin-top: 10px;
+                        padding: 12px;
+                        border-radius: 5px;
+                        border: none;
+                        font-weight: bold;
+                        font-size: 16px;
+                        background-color: #ffc107;
+                        color: white;
+                        cursor: pointer;
+                        transition: background-color 0.2s;
+
+        }
+
+                    .role-dropdown-bottom button:hover {
+                            background-color: #e0a800;
+
+        }
+
+                .role-dropdown-bottom input[type="checkbox"] {
+                        margin-right: 5px;
+
+        }
+
+
+
+        /* Popups - Unified Popups */
+                .popup-overlay {
+                        display: none;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.6);
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+
+        }
+
+                .popup-box {
+                        background: #fff;
+                        padding: 20px 25px;
+                        border-radius: 12px;
+                        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+                        width: 450px;
+                        max-width: 90%;
+                        max-height: 80%;
+                        overflow-y: auto;
+                        position: relative;
+
+        }
+
+
+
+        /* CUSTOM LOGOUT POPUP STYLES */
+                #custom-logout-popup {
+                        display: none;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.6);
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 10000;
+
+        }
+
+                .popup-box-confirm {
+                        background: #fff;
+                        padding: 30px;
+                        border-radius: 12px;
+                        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+                        width: 300px;
+                        text-align: center;
+
+        }
+
+                .custom-confirm-btn {
+                        padding: 10px 25px;
+                        font-size: 16px;
+                        border-radius: 8px;
+                        border: none;
+                        cursor: pointer;
+                        font-weight: bold;
+                        transition: background-color 0.2s, transform 0.1s;
+                        width: 100px;
+
+        }
+
+
+
+        /* OK Button Styles & Hover */
+                .ok-btn {
+                        background-color: #4CAF50;
+                        color: white;
+
+        }
+
+                    .ok-btn:hover {
+                            background-color: #45a049;
+                            transform: translateY(-1px);
+
+        }
+
+                    .ok-btn:active {
+                            transform: translateY(0);
+
+        }
+
+
+
+        /* CANCEL Button Styles & Hover */
+                .cancel-btn {
+                        background-color: #f44336;
+                        color: white;
+
+        }
+
+                    .cancel-btn:hover {
+                            background-color: #d32f2f;C
+                            transform: translateY(-1px);
+
+        }
+
+                    .cancel-btn:active {
+                            transform: translateY(0);
+
+        }
+
+
+
+        /* END CUSTOM LOGOUT POPUP STYLES */
+
+        /* INAYOS PARA MAGING SCROLLABLE ANG LOGIN HISTORY */
+                .popup-box-login-history {
+                        background: #fff;
+                        padding: 20px 25px;
+                        border-radius: 12px;
+                        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+                        width: 600px;
+                        max-width: 90%;
+                        max-height: 80vh;
+                        position: relative;
+                        display: flex;
+                        flex-direction: column;
+
+        }
+
+                #login-history-content {
+                        overflow-y: auto;
+                        border-top: 1px solid #ddd;
+                        margin-top: 15px;
+                        padding-top: 10px;
+
+        }
+
+                .popup-box-manage-account {
+                        background: #fff;
+                        padding: 20px 25px;
+                        border-radius: 12px;
+                        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+                        width: 800px;
+                        max-width: 90%;
+                        max-height: 80%;
+                        overflow-y: auto;
+                        position: relative;
+
+        }
+
+                .popup-box-generate {
+                        background: #fff;
+                        padding: 20px 30px;
+                        border-radius: 10px;
+                        text-align: center;
+                        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+                        position: relative;
+                        width: 350px;
+
+        }
+
+                .popup-box input[type="text"],
+                .popup-box input[type="password"] {
+                        width: 100%;
+                        margin: 5px 0;
+                        padding: 10px;
+                        border-radius: 5px;
+                        border: 1px solid #ccc;
+                        box-sizing: border-box;
+
+        }
+
+                .popup-box-info {
+                        position: relative;
+                        background: white;
+                        padding: 20px 30px;
+                        border-radius: 10px;
+                        text-align: center;
+                        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+                        width: 350px;
+
+        }
+
+
+
+        /* ===== UNIFIED STYLE PARA SA LAHAT NG CLOSE BUTTONS ===== */
+                .popup-close-btn {
+                        position: absolute;
+                        top: 10px;
+                        right: 10px;
+                        width: 35px;
+                        height: 35px;
+                        padding: 0;
+                        border: none;
+                        border-radius: 8px;
+                        background-color: #f44336;
+                        color: white;
+                        font-size: 20px;
+                        font-weight: bold;
+                        line-height: 35px;
+                        text-align: center;
+                        cursor: pointer;
+                        transition: background-color 0.2s, transform 0.2s;
+                        z-index: 10;
+
+        }
+
+                    .popup-close-btn:hover {
+                            background-color: #d32f2f;
+                            transform: scale(1.1);
+
+        }
+
+
+
+        /* ============================================================= */
+
+        /* LOGIN HISTORY POPUP */
+                #login-history-popup {
+                        display: none;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.6);
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+
+        }
+
+                #login-history-content table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        background-color: #ffffff;
+                        border-radius: 8px;
+                        overflow: hidden;
+
+        }
+
+                #login-history-content th {
+                        background-color: #1976d2;
+                        color: white;
+                        padding: 10px;
+                        text-align: left;
+                        font-weight: bold;
+
+        }
+
+                #login-history-content td {
+                        padding: 8px;
+                        border-bottom: 1px solid #ccc;
+                        font-size: 14px;
+
+        }
+
+                #login-history-content tr:nth-child(even) {
+                        background-color: #e3f2fd;
+
+        }
+
+                #login-history-content tr:hover {
+                        background-color: #90caf9;
+
+        }
+
+                #login-history-popup .delete-btn {
+                        background-color: #f44336;
+
+        }
+
+                    #login-history-popup .delete-btn:hover {
+                            background-color: #d32f2f;
+
+        }
+
+                #manage-accounts-popup .popup-box {
+                        background: linear-gradient(145deg, #e3f2fd, #bbdefb);
+
+        }
+
+                #accounts-content table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 10px;
+                        background-color: #ffffff;
+                        border-radius: 8px;
+                        overflow: hidden;
+                        table-layout: fixed;
+
+        }
+
+                #accounts-content th {
+                        background-color: #1976d2;
+                        color: white;
+                        padding: 10px;
+                        text-align: left;
+                        font-weight: bold;
+
+        }
+
+                #accounts-content td {
+                        padding: 8px;
+                        border-bottom: 1px solid #ccc;
+                        font-size: 14px;
+
+        }
+
+                #accounts-content tr:nth-child(even) {
+                        background-color: #e3f2fd;
+
+        }
+
+                #accounts-content tr:hover {
+                        background-color: #90caf9;
+
+        }
+
+
+
+        /* STYLES PARA SA STAFF ACTIVITY POPUP */
+                #activity-content .stats-container {
+                        display: flex;
+                        justify-content: space-around;
+                        align-items: center;
+                        text-align: center;
+                        padding: 15px 0;
+
+        }
+
+                #activity-content .stat-item {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        flex: 1;
+
+        }
+
+                    #activity-content .stat-item .label {
+                            font-size: 1em;
+                            color: #555;
+                            font-weight: bold;
+                            margin-bottom: 8px;
+
+        }
+
+                    #activity-content .stat-item .number {
+                            font-size: 1.8em;
+                            font-weight: bold;
+                            color: #333;
+                            margin-top: 5px;
+
+        }
+
+                #activity-content .action-item .label {
+                        visibility: hidden;
+
+        }
+
+                #activity-content .reset-btn {
+                        background-color: #2ecc71;
+                        color: white;
+                        border: none;
+                        padding: 8px 25px;
+                        border-radius: 6px;
+                        font-size: 1em;
+                        font-weight: bold;
+                        cursor: pointer;
+                        transition: background-color 0.3s ease;
+
+        }
+
+                    #activity-content .reset-btn:hover {
+                            background-color: #27ae60;
+
+        }
+
+                #edit-delete-popup .popup-box {
+                        background: linear-gradient(145deg, #e8f5e9, #c8e6c9);
+
+        }
+
+                .action-btn {
+                        padding: 5px 10px;
+                        margin: 0 2px;
+                        border: none;
+                        border-radius: 5px;
+                        font-size: 12px;
+                        cursor: pointer;
+                        font-weight: bold;
+                        color: white;
+                        transition: 0.2s;
+
+        }
+
+                .edit-btn {
+                        background-color: #2196F3;
+                        font-size: 12px;
+                        width: 118px;
+
+        }
+
+                    .edit-btn:hover {
+                            background-color: #1976D2;
+
+        }
+
+                .delete-btn {
+                        background-color: #f44336;
+                        width: 118px;
+
+        }
+
+                    .delete-btn:hover {
+                            background-color: #d32f2f;
+
+        }
+
+                .view-btn {
+                        background-color: #4CAF50;
+                        font-size: 12px;
+                        width: 118px;
+
+        }
+
+                    .view-btn:hover {
+                            background-color: #388E3C;
+
+        }
+
+                .queue-popup-overlay {
+                        display: none;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.6);
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+
+        }
+
+                .queue-popup-box {
+                        background: #fff;
+                        padding: 25px 30px;
+                        border-radius: 10px;
+                        text-align: center;
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+                        position: relative;
+                        width: 350px;
+
+        }
+
+                #queue-message {
+                        margin-top: 20px;
+
+        }
+
+                .queue-popup-box .queue-number {
+                        font-size: 32px;
+                        font-weight: bold;
+                        margin-bottom: 10px;
+                        display: block;
+                        color: #ec9b00        
+        }
+
+                .queue-popup-box .queue-details {
+                        font-size: 16px;
+
+        }
+
+                .queue-popup-btn {
+                        margin-top: 15px;
+                        padding: 10px 25px;
+                        font-size: 16px;
+                        border-radius: 100px;
+                        border: none;
+                        background-color: #4CAF50;
+                        color: white;
+                        cursor: pointer;
+
+        }
+
+                    .queue-popup-btn:hover {
+                            background-color: #45a049;
+
+        }
+
+                .popup-overlay-queue-selection {
+                        display: none;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.6);
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+
+        }
+
+                .popup-box-queue-selection {
+                        background: #1976d2;
+                        height: 660px;
+                        border-radius: 10px;
+                        width: 1100px;
+                        max-width: 100%;
+                        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+                        position: relative;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+
+        }
+
+                    .popup-box-queue-selection .queue-btn {
+                            padding: 10px 25px;
+                            margin: 5px;
+                            font-size: 16px;
+                            border-radius: 5px;
+                            border: none;
+                            font-weight: bold;
+                            cursor: pointer;
+                            transition: background-color 0.2s;
+
+        }
+
+                        .popup-box-queue-selection .queue-btn.call {
+                                background-color: #4CAF50;
+                                color: white;
+
+        }
+
+                            .popup-box-queue-selection .queue-btn.call:hover {
+                                    background-color: #388E3C;
+
+        }
+
+                     
+
+        }
+
+                        .popup-box-queue-selection .queue-btn.next {
+                                background-color: #2196F3;
+                                color: white;
+
+        }
+
+                            .popup-box-queue-selection .queue-btn.next:hover {
+                                    background-color: #1565C0;
+
+        }
+
+                        .popup-box-queue-selection .queue-btn.delete {
+                                background-color: #F44336;
+                                color: white;
+
+        }
+
+                            .popup-box-queue-selection .queue-btn.delete:hover {
+                                    background-color: #D32F2F;
+
+        }
+
+                        .popup-box-queue-selection .queue-btn.refresh {
+                                background-color: #ff9800;
+                                color: white;
+
+        }
+
+                            .popup-box-queue-selection .queue-btn.refresh:hover {
+                                    background-color: #D32F2F;
+
+        }
+
+                    .popup-box-queue-selection .queue-preview {
+                            position: absolute;
+                            margin-top: 160px;
+                            left: 50px;
+                            width: 500px;
+                            height: 380px;
+                            overflow-y: auto;
+                            border: 1px solid #ccc;
+                            padding: 10px;
+                            border-radius: 5px;
+                            background-color: #ffffff;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+
+        }
+
+                        .popup-box-queue-selection .queue-preview p {
+                                margin: 5px 0;
+                                font-size: 16px;
+                                font-weight: bold;
+                                color: #45a049;
+
+        }
+
+                    .popup-box-queue-selection .queue-list {
+                            position: absolute;
+                            margin-top: 160px;
+                            right: 50px;
+                            width: 500px;
+                            height: 380px;
+                            overflow-y: auto;
+                            border: 1px solid #ccc;
+                            padding: 10px;
+                            border-radius: 5px;
+                            background-color: #4CAF50;
+
+        }
+
+
+                        .popup-box-queue-selection .queue-list p {
+                                margin: 5px 0;
+                                font-size: 16px;
+                                font-weight: bold;
+
+        }
+
+
+
+        /* Added style for clickable queue items */
+                .queue-list > div {
+                        cursor: pointer;
+                        transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+
+        }
+
+
+
+        /* Hover effect added to the list item */
+                    .queue-list > div:hover {
+                            transform: scale(1.02);
+                            box-shadow: 0 0 7px rgba(255, 255, 255, 0.8);
+
+        }
+
+                .now-serving-label {
+                        font-size: 28px;
+                        font-weight: bold;
+                        color: #333;
+                        margin-bottom: 10px;
+
+        }
+
+                .center-box {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 250px;
+                        height: 90px;
+                        background-color: blue;
+                        border-radius: 20px;
+                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                        font-size: 40px;
+                        font-weight: bold;
+                        color: white;
+                        user-select: none;
+                        margin: 0 auto;
+
+        }
+
+
+
+        /* Serving Timer Styles */
+                #servingTimeContainer {
+                        margin-top: auto;
+                        margin-bottom: 20px;
+                        text-align: center;
+
+        }
+
+                    #servingTimeContainer h1 {
+                            margin-top: 10px;
+
+        }
+
+                #servingTime {
+                        font-size: 50px;
+                        font-weight: bold;
+                        color: #333;
+                        margin-top: 5px;
+
+        }
+
+
+
+        /* ============== START: PATIENT RECORD MODULE STYLES (AS POPUP) ============== */
+                #patient-record-popup {
+                        display: none;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.6);
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+
+        }
+
+                #btn-queue-preview {
+                        background-color: #73C8D2;
+                        position: absolute;
+
+            /* or 'fixed' if you want it to stay while scrolling */
+                        top: 200px;
+
+            /* starting position */
+                        left: 50px;
+
+            /* starting position */
+                        padding: 27px 95px;
+                        font-size: 25px;
+                        z-index: 1000;
+
+        }
+
+                    #btn-queue-preview:hover {
+                            background-color: #1976D2;
+
+        }
+
+
+                .patient-record-box {
+                        padding: 20px;
+                        width: 90%;
+                        max-width: 1200px;
+                        height: 85vh;
+                        background-color: #f0f8ff;
+
+            /* Light blue background for the whole module */
+                        border-radius: 15px;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                        position: relative;
+                        display: flex;
+                        flex-direction: column;
+                        box-sizing: border-box;
+
+        }
+
+                .patient-module-header {
+                        background-color: #ff9800;
+
+            /* Orange header */
+                        color: white;
+                        padding: 10px 20px;
+                        font-size: 22px;
+                        font-weight: bold;
+                        text-align: center;
+                        flex-shrink: 0;
+
+            /* Make header color span the full width of the box's inner content area */
+                        margin: -20px -20px 20px -20px;
+                        border-radius: 15px 15px 0 0;
+                        position: relative;
+
+        }
+
+
+
+        /* ADJUSTED: Close button inside the orange header */
+                    .patient-module-header .popup-close-btn {
+                            position: absolute;
+                            right: 15px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            z-index: 10;
+
+        }
+
+                .patient-module-content {
+                        display: flex;
+                        gap: 20px;
+                        flex-grow: 1;
+
+            /* Para kunin ang natitirang taas */
+                        overflow: hidden;
+
+            /* Para ma-control ng mga inner columns ang scroll */
+
+        }
+
+                .patient-column {
+                        background-color: #ffffff;
+                        border-radius: 10px;
+                        padding: 15px;
+                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                        position: relative;
+                        display: flex;
+                        flex-direction: column;
+                        box-sizing: border-box;
+
+        }
+
+                .patient-list-container {
+                        flex: 1;
+
+            /* Takes 1 part of the space */
+
+        }
+
+                .patient-details-container {
+                        flex: 1.5;
+
+            /* Takes 1.5 parts of the space */
+
+        }
+
+                .patient-form-container {
+                        flex: 1.5;
+
+            /* Takes 1.5 parts of the space */
+
+        }
+
+
+
+        /* Column 1: Patient List */
+                .patient-search {
+                        width: 100%;
+                        padding: 8px;
+                        border: 1px solid #ccc;
+                        border-radius: 5px;
+                        box-sizing: border-box;
+                        margin-bottom: 10px;
+                        flex-shrink: 0;
+
+        }
+
+                .patient-list {
+                        height: 250px;
+                        flex-grow: 1;
+
+            /* Para kunin ang natitirang taas */
+                        overflow-y: auto;
+                        border: 1px solid #e0e0e0;
+                        border-radius: 5px;
+                        padding: 5px;
+
+        }
+
+                .patient-list-item {
+                        padding: 10px;
+                        cursor: pointer;
+                        border-bottom: 1px solid #f0f0f0;
+                        color: #007bff;
+                        font-weight: bold;
+
+        }
+
+                    .patient-list-item:hover {
+                            background-color: #e3f2fd;
+
+        }
+
+                    .patient-list-item.selected {
+                            background-color: #007bff;
+                            color: white;
+
+        }
+
+
+
+        /* Custom scrollbar for the patient list */
+                .patient-list::-webkit-scrollbar {
+                        width: 8px;
+
+        }
+
+                .patient-list::-webkit-scrollbar-track {
+                        background: #f1f1f1;
+                        border-radius: 10px;
+
+        }
+
+                .patient-list::-webkit-scrollbar-thumb {
+                        background: #ff9800;
+
+            /* Orange scrollbar */
+                        border-radius: 10px;
+
+        }
+
+                    .patient-list::-webkit-scrollbar-thumb:hover {
+                            background: #e68a00;
+
+        }
+
+
+
+        /* Column 2: Patient Details */
+                .patient-details-content {
+                        padding: 10px;
+                        font-size: 16px;
+                        flex-grow: 1;
+                        overflow-y: auto;
+
+        }
+
+                    .patient-details-content p {
+                            margin: 0 0 15px 0;
+
+        }
+
+                    .patient-details-content strong {
+                            display: inline-block;
+                            width: 120px;
+
+            /* Increased width for labels */
+
+        }
+
+                    .patient-details-content span {
+                            color: #555;
+
+        }
+
+                    .patient-details-content .detail-record {
+                            background-color: #f7f7f7;
+                            border-left: 5px solid #007bff;
+                            padding: 10px;
+                            margin-bottom: 10px;
+                            border-radius: 5px;
+
+        }
+
+
+
+        /* Column 3: Patient Form */
+                .patient-record-form {
+                        border: 2px solid #ff9800;
+                        padding: 15px;
+                        border-radius: 8px;
+                        background-color: #fffaf0;
+                        flex-grow: 1;
+                        overflow-y: auto;
+
+        }
+
+                    .patient-record-form label {
+                            display: block;
+                            margin-bottom: 5px;
+                            font-weight: bold;
+                            color: #333;
+
+        }
+
+                    .patient-record-form input,
+                    .patient-record-form select {
+                            width: 100%;
+                            padding: 8px;
+                            margin-bottom: 10px;
+                            border: 1px solid #ccc;
+                            border-radius: 5px;
+                            box-sizing: border-box;
+
+        }
+
+                .patient-form-buttons {
+                        display: flex;
+                        gap: 10px;
+                        margin-top: 10px;
+
+        }
+
+
+
+        /* Buttons in Patient Module */
+                .patient-module-btn {
+                        padding: 10px 15px;
+                        border: none;
+                        border-radius: 5px;
+                        color: white;
+                        font-weight: bold;
+                        cursor: pointer;
+                        transition: background-color 0.3s;
+                        flex-grow: 1;
+
+            /* Buttons share space */
+
+        }
+
+                .btn-add {
+                        background-color: #007bff;
+
+        }
+
+                    .btn-add:hover {
+                            background-color: #0056b3;
+
+        }
+
+                .btn-update {
+                        background-color: #ffc107;
+                        color: #333;
+
+        }
+
+                    .btn-update:hover {
+                            background-color: #e0a800;
+
+        }
+
+                .btn-export {
+                        width: 100%;
+                        margin-top: 15px;
+                        background-color: #17a2b8;
+                        flex-shrink: 0;
+
+            /* Keep it at the bottom */
+
+        }
+
+                    .btn-export:hover {
+                            background-color: #138496;
+
+        }
+
+                .btn-plus {
+                        position: absolute;
+                        bottom: 15px;
+                        right: 15px;
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        background-color: #ff9800;
+                        color: white;
+                        font-size: 24px;
+                        line-height: 40px;
+                        text-align: center;
+                        border: none;
+                        cursor: pointer;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                        padding: 0;
+                        flex-shrink: 0;
+
+        }
+
+                    .btn-plus:hover {
+                            background-color: #e68a00;
+
+        }
+
+
+
+        /* ADDED: Styles for the new "First Visit" checkbox */
+                .patient-record-form .form-group-checkbox {
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 10px;
+
+        }
+
+                    .patient-record-form .form-group-checkbox label {
+                            display: inline;
+                            margin-bottom: 0;
+                            margin-left: 5px;
+                            font-weight: normal;
+
+        }
+
+
+
+        /* END: PATIENT RECORD MODULE STYLES */
+
+    </style>
+</head>
+
+<body>
+    <h1>Admin Dashboard</h1>
+
+    <div id="user-display"></div>
+    <button id="btn-logout" onclick="confirmLogout()">Logout</button>
+
+    <div class="top-buttons-container">
+        <button id="btn-queue-selection" onclick="openQueueSelectionPopup()">Queue Selection</button>
+        <button id="btn-queue-preview" onclick="openQueuePreview()">Queue Preview</button>
+        <button id="btn-history" onclick="showLoginHistory()">View Login History</button>
+        <button id="btn-manage" onclick="showAccounts()">Manage Accounts</button>
+        <button id="btn-create" onclick="openCreateStaffPopup()">Create Staff Account</button>
+    </div>
+
+    <button id="btn-patient-record" onclick="openPatientRecordPopup()">Patient Record Module</button>
+
+
+    <div id="patient-record-popup" class="popup-overlay">
+        <div class="patient-record-box">
+            <div class="patient-module-header">
+                Patient Record Module
+                <button class="popup-close-btn" onclick="closePatientRecordPopup()">×</button>
+            </div>
+            <div class="patient-module-content">
+
+                <div class="patient-column patient-list-container">
+                    <input type="search" placeholder="Search Patient Name..." class="patient-search" id="patient-search-input" onkeyup="searchPatients()">
+                    <div class="patient-list" id="patient-list">
+                    </div>
+                    <button class="btn-plus" onclick="clearPatientForm()">+</button>
+                </div>
+
+                <div class="patient-column patient-details-container">
+                    <h4 style="margin-top:0;">Visit History</h4>
+                    <div class="patient-details-content" id="patient-details-content">
+                        <p style="text-align:center; color:#999;">Select a patient to view visit details.</p>
+                    </div>
+                </div>
+
+                <div class="patient-column patient-form-container">
+                    <div class="patient-record-form">
+                        <input type="hidden" id="patient-id">
+                        <h4 style="margin-top: 0; color: #ff9800;">Patient Information Form</h4>
+
+                        <label for="patient-name">Name:</label>
+                        <input type="text" id="patient-name" placeholder="Patient's Full Name">
+
+                        <label for="patient-contact">Contact:</label>
+                        <input type="tel" id="patient-contact" placeholder="Contact Number (e.g. 09xxxxxxxxx)" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)">
+
+                        <label for="patient-date">Date of Visit:</label>
+                        <input type="date" id="patient-date">
+
+                        <div class="form-group-checkbox">
+                            <input type="checkbox" id="patient-first-visit">
+                            <label for="patient-first-visit">First Visit</label>
+                        </div>
+
+                        <label for="patient-purpose">Purpose of Visit:</label>
+                        <select id="patient-purpose">
+                            <option value="" disabled selected>-- Select Purpose --</option>
+                            <option value="Prenatal Check-Up">Prenatal Check-Up</option>
+                            <option value="Vaccination">Vaccination</option>
+                            <option value="Follow-up Checkup">Follow-up Checkup</option>
+                            <option value="General Checkup">General Checkup</option>
+                            <option value="Payment / Billing">Payment / Billing</option>
+                        </select>
+
+                        <div class="patient-form-buttons">
+                            <button class="patient-module-btn btn-add" onclick="addPatientRecord()">Add New Record</button>
+                            <button class="patient-module-btn btn-update" onclick="updatePatientRecord()">Update Selected Patient</button>
+                        </div>
+                    </div>                 <div style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 15px;">
+                        <label for="export-date" style="font-weight: bold; margin-bottom: 5px; display: block;">Select Date to Export:</label>
+                        <input type="date" id="export-date" style="width: calc(100% - 20px); padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                        <button class="patient-module-btn btn-export" onclick="exportPatientDataByDate()">Export Selected Date (PDF)</button>
+                    </div>
+
+                </div>    
+            </div>
+        </div>
+    </div> ```
+
+   
+
+    <div id="custom-logout-popup" class="popup-overlay">
+        <div class="popup-box-confirm">
+            <h3 style="color: #333; margin-top: 0;">Confirm Logout</h3>
+            <p style="margin-bottom: 20px;">Are you sure you want to log out?</p>
+            <div style="display: flex; justify-content: center; gap: 15px;">
+                <button id="custom-ok-btn" class="custom-confirm-btn ok-btn" onclick="logoutConfirmed()">OK</button>
+                <button id="custom-cancel-btn" class="custom-confirm-btn cancel-btn" onclick="cancelLogout()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="staff-popup" class="popup-overlay">
+        <div class="popup-box">
+            <button class="popup-close-btn" onclick="closeCreateStaffPopup()">×</button>
+            <h3>Create Staff Account</h3>
+            <div style="margin-top:15px;">
+                <input type="text" id="staff-username" placeholder="Username">
+                <input type="password" id="staff-password" placeholder="Password">
+                <button class="action-btn edit-btn" onclick="createStaff()">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="manage-accounts-popup" class="popup-overlay">
+        <div class="popup-box-manage-account">
+            <button class="popup-close-btn" onclick="closeManageAccountsPopup()">×</button>
+            <div style="display:flex; justify-content: flex-start; align-items:center; gap: 15px;">
+                <h3>Manage Accounts</h3>
+                <button class="action-btn view-btn" onclick="refreshAccounts()">
+                    Refresh
+                </button>
+            </div>
+            <div id="accounts-content"></div>
+        </div>
+    </div>
+
+    <div id="edit-popup" class="popup-overlay">
+        <div class="popup-box">
+            <button class="popup-close-btn" onclick="closeEditPopup()">×</button>
+            <h3>Edit Account</h3>
+            <div style="margin-top:15px;">
+                <input type="hidden" id="edit-id">
+                <input type="text" id="edit-username" placeholder="Username">
+                <input type="password" id="edit-password" placeholder="New Password">
+                <button class="action-btn edit-btn" onclick="updateAccount()">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="delete-popup" class="popup-overlay">
+        <div class="popup-box">
+            <button class="popup-close-btn" onclick="closeDeletePopup()">×</button>
+            <h3>Delete Account</h3>
+            <div style="margin-top:15px; text-align:center;">
+                <input type="hidden" id="delete-id">
+                <p>Are you sure you want to delete this account?</p>
+                <button class="action-btn delete-btn" onclick="confirmDelete()">Yes, Delete</button>
+                <button class="action-btn view-btn" onclick="closeDeletePopup()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="activity-popup" class="popup-overlay">
+        <div class="popup-box">
+            <button class="popup-close-btn" onclick="closeActivityPopup()">×</button>
+            <h3>Staff Activity: <span id="activity-username"></span></h3>
+            <div id="activity-content" style="margin-top:10px;">
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="label">Total Number Generated</span>
+                        <span class="number" id="activity-served">0</span>
+                    </div>
+                    <div class="stat-item action-item">
+                        <span class="label">Action</span>
+                        <button class="reset-btn" id="activity-reset-btn" onclick="resetActivity(this)">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-history-popup" class="popup-overlay">
+        <div class="popup-box-login-history">
+            <button class="popup-close-btn" onclick="closeLoginHistoryPopup()">×</button>
+            <div style="display:flex; align-items:center; gap: 15px; margin-bottom: 10px; flex-shrink: 0;">
+                <h3>Login History</h3>
+                <button class="action-btn delete-btn" onclick="clearLoginHistoryFromPopup()" style="width:150px;">
+                    Clear Login History
+                </button>
+            </div>
+            <div id="login-history-content"></div>
+        </div>
+    </div>
+
+    <div id="info-popup" class="popup-overlay">
+        <div class="popup-box-info">
+            <button class="popup-close-btn" onclick="closeInfoPopup()">×</button>
+            <p id="info-message"></p>
+        </div>
+    </div>
+
+    <div id="queue-popup" class="queue-popup-overlay">
+        <div class="queue-popup-box">
+            <button class="popup-close-btn" onclick="closeQueuePopup()">×</button>
+            <div id="queue-message"></div>
+            <button class="queue-popup-btn" onclick="printQueue()">Print</button>
+        </div>
+    </div>
+
+    <div id="queue-selection-popup" class="popup-overlay-queue-selection">
+        <div class="popup-box-queue-selection">
+            <button class="popup-close-btn" onclick="closeQueueSelectionPopup()">×</button>
+            <h3>Queue Selection</h3>
+            <div style="margin-top:15px;">
+                <button class="queue-btn call" onclick="callQueue()">Call</button>
+                <button class="queue-btn next" onclick="nextQueue()">Next</button>
+                <button class="queue-btn delete" onclick="deleteCurrentQueue()">Delete</button>
+            </div>
+
+            <div class="queue-preview" id="queue-preview">
+                <p id="current-time" style="text-align:center; font-weight:bold; font-size:18px; color:#45a049;">
+                </p>
+                <h2 class="now-serving-label">Now Serving</h2>
+                <div class="center-box">--</div>
+
+                <div id="servingTimeContainer">
+                    <h1 style="margin-top:40px;">Serving Time</h1>
+                    <div id="servingTime">00:00</div>
+                </div>
+            </div>
+
+            <div class="queue-list" id="queue-list">
+                <h3 style="text-align:center; color:white; margin-bottom:10px; font-size:28px;">Queue List</h3>
+            </div>
+        </div>
+    </div>
+
+    <audio id="beepSound" src="beepbeep.mp3" preload="auto"></audio>
+    <script src="jspdf.umd.min.js"></script>
+    <script>
+        document.getElementById("btn-queue-preview").addEventListener("click", function () {
+            const features = "width=1200,height=700,resizable=yes";
+            window.open("queuepreview.html", "QueuePreview", features);
+        });
+
+        // =========================================================================
+        // === ORIGINAL QUEUE MANAGEMENT SYSTEM (QMS) VARIABLES ===
+        // =========================================================================
+        let chkQueueNumber = 0; // Check-up counter
+        let vcineQueueNumber = 0; // Vaccine counter
+        let csrQueueNumber = 0; // Cashier counter
+        const MAX_QUEUE_NUMBER = 100;
+
+        let queueList = [];
+        let currentIndex = -1;
+        let previousIndex = -1;
+        let tempSelectedIndex = -1;
+        let isNextPressed = false;
+
+        let timerInterval = null;
+        let seconds = 0;
+        const TIMER_LIMIT = 90; // 1 minute and 30 seconds (90 seconds)
+
+        const beepSound = document.getElementById('beepSound');
+
+        // 🟢 NEW GLOBAL VARIABLE: Admin ID
+        let adminId = null;
+
+        // =========================================================================
+        // === NEW: PATIENT RECORD MODULE VARIABLES & DUMMY DATA (UPDATED: NO DUMMY) ===
+        // =========================================================================
+        // FIXED: Walang laman ang patientRecords array
+        // Initialize patient records
+        let patientRecords = [];
+        let nextPatientId = 1;
+        let selectedPatientId = null;
+        let isAddingNewPatient = true;
+
+        // Load from localStorage
+        const storedPatients = localStorage.getItem("patientRecords");
+        if (storedPatients) {
+            try {
+                patientRecords = JSON.parse(storedPatients);
+                if (patientRecords.length > 0) {
+                    nextPatientId = Math.max(...patientRecords.map(p => p.id)) + 1;
+                }
+            } catch (e) {
+                console.error("Error loading patient records:", e);
+                patientRecords = [];
+            }
+        }
+
+        // Render patient list once DOM is ready
+        document.addEventListener("DOMContentLoaded", function () {
+            renderPatientList(patientRecords);
+        });
+
+
+
+        // =========================================================================
+        // === PATIENT RECORD MODULE FUNCTIONS (NEW/MODIFIED) ===
+        // =========================================================================
+        // Para sa pag clear ng patient records pag di na active sa loob ng 12 months 
+        function clearOldPatientRecords(months = 12) {
+            const cutoffDate = new Date();
+            cutoffDate.setMonth(cutoffDate.getMonth() - months);
+
+            patientRecords = patientRecords.filter(patient =>
+                patient.visits.some(visit => new Date(visit.date) >= cutoffDate)
+            );
+
+            // 🔹 Save updated records to localStorage
+            localStorage.setItem("patientRecords", JSON.stringify(patientRecords));
+        }
+
+
+        function openPatientRecordPopup() {
+            console.log("Opening Patient Record Popup..."); // Debug message
+            const popupElement = document.getElementById("patient-record-popup");
+            if (!popupElement) {
+                console.error("ERROR: Cannot find the patient record popup element (#patient-record-popup)!");
+                showInfo("Error: Cannot find the patient record popup element."); // Show user feedback
+                return; // Stop if the main popup element is missing
+            }
+            // Show the popup *first*
+            popupElement.style.display = "flex";
+
+            // Reset selected patient ID
+            selectedPatientId = null;
+
+            try { // Use try...catch for safety
+                clearOldPatientRecords(12);
+
+                // --- Safely set max date and default value for export date input ---
+                const today = getLocalDateISOString(); // Use local date
+                const exportDateInput = document.getElementById('export-date'); // Find the date input element
+
+                if (exportDateInput) { // Check if the element was successfully found
+                    exportDateInput.value = today; // Set default value to today
+                    exportDateInput.max = today;  // Set the max attribute to prevent future dates
+                    console.log("Export date input found and configured. Max date:", today); // Debug message
+                } else {
+                    // Log a warning if the element is missing, but don't stop the function
+                    console.warn("WARNING: Export date input element (#export-date) not found! Date filtering/export might not work as expected.");
+                }
+                // --- END ---
+                document.getElementById('patient-date').max = today;
+
+                // Continue setting up the rest of the popup
+                renderPatientList(patientRecords);
+                clearPatientForm();
+                renderPatientDetails(null); // Clear details when opening
+                console.log("Patient Record Popup opened and configured successfully."); // Debug message
+
+            } catch (error) {
+                // If any error occurs during setup, log it and try to hide the popup
+                console.error("ERROR occurred inside openPatientRecordPopup:", error);
+                showInfo("An error occurred while setting up the patient record popup: " + error.message);
+                if (popupElement) {
+                    popupElement.style.display = "none"; // Hide potentially broken popup
+                }
+            }
+        }
+
+        function closePatientRecordPopup() {
+            document.getElementById("patient-record-popup").style.display = "none";
+        }
+
+        // --- Render List & Select ---
+        function renderPatientList(patients) {
+            const listContainer = document.getElementById('patient-list');
+            listContainer.innerHTML = '';
+
+            if (patients.length === 0) {
+                listContainer.innerHTML = '<p style="text-align:center; margin-top:10px; color:#555;">No patients found.</p>';
+                return;
+            }
+
+            patients.forEach(patient => {
+                const item = document.createElement('div');
+                // Kung ang selectedPatientId ay null, walang magse-set ng 'selected' class.
+                item.className = `patient-list-item ${patient.id === selectedPatientId ? 'selected' : ''}`;
+                item.textContent = patient.name;
+                item.dataset.id = patient.id;
+                item.onclick = () => selectPatient(patient.id);
+                listContainer.appendChild(item);
+            });
+        }
+
+        function selectPatient(id) {
+            selectedPatientId = id;
+            isAddingNewPatient = false;
+
+            // Highlight the selected item in the list
+            document.querySelectorAll('.patient-list-item').forEach(item => {
+                item.classList.remove('selected');
+                if (parseInt(item.dataset.id) === id) {
+                    item.classList.add('selected');
+                }
+            });
+
+            const patient = patientRecords.find(p => p.id === id);
+            if (patient) {
+                // Populate the Form Column with patient's MAIN details (Name, Contact)
+                document.getElementById('patient-id').value = patient.id;
+                document.getElementById('patient-name').value = patient.name;
+                document.getElementById('patient-contact').value = patient.contact;
+
+                // Clear temporary visit data fields for new entry
+                document.getElementById('patient-date').value = new Date().toISOString().slice(0, 10);
+                document.getElementById('patient-purpose').value = "";
+
+                // Set the checkbox state based on visit history
+                document.getElementById('patient-first-visit').checked = (patient.visits.length === 0);
+
+                // ✅ --- ADD THIS LINE ---
+                document.getElementById('patient-first-visit').disabled = true; // Make it non-clickable
+
+                // Render the visit history in the Details Column
+                renderPatientDetails(patient);
+
+                // Update button visibility/text
+                document.querySelector('.btn-add').textContent = 'Add New Visit';
+                document.querySelector('.btn-update').style.display = 'inline-block';
+            }
+        }
+
+        function renderPatientDetails(patient) {
+            const detailsContainer = document.getElementById('patient-details-content');
+            detailsContainer.innerHTML = '';
+
+            if (!patient) {
+                detailsContainer.innerHTML = '<p style="text-align:center; color:#999;">Select a patient to view visit details.</p>';
+                return;
+            }
+
+            // Display main patient info once at the top
+            detailsContainer.innerHTML += `
+                                                         <h5>${patient.name}</h5>
+                                                         <p><strong>Contact No:</strong> <span>${patient.contact}</span></p>
+                                                         <hr>`;
+
+            // Display Visit History
+            if (patient.visits.length === 0) {
+                detailsContainer.innerHTML += `<p style="text-align:center; color:red;">No visit history recorded.</p>`;
+                return;
+            }
+
+            patient.visits.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date descending (latest first)
+
+            patient.visits.forEach(visit => {
+                const visitType = visit.isFirstVisit ? '<span style="color: blue;">(1st Visit)</span>' : '<span style="color: green;">(Follow-up)</span>';
+                detailsContainer.innerHTML += `
+                                                                         <div class="detail-record">
+                                                                             <p><strong>Date:</strong> <span>${visit.date} ${visitType}</span></p>
+                                                                             <p><strong>Purpose:</strong> <span>${visit.purpose}</span></p>
+                                                                             <p><strong>Notes:</strong> <span>${visit.notes || 'N/A'}</span></p>
+                                                                         </div>
+                                                                         `;
+            });
+        }
+
+        /**
+         * Clears the patient form, sets the context to "Add New Patient",
+         * clears patient selection (removes highlight), and clears the details column.
+         */
+        function clearPatientForm() {
+            selectedPatientId = null; // Huwag magkaroon ng selected patient
+            isAddingNewPatient = true;
+
+            // Clear all list highlights
+            document.querySelectorAll('.patient-list-item').forEach(item => item.classList.remove('selected'));
+
+            // Clear form inputs
+            document.getElementById('patient-id').value = '';
+            document.getElementById('patient-name').value = ''; // FIX: Nilinis ang Name field
+            document.getElementById('patient-contact').value = ''; // FIX: Nilinis ang Contact field
+            document.getElementById('patient-date').value = getLocalDateISOString(); // Set to local today
+            document.getElementById('patient-purpose').value = "";
+
+            // Set checkbox to checked for new patient
+            document.getElementById('patient-first-visit').checked = true;
+
+            // ✅ --- ADD THIS LINE ---
+            document.getElementById('patient-first-visit').disabled = true; // Make it non-clickable
+
+            // Clear details column
+            renderPatientDetails(null);
+
+            // Update button visibility/text
+            document.querySelector('.btn-add').textContent = 'Add New Patient';
+            document.querySelector('.btn-update').style.display = 'none'; // Hide update button for new patient
+        }
+
+        // --- CRUD Operations ---
+        function addPatientRecord() {
+            const name = document.getElementById('patient-name').value.trim();
+            const contact = document.getElementById('patient-contact').value.trim();
+            const date = document.getElementById('patient-date').value;
+            const purpose = document.getElementById('patient-purpose').value;
+            const isFirstVisit = document.getElementById('patient-first-visit').checked;
+
+            // Simple validation (Includes contact length check)
+            if (!name || !contact || !date || !purpose) {
+                showInfo("Error: Please fill in all patient and visit details.");
+                return;
+            }
+            // 🟢 NEW: Contact specific validation
+            if (contact.length !== 11 || !/^\d{11}$/.test(contact)) {
+                showInfo("Error: Contact number must be exactly 11 numeric digits.");
+                return;
+            }
+
+            if (isAddingNewPatient) {
+                // Add New Patient (and their first visit)
+                const newPatient = {
+                    id: nextPatientId++,
+                    name: name,
+                    contact: contact,
+                    visits: [{
+                        date: date,
+                        purpose: purpose,
+                        isFirstVisit: true,
+                        notes: `Initial visit for ${purpose}.`
+                    }]
+                };
+                patientRecords.unshift(newPatient); // Add to the top
+                selectedPatientId = newPatient.id;
+                showInfo(`Success: New patient "${name}" added.`);
+
+                // Simulate backend call (Replace with actual backend message)
+                window.chrome.webview.postMessage(`addPatient:${JSON.stringify(newPatient)}`);
+
+            } else {
+                // Add New Visit (to an existing patient)
+                const patient = patientRecords.find(p => p.id === selectedPatientId);
+                if (patient) {
+                    const newVisit = {
+                        date: date,
+                        purpose: purpose,
+                        isFirstVisit: patient.visits.length === 0,
+                        notes: `Follow-up visit for ${purpose}.`
+                    };
+                    patient.visits.push(newVisit);
+
+                    // Also update patient's main info (Name/Contact) in case they were changed
+                    patient.name = name;
+                    patient.contact = contact;
+
+                    showInfo(`Success: New visit added for "${name}".`);
+
+                    // Simulate backend call (Replace with actual backend message)
+                    window.chrome.webview.postMessage(`addVisit:${selectedPatientId}:${JSON.stringify(newVisit)}`);
+
+                } else {
+                    showInfo("Error: Selected patient not found.");
+                    return;
+                }
+            }
+
+            // Re-render everything
+            // Save to localStorage
+            localStorage.setItem("patientRecords", JSON.stringify(patientRecords));
+            renderPatientList(patientRecords);
+            selectPatient(selectedPatientId); // Reload details and form context
+        }
+
+        function updatePatientRecord() {
+            if (selectedPatientId === null) {
+                showInfo("Error: Please select a patient to update.");
+                return;
+            }
+
+            const name = document.getElementById('patient-name').value.trim();
+            const contact = document.getElementById('patient-contact').value.trim();
+
+            // Simple validation (Includes contact length check)
+            if (!name || !contact) {
+                showInfo("Error: Name and Contact cannot be empty.");
+                return;
+            }
+            // 🟢 NEW: Contact specific validation
+            if (contact.length !== 11 || !/^\d{11}$/.test(contact)) {
+                showInfo("Error: Contact number must be exactly 11 numeric digits.");
+                return;
+            }
+
+            const patient = patientRecords.find(p => p.id === selectedPatientId);
+            if (patient) {
+                // Only update Name and Contact from the form, since visits are added separately.
+                patient.name = name;
+                patient.contact = contact;
+
+                showInfo(`Success: Patient "${name}" (ID: ${selectedPatientId}) updated.`);
+
+                // Simulate backend call (Replace with actual backend message)
+                window.chrome.webview.postMessage(`updatePatient:${selectedPatientId}:${name}:${contact}`);
+            } else {
+                showInfo("Error: Selected patient not found for update.");
+            }
+
+            // Re-render list/details
+            // Save to localStorage
+            localStorage.setItem("patientRecords", JSON.stringify(patientRecords));
+            renderPatientList(patientRecords);
+            renderPatientDetails(patient);
+        }
+
+        function searchPatients() {
+            const searchTerm = document.getElementById('patient-search-input').value.toLowerCase();
+            const filteredPatients = patientRecords.filter(patient =>
+                patient.name.toLowerCase().includes(searchTerm)
+            );
+            renderPatientList(filteredPatients);
+        }
+
+        async function exportPatientDataByDate() {
+
+            // 1. Check if jsPDF library is loaded
+            if (typeof window.jspdf === 'undefined') {
+                console.error("jsPDF library is not loaded. Cannot export.");
+                showInfo("Error: PDF library (jsPDF) is not loaded. Make sure 'jspdf.umd.min.js' is in the wwwroot folder.");
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+
+            // 2. Get Date
+            const selectedDate = document.getElementById('export-date').value;
+            if (!selectedDate) {
+                showInfo("Error: Please select a date to export.");
+                return;
+            }
+
+            // 3. Get and Filter Data
+            const allPatientRecords = JSON.parse(localStorage.getItem("patientRecords") || "[]");
+            if (!allPatientRecords || allPatientRecords.length === 0) {
+                showInfo("No patient data available to export.");
+                return;
+            }
+
+            // Filter for patients who had visits on the selected date
+            const recordsToExport = allPatientRecords.filter(patient =>
+                patient.visits && patient.visits.some(visit => visit.date === selectedDate)
+            );
+
+            if (recordsToExport.length === 0) {
+                showInfo(`No patient visits recorded on ${selectedDate}.`);
+                return;
+            }
+
+            // 4. Create PDF
+            const doc = new jsPDF();
+            doc.setFontSize(18);
+            doc.text(`Patient Visits Report - ${selectedDate}`, 14, 20);
+            doc.setFontSize(12);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+            let y = 40;
+
+            recordsToExport.forEach((patient, idx) => {
+                if (idx > 0) { // Add separator line
+                    y += 6;
+                    doc.setDrawColor(200, 200, 200);
+                    doc.line(10, y, 200, y);
+                    y += 8;
+                }
+
+                if (y > 260) { // Check for page break
+                    doc.addPage();
+                    y = 20;
+                }
+
+                doc.setFontSize(14);
+                doc.text(`${idx + 1}. ${patient.name}`, 14, y);
+                y += 7;
+                doc.setFontSize(11);
+                doc.text(`Contact: ${patient.contact}`, 14, y);
+                y += 6;
+
+                // Filter to show ONLY visits on the selected date
+                const visitsOnDate = patient.visits.filter(visit => visit.date === selectedDate);
+
+                if (visitsOnDate.length > 0) {
+                    doc.text(`Visits on ${selectedDate}:`, 14, y);
+                    y += 6;
+
+                    visitsOnDate.forEach((visit) => {
+                        const visitType = visit.isFirstVisit ? "(1st Visit)" : "(Follow-up)";
+                        const visitInfo = `    • ${visit.purpose} ${visitType}`;
+
+                        if (y > 270) {
+                            doc.addPage();
+                            y = 20;
+                        }
+                       doc.text(visitInfo, 20, y);
+                        y += 6;
+
+                        if (visit.notes) {
+                            const splitNotes = doc.splitTextToSize(`Notes: ${visit.notes}`, 160);
+                            if (y + (splitNotes.length * 6) > 280) {
+                             doc.addPage();
+                                y = 20;
+                            }
+                            doc.text(splitNotes, 24, y);
+                            y += splitNotes.length * 6;
+                        }
+                    });
+                }
+            });
+
+            // 5. Save the PDF
+            doc.save(`Patient_Records_${selectedDate}.pdf`);
+            showInfo(`PDF export for ${selectedDate} completed successfully!`);
+        }
+
+
+
+
+        // =========================================================================
+        // === NEW: LOCAL STORAGE SYNC FUNCTION ===
+        // =========================================================================
+
+        /**
+         * Saves the current queue state (queueList and currentIndex) to localStorage.
+         * This is called after every action that modifies the queue to notify the display screen.
+         */
+        function saveQueueState() {
+            // 1. I-save ang buong Queue List at ang index ng kasalukuyang tinatawag
+            localStorage.setItem('queueList', JSON.stringify(queueList));
+            localStorage.setItem('currentIndex', currentIndex.toString());
+
+            // 2. Optional: Para sa C# WebView communication (para ma-broadcast sa kabilang window)
+            const nextInline = [];
+            const startNext = currentIndex + 1;
+            for (let i = 0; i < 3; i++) {
+                if (startNext + i < queueList.length) {
+                    nextInline.push(queueList[startNext + i]);
+                }
+            }
+
+            const nowServing = currentIndex >= 0 ? queueList[currentIndex] : "--";
+
+            // Kung gumagamit kayo ng C# WebView:
+            // window.chrome.webview.postMessage(`updateDisplay:${nowServing}:${nextInline.join(',')}`);
+        }
+
+        // =========================================================================
+        // === MODIFIED ORIGINAL QMS FUNCTIONS & UTILITIES ===
+        // =========================================================================
+
+        function playBeep() {
+            if (beepSound) {
+                beepSound.currentTime = 0;
+                beepSound.play().catch(e => console.log("Audio playback failed (usually due to user interaction requirement):", e));
+            }
+        }
+
+        function confirmLogout() {
+            document.getElementById("custom-logout-popup").style.display = "flex";
+        }
+
+        function logoutConfirmed() {
+            document.getElementById("custom-logout-popup").style.display = "none";
+            logout();
+        }
+
+        function cancelLogout() {
+            document.getElementById("custom-logout-popup").style.display = "none";
+        }
+
+        function updateLiveTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds_live = now.getSeconds().toString().padStart(2, '0');
+
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+
+            const liveTime = `${hours}:${minutes}:${seconds_live} ${ampm}`;
+
+            document.getElementById('current-time').textContent = liveTime;
+        }
+
+        function openQueueSelectionPopup() {
+            document.getElementById("queue-selection-popup").style.display = "flex";
+            window.chrome.webview.postMessage("getQueueList");
+        }
+
+         
+
+        function closeQueueSelectionPopup() {
+            document.getElementById("queue-selection-popup").style.display = "none";
+        }
+
+        function openCreateStaffPopup() {
+            document.getElementById("staff-popup").style.display = "flex";
+        }
+
+        function closeCreateStaffPopup() {
+            document.getElementById("staff-popup").style.display = "none";
+        }
+
+        function showAccounts() {
+            window.chrome.webview.postMessage("manageAccounts");
+            document.getElementById("manage-accounts-popup").style.display = "flex";
+        }
+
+        function closeManageAccountsPopup() {
+            document.getElementById("manage-accounts-popup").style.display = "none";
+        }
+
+        function openEditPopup(id, username, password) {
+            document.getElementById("edit-id").value = id;
+            document.getElementById("edit-username").value = username;
+            document.getElementById("edit-password").value = password;
+            document.getElementById("edit-popup").style.display = "flex";
+        }
+
+        function closeEditPopup() {
+            document.getElementById("edit-popup").style.display = "none";
+        }
+
+        function openDeletePopup(id) {
+            document.getElementById("delete-id").value = id;
+            document.getElementById("delete-popup").style.display = "flex";
+        }
+
+        function closeDeletePopup() {
+            document.getElementById("delete-popup").style.display = "none";
+        }
+
+        function showActivityPopup(username, id) {
+            document.getElementById("activity-username").innerText = username;
+            document.getElementById("activity-popup").style.display = "flex";
+            // Request total_number_generated from backend
+            window.chrome.webview.postMessage(`getTotalGenerated:${username}`);
+            // Store username for reset
+            document.getElementById("activity-reset-btn").dataset.username = username;
+        }
+
+        function resetActivity(btn) {
+            const username = btn.dataset.username;
+            window.chrome.webview.postMessage(`resetTotalGenerated:${username}`);
+        }
+
+
+
+        function closeActivityPopup() {
+            document.getElementById("activity-popup").style.display = "none";
+        }
+
+        function showLoginHistory() {
+            window.chrome.webview.postMessage("viewLoginHistory");
+            document.getElementById("login-history-popup").style.display = "flex";
+        }
+
+        function closeLoginHistoryPopup() {
+            document.getElementById("login-history-popup").style.display = "none";
+        }
+
+        function showInfo(message) {
+            document.getElementById("info-message").innerText = message;
+            document.getElementById("info-popup").style.display = "flex";
+        }
+
+        function closeInfoPopup() {
+            document.getElementById("info-popup").style.display = "none";
+        }
+
+        function closeQueuePopup() {
+            document.getElementById("queue-popup").style.display = "none";
+            document.querySelectorAll("input[type='radio']").forEach(r => r.checked = false);
+            document.querySelectorAll("input[type='checkbox']").forEach(c => c.checked = false);
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            seconds = 0;
+            const TIMER_LIMIT = 10;
+            const display = document.getElementById('servingTime');
+            display.style.color = "#333";
+
+            function updateTimerDisplay() {
+                if (seconds > TIMER_LIMIT) {
+                    clearInterval(timerInterval);
+                    display.textContent = "TIMEOUT";
+                    display.style.color = "red";
+                    return;
+                }
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                seconds++;
+            }
+            updateTimerDisplay();
+            timerInterval = setInterval(updateTimerDisplay, 1000);
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            seconds = 0;
+            document.getElementById('servingTime').textContent = "00:00";
+            document.getElementById('servingTime').style.color = "#333";
+        }
+
+        function generateQueue(code) {
+            let currentCounter;
+            let currentNumber;
+
+            if (code === "CHK") {
+                chkQueueNumber = (chkQueueNumber % MAX_QUEUE_NUMBER) + 1;
+                currentCounter = chkQueueNumber;
+            } else if (code === "VCINE") {
+                vcineQueueNumber = (vcineQueueNumber % MAX_QUEUE_NUMBER) + 1;
+                currentCounter = vcineQueueNumber;
+            } else if (code === "CSR") {
+                csrQueueNumber = (csrQueueNumber % MAX_QUEUE_NUMBER) + 1;
+                currentCounter = csrQueueNumber;
+            } else {
+                console.error("Invalid queue code.");
+                return;
+            }
+
+            currentNumber = currentCounter;
+            const queueNumber = code + "-" + String(currentNumber).padStart(3, '0');
+            let serviceText = "";
+
+            try {
+                if (code === "CHK") {
+                    const selectedRadio = document.querySelector('input[name="checkup-type"]:checked');
+                    serviceText = selectedRadio ? selectedRadio.value : "No service selected";
+                    if (!selectedRadio) throw new Error("Please select a check-up type.");
+                } else if (code === "VCINE") {
+                    const selectedCheckbox = [];
+                    document.querySelectorAll('#vaccine-dropdown input[type="checkbox"]:checked').forEach(cb => selectedCheckbox.push(cb.value));
+                    serviceText = selectedCheckbox.length > 0 ? selectedCheckbox.join(", ") : "No vaccine selected";
+                    if (selectedCheckbox.length === 0) throw new Error("Please select at least one vaccine.");
+                } else if (code === "CSR") {
+                    const selectedRadio = document.querySelector('input[name="Payment & Billing"]:checked');
+                    serviceText = selectedRadio ? selectedRadio.value : "No service selected";
+                    if (!selectedRadio) throw new Error("Please select a cashier service.");
+                }
+            } catch (error) {
+                if (code === "CHK") chkQueueNumber = (chkQueueNumber - 1 + MAX_QUEUE_NUMBER) % MAX_QUEUE_NUMBER;
+                if (code === "VCINE") vcineQueueNumber = (vcineQueueNumber - 1 + MAX_QUEUE_NUMBER) % MAX_QUEUE_NUMBER;
+                if (code === "CSR") csrQueueNumber = (csrQueueNumber - 1 + MAX_QUEUE_NUMBER) % MAX_QUEUE_NUMBER;
+
+                alert(error.message);
+                return;
+            }
+
+            const dateTime = new Date().toLocaleString();
+            const messageHTML = `
+                                                         <span class="queue-number">${queueNumber}</span>
+                                                         <span class="queue-details">
+                                                             ${serviceText ? `Service: ${serviceText}<br>` : ""}
+                                                             Date & Time: ${dateTime}<br>
+                                                             Please take care of your queue number <br>
+                                                             Thank You.
+                                                         </span>`;
+            document.getElementById("queue-message").innerHTML = messageHTML;
+            document.getElementById("queue-popup").style.display = "flex";
+        }
+
+        function generateCheckupQueue() {
+            generateQueue("CHK");
+        }
+
+        function generateVaccineQueue() {
+            generateQueue("VCINE");
+        }
+
+        function generateCashierQueue() {
+            generateQueue("CSR");
+        }
+
+        function printQueue() {
+            const popupElement = document.getElementById("queue-message");
+            const queueNumberElement = popupElement.querySelector(".queue-number");
+            const queueNumber = queueNumberElement ? queueNumberElement.textContent.trim() : "N/A";
+
+            if (queueNumber !== "N/A") {
+                queueList.push(queueNumber);
+                isNextPressed = false;
+                updateQueueListDisplay();
+
+                // === I-SYNC ANG QUEUE STATE SA LOCAL STORAGE ===
+                saveQueueState();
+            }
+
+            try {
+                const popupHTML = popupElement.innerHTML;
+                const printWindow = window.open('', '', 'width=800,height=600');
+                printWindow.document.write(`<html><head><title>Queue Ticket</title></head><body>${popupHTML}</body></html>`);
+                printWindow.document.close();
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+            } catch (error) {
+                console.log("Printing skipped or failed:", error);
+            }
+
+            closeQueuePopup();
+        }
+
+        function updateQueueListDisplay() {
+            const listContainer = document.getElementById('queue-list');
+            if (!listContainer) return;
+
+            listContainer.innerHTML = '<h3 style="text-align:center; color:white; margin-bottom:10px; font-size:28px;">Queue List</h3>';
+
+            if (queueList.length === 0) {
+                listContainer.innerHTML += `<p style="text-align:center; color:white; font-size:20px;">N/A</p>`;
+                return;
+            }
+
+            queueList.forEach((queueNum, index) => {
+                if (isNextPressed && index < currentIndex) {
+                    return;
+                }
+
+                const item = document.createElement('div');
+
+                let bgColor = index === currentIndex ? '#388E3C' : 'white';
+                let textColor = index === currentIndex ? 'white' : 'black';
+
+                let borderStyle = index === previousIndex ? '3px solid #FFC107' : 'none';
+
+                item.style.background = bgColor;
+                item.style.color = textColor;
+                item.style.fontWeight = 'bold';
+                item.style.fontSize = '18px';
+                item.style.margin = '5px';
+                item.style.padding = '8px';
+                item.style.borderRadius = '8px';
+                item.style.border = borderStyle;
+                item.style.display = 'flex';
+                item.style.justifyContent = 'space-between';
+                item.setAttribute('onclick', `selectQueue(${index})`);
+                item.innerHTML = `<span>${queueNum}</span>`;
+                listContainer.appendChild(item);
+            });
+        }
+
+        function updateBlueBox(code) {
+            const box = document.querySelector('.center-box');
+            if (box) box.textContent = code || "--";
+
+        }
+
+        function callQueue() {
+            if (queueList.length === 0) return;
+
+            if (currentIndex < 0) currentIndex = 0;
+
+            const queueItem = queueList[currentIndex];
+            if (!queueItem) return;
+
+            // Mark the current number as called
+            queueItem.called = true;
+
+            tempSelectedIndex = -1;
+
+            if (currentIndex >= 0 && currentIndex < queueList.length) {
+                const code = queueList[currentIndex];
+
+                updateBlueBox(code);
+
+
+                updateQueueListDisplay();
+                startTimer();
+                playBeep();
+
+                // 🟢 NEW LOGIC: Update the activity counter when a number is called
+                if (adminId) {
+                    // Magpapadala ng message sa C# backend para i-increment ang counter ng ADMIN
+                    window.chrome.webview.postMessage(`incrementActivity:${adminId}`);
+                }
+
+                // === I-SYNC ANG QUEUE STATE SA LOCAL STORAGE ===
+                saveQueueState();
+                localStorage.setItem("calledNow", Date.now().toString());
+
+
+            } else {
+                console.log("Invalid current queue index on callQueue.");
+
+            }
+        }
+
+
+        function nextQueue() {
+            if (queueList.length === 0) {
+                currentIndex = -1;
+                previousIndex = -1;
+                tempSelectedIndex = -1;
+                updateBlueBox("--");
+                queueList.splice(currentIndex, 1);
+                resetTimer();
+
+                // === I-SYNC ANG QUEUE STATE SA LOCAL STORAGE ===
+                saveQueueState();
+                return;
+            }
+
+
+            isNextPressed = true;
+
+            if (tempSelectedIndex !== -1) {
+                currentIndex = tempSelectedIndex;
+                tempSelectedIndex = -1;
+            }
+
+            if (currentIndex < 0) {
+                currentIndex = 0;
+                previousIndex = -1;
+            } else {
+                previousIndex = currentIndex;
+
+                currentIndex++;
+
+                if (currentIndex >= queueList.length) {
+                    if (currentIndex >= queueList.length) {
+                        currentIndex = -1; // No number to serve
+                        updateBlueBox("--"); // Clear Now Serving
+                        queueList = [];      // Clear the queue
+                        updateQueueListDisplay(); // Show N/A
+                        resetTimer();
+                        saveQueueState();
+                        console.log("Last number reached. Queue list is now empty.");
+                        return;
+                    }
+
+                }
+            }
+
+            const code = queueList[currentIndex];
+
+            updateBlueBox(code);
+            updateQueueListDisplay();
+
+            resetTimer();
+
+            // === I-SYNC ANG QUEUE STATE SA LOCAL STORAGE ===
+            saveQueueState();
+
+            console.log(`Skipped to next customer. Current customer (pending call) is at index ${currentIndex}: ${code}`);
+        }
+
+        function deleteCurrentQueue() {
+            isNextPressed = false;
+
+            if (queueList.length === 0) {
+                return;
+            }
+
+            // Gamitin natin ang currentIndex/tempSelectedIndex (kung may highlighted) or default sa 0 (top)
+            let indexToDelete = -1;
+
+            if (tempSelectedIndex !== -1) {
+                indexToDelete = tempSelectedIndex;
+            } else if (currentIndex !== -1 && currentIndex < queueList.length) {
+                indexToDelete = currentIndex;
+            } else if (queueList.length > 0) {
+                indexToDelete = 0;
+            }
+
+            if (indexToDelete === -1) return;
+
+
+            const deletedQueueNumber = queueList.splice(indexToDelete, 1)[0];
+
+            console.log(`Deleted queue number: ${deletedQueueNumber} at index ${indexToDelete}`);
+
+            // Ayusin ang mga index pagkatapos mag-delete
+            if (currentIndex > indexToDelete) {
+                currentIndex--;
+            } else if (currentIndex === indexToDelete) {
+                currentIndex = -1; // Cleared the currently serving
+            }
+
+            if (previousIndex > indexToDelete) {
+                previousIndex--;
+            } else if (previousIndex === indexToDelete) {
+                previousIndex = -1;
+            }
+            tempSelectedIndex = -1;
+
+            // Update Blue Box display
+            const blueBox = document.querySelector('.center-box');
+            if (blueBox.textContent === deletedQueueNumber || currentIndex === -1) {
+                const nextCode = currentIndex !== -1 ? queueList[currentIndex] : "--";
+                updateBlueBox(nextCode);
+                resetTimer();
+            }
+
+            updateQueueListDisplay();
+
+            // === I-SYNC ANG QUEUE STATE SA LOCAL STORAGE ===
+            saveQueueState();
+        }
+
+        // ❌ TINANGGAL ANG refreshQueueList() FUNCTION
+
+        function logout() {
+            window.chrome.webview.postMessage("logout");
+        }
+
+        function createStaff() {
+            const user = document.getElementById("staff-username").value;
+            const pass = document.getElementById("staff-password").value;
+            if (user && pass) window.chrome.webview.postMessage(`createStaff:${user}:${pass}`);
+            closeCreateStaffPopup();
+        }
+
+        function refreshAccounts() {
+            window.chrome.webview.postMessage("manageAccounts");
+        }
+
+        function updateAccount() {
+            const id = document.getElementById("edit-id").value;
+            const user = document.getElementById("edit-username").value;
+            const pass = document.getElementById("edit-password").value;
+            window.chrome.webview.postMessage(`updateAccount:${id}:${user}:${pass}`);
+            closeEditPopup();
+        }
+
+        function confirmDelete() {
+            const id = document.getElementById("delete-id").value;
+            window.chrome.webview.postMessage(`deleteAccount:${id}`);
+            closeDeletePopup();
+        }
+
+        // Listener for messages from backend
+        window.chrome.webview.addEventListener('message', event => {
+            const data = event.data;
+            if (data.startsWith("accounts:")) {
+                const accounts = JSON.parse(data.replace("accounts:", ""));
+
+                // --- NEW SORTING LOGIC ---
+                // Separate admins and staff
+                const admins = accounts.filter(acc => acc.Role === 'admin');
+                const staff = accounts.filter(acc => acc.Role !== 'admin');
+
+                // (Optional) Sort staff by ID
+                staff.sort((a, b) => a.Id - b.Id);
+
+                // Recombine the list with admins on top
+                const sortedAccounts = [...admins, ...staff];
+                // --- END NEW SORTING LOGIC ---
+
+                let html = `<table><tr><th>ID</th><th>Username</th><th>Password</th><th>Role</th><th>Action</th></tr>`;
+
+                // Loop over the new sorted list
+                sortedAccounts.forEach(acc => {
+                    html += `<tr>
+                            <td>${acc.Id}</td>
+                            <td>${acc.Username}</td>
+                            <td>${acc.Password}</td>
+                            <td>${acc.Role}</td>
+                            <td>
+                                <button class="action-btn edit-btn" onclick="openEditPopup(${acc.Id},'${acc.Username}','${acc.Password}')">Edit</button>
+
+                                ${acc.Role !== 'admin' ? `<button class="action-btn delete-btn" onclick="openDeletePopup(${acc.Id})">Delete</button>` : ''}
+
+                                <button class="action-btn view-btn" onclick="showActivityPopup('${acc.Username}',${acc.Id})">View Activity</button>
+                            </td>
+                        </tr>`;
+                });
+                html += "</table>";
+                document.getElementById("accounts-content").innerHTML = html;
+
+            } else if (data.startsWith("activity:")) {
+                const activity = JSON.parse(data.replace("activity:", ""));
+                document.getElementById("activity-served").innerText = activity.served;
+                // Wala sa screenshot ang pending, kaya served lang ang aayusin natin
+                // document.getElementById("activity-pending").innerText = activity.pending;
+                document.querySelector("#activity-reset-btn").dataset.id = activity.id || 0;
+            } else if (data.startsWith("loginHistory:")) {
+                const logs = JSON.parse(data.replace("loginHistory:", ""));
+                let html = `<table><tr><th>Username</th><th>Action</th><th>Date</th><th>Time</th></tr>`;
+                logs.forEach(log => {
+                    html += `<tr>
+                            <td>${log.Username}</td>
+                            <td>${log.Action}</td>
+                            <td>${log.Date}</td>
+                            <td>${log.Time}</td>
+                        </tr>`;
+                });
+                html += "</table>";
+                document.getElementById("login-history-content").innerHTML = html;
+            } else if (data.startsWith("success:")) {
+                showInfo(data.replace("success:", ""));
+                if (document.getElementById("manage-accounts-popup").style.display === "flex") {
+                    refreshAccounts();
+                }
+            } else if (data.startsWith("error:")) {
+                showInfo(data.replace("error:", ""));
+            } else if (data.startsWith("totalGenerated:")) {
+                // Format: totalGenerated:username:value
+                const parts = data.split(":");
+                const total = parts[2];
+                document.getElementById("activity-served").innerText = total;
+            }
+        });
+        // ---- ON PAGE LOAD ----
+        document.addEventListener("DOMContentLoaded", function () {
+            const user = localStorage.getItem("loggedInUser");
+            const role = localStorage.getItem("userRole");
+            // 🟢 NEW: Get Admin ID from localStorage
+            adminId = localStorage.getItem("userId");
+
+            const display = document.getElementById("user-display");
+
+            if (role === "admin" && user) {
+                display.textContent = "Welcome, " + user;
+            } else {
+                console.log("Not logged in as Admin. (Simulated redirect to login.html)");
+            }
+
+            updateLiveTime();
+            setInterval(updateLiveTime, 1000);
+
+            // Initial queue state load (para ma-sync ang display ng admin)
+            const storedQueueList = localStorage.getItem('queueList');
+            const storedIndex = localStorage.getItem('currentIndex');
+
+            if (storedQueueList) {
+                try {
+                    queueList = JSON.parse(storedQueueList);
+                } catch (e) {
+                    console.error("Error loading queueList:", e);
+                }
+            }
+
+            if (storedIndex) {
+                currentIndex = parseInt(storedIndex, 10);
+            }
+
+            // Initial queue list display for the control panel
+            updateQueueListDisplay();
+            const currentServing = currentIndex >= 0 ? queueList[currentIndex] : "--";
+            updateBlueBox(currentServing);
+
+            // Set current date to the Patient Form on load
+            document.getElementById('patient-date').value = getLocalDateISOString();
+
+            // WALANG patient selection sa simula pa lang
+            selectedPatientId = null;
+            renderPatientList(patientRecords);
+            clearPatientForm();
+        });
+
+        // 🟢 MODIFIED: Listener for new queue entries from staff (AUTOMATIC REFRESH)
+        window.addEventListener("storage", function (event) {
+            // Tanging ang queueList lang ang kailangan i-monitor
+            if (event.key === "queueList" && document.getElementById("queue-selection-popup").style.display === "flex") {
+
+                // I-sync ang mga global variables ni Admin
+                const storedQueueList = localStorage.getItem('queueList');
+                const storedIndex = localStorage.getItem('currentIndex');
+
+                if (storedQueueList) {
+                    try {
+                        // I-update ang global queueList ni Admin
+                        queueList = JSON.parse(storedQueueList);
+                    } catch (e) {
+                        console.error("Error loading queueList from storage event:", e);
+                    }
+                }
+
+                if (storedIndex) {
+                    // I-update ang global currentIndex ni Admin
+                    currentIndex = parseInt(storedIndex, 10);
+                } else {
+                    currentIndex = -1;
+                }
+
+                // I-update ang display agad
+                updateQueueListDisplay();
+
+                // I-update ang Now Serving box
+                const currentServing = currentIndex >= 0 && currentIndex < queueList.length ? queueList[currentIndex] : "--";
+                updateBlueBox(currentServing);
+
+                console.log("Admin Queue List automatically refreshed via storage event.");
+            }
+        });
+        // =========================================================================
+        // === DATE HELPER FUNCTION ===
+        // =========================================================================
+        /**
+         * Gets the current *local* date in YYYY-MM-DD format.
+         * (This replaces .toISOString() which uses UTC).
+         */
+        function getLocalDateISOString() {
+            const date = new Date(); // Gets local date and time
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // getMonth() is 0-indexed
+            const day = date.getDate().toString().padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+        }
+
+
+        // ⛔ REMOVED: Hindi na kailangan ang redundant renderQueueList function
+    </script>
+
+

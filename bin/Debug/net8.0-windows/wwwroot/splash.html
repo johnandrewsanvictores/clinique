@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        function goToLogin() {
+            window.chrome.webview.postMessage("goLogin");
+            document.body.classList.add("fade-out");
+
+            // Wait for animation to finish, then go to login
+            setTimeout(() => {
+                window.chrome.webview.postMessage("goLogin");
+            }, 800); // match the CSS transit
+        }
+    </script>
+</head>
+<body class="splash-body">
+    <div class="splash">
+        <button class="get-started-btn" onclick="goToLogin()">Get Started</button>
+    </div>
+</body>
+</html>

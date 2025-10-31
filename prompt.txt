@@ -1,0 +1,15 @@
+if there's a problem, analyze that first  and understand what is the problem including its code why is that. Next,
+
+before making changes, analyze what files and codes i'm referring and its related files, understand how the function works, their relations, design etc.
+for backend, make sure you analyze the models, tables in db, and all the valid columns of that table related to the tasks.
+
+after analyzing, make a plan first, tell me that explicitly then do the main task which includes changes. Just don't change the other parts of the code that is not related to the main tasks.
+And write clean, modular and easy to maintain code. Follow the "Don't Repeat Yourself" (DRY) rule.
+
+For backend, api for connecting frontend and the model. MOdel contains code for crud or database operations. make sure the pairing of symbols, blocks are correct both in frontend and backend.
+For frontend, have a reference to other views or ui to get the general theme.
+
+after you generate changes, just recheck the code for structure,bugs and the pairing of symboles to ensure that no syntax error.
+
+don't create md file, remove the debug or test file if you created it.
+Don't insert commaent unless the code or algorithm seems complex.

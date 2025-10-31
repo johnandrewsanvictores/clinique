@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Display</title>
+    <style>
+        /* BASE STYLES para sa buong Display Screen */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .main-container {
+            width: 90%;
+            max-width: 1200px;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+            display: flex;
+            gap: 25px;
+        }
+
+        /* LEFT PANEL: NOW SERVING */
+        .serving-panel {
+            flex: 2;
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid #ccc;
+        }
+
+        .header-time {
+            color: #007bff;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .now-serving-label {
+            font-size: 40px;
+            font-weight: bold;
+            color: #343a40;
+            margin-bottom: 15px;
+        }
+
+        .now-serving-box {
+            background-color: #007bff; /* Blue */
+            color: white;
+            font-size: 100px;
+            font-weight: 900;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            min-height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        /* RIGHT PANEL: QUEUE LIST (NEXT IN LINE) */
+        .queue-list-panel {
+            position: relative;
+            flex: 1;
+            background-color: #28a745; /* Green */
+            color: white;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+        }
+
+            .queue-list-panel h2 {
+                font-size: 32px;
+                margin-top: 0;
+                margin-bottom: 25px;
+                border-bottom: 2px solid white;
+                padding-bottom: 10px;
+            }
+
+            .queue-list-panel .next-item {
+                font-size: 30px;
+                font-weight: bold;
+                margin-bottom: 12px;
+                background-color: rgba(255, 255, 255, 0.15);
+                padding: 15px;
+                border-radius: 8px;
+            }
+
+                .queue-list-panel .next-item.na {
+                    color: #cccccc;
+                    font-weight: normal;
+                    font-size: 24px;
+                }
+
+        /* KEYFRAME FOR FLASHING EFFECT kapag may bagong tawag */
+        @keyframes flashServe {
+            0% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+
+            50% {
+                opacity: 0.7;
+                transform: scale(1.0);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="serving-panel">
+            <div class="header-time" id="live-time"></div>
+
+            <div class="now-serving-content">
+                <div class="now-serving-label">NOW SERVING: Please Proceed to the Desk</div>
+                <div class="now-serving-box" id="now-serving-number">--</div>
+            </div>
+
+        </div>
+
+        <div class="queue-list-panel">
+            <h2>NEXT IN LINE</h2>
+            <div id="next-1" class="next-item na">---</div>
+            <div id="next-2" class="next-item na">---</div>
+            <div id="next-3" class="next-item na">---</div>
+        </div>
+    </div>
+
+    <audio id="beepSound" src="beepbeep.mp3" preload="auto"></audio>
+
+    <script>
+        const nowServingBox = document.getElementById('now-serving-number');
+        const beepSound = document.getElementById('beepSound');
+        let currentServedNumber = null;
+
+        // I-update ang real-time clock
+        function updateLiveTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+
+            document.getElementById('live-time').textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
+        }
+
+        // Patunugin ang beep sound
+        function playBeep() {
+            if (beepSound) {
+                // Play sound twice for better attention
+                beepSound.currentTime = 0;
+                beepSound.play().catch(e => console.log("Audio playback failed:", e));
+                setTimeout(() => {
+                    beepSound.currentTime = 0;
+                    beepSound.play().catch(e => console.log("Audio playback failed:", e));
+                }, 800);
+            }
+        }
+
+        // Ang pinakamahalagang function: Nagre-read mula sa Admin's Local Storage
+        function updateDisplayFromStorage() {
+            // 1. Kumuha ng data mula sa Local Storage
+            const storedQueueList = localStorage.getItem('queueList');
+            const storedIndex = parseInt(localStorage.getItem('currentIndex'));
+
+            let queueList = [];
+            if (storedQueueList) {
+                try {
+                    queueList = JSON.parse(storedQueueList);
+                } catch (e) {
+                    console.error("Error parsing queue list:", e);
+                }
+            }
+
+            // 2. I-update ang Now Serving
+            const newNowServing = storedIndex >= 0 && storedIndex < queueList.length
+                                 ? queueList[storedIndex]
+                                 : "--";
+
+            // Logic for Beep and Animation (Triggered only when the served number CHANGES)
+            if (newNowServing !== "--" && newNowServing !== currentServedNumber) {
+                playBeep();
+                // Akyatin ang animation para mapansin
+                nowServingBox.style.animation = 'flashServe 0.5s 6 alternate';
+                setTimeout(() => {
+                    nowServingBox.style.animation = 'none';
+                }, 3000); // 3 seconds after the change
+                currentServedNumber = newNowServing;
+            } else if (newNowServing === "--" && currentServedNumber !== newNowServing) {
+                // I-reset ang animation kapag walang laman ang pila
+                nowServingBox.style.animation = 'none';
+                currentServedNumber = newNowServing;
+            }
+
+            nowServingBox.textContent = newNowServing;
+
+            // 3. I-update ang Next In Line (Top 3)
+            const nextElements = [
+                document.getElementById('next-1'),
+                document.getElementById('next-2'),
+                document.getElementById('next-3')
+            ];
+
+            for (let i = 0; i < 3; i++) {
+                const nextIndex = storedIndex + i + 1;
+                const nextItem = nextElements[i];
+
+                if (nextIndex < queueList.length) {
+                    nextItem.textContent = queueList[nextIndex];
+                    nextItem.classList.remove('na');
+                } else {
+                    nextItem.textContent = "---";
+                    nextItem.classList.add('na');
+                }
+            }
+        }
+
+        // --- Run on Load ---
+        document.addEventListener("DOMContentLoaded", function () {
+            // Unang load at regular update tuwing 500ms
+            updateDisplayFromStorage();
+            setInterval(updateDisplayFromStorage, 500);
+
+            // Oras update tuwing 1 segundo
+            updateLiveTime();
+            setInterval(updateLiveTime, 1000);
+        });
+    </script>
+</body>
+</html>
