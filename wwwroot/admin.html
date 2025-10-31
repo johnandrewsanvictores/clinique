@@ -1513,9 +1513,7 @@
                             <button class="patient-module-btn btn-update" onclick="updatePatientRecord()">Update Selected Patient</button>
                         </div>
                     </div>                 <div style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 15px;">
-                        <label for="export-date" style="font-weight: bold; margin-bottom: 5px; display: block;">Select Date to Export:</label>
-                        <input type="date" id="export-date" style="width: calc(100% - 20px); padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
-                        <button class="patient-module-btn btn-export" onclick="exportPatientDataByDate()">Export Selected Date (PDF)</button>
+                        <button class="patient-module-btn btn-export" onclick="openExportFilterPopup()">Choose Selected Export (PDF)</button>
                     </div>
 
                 </div>    
@@ -1546,6 +1544,53 @@
                 <input type="password" id="staff-password" placeholder="Password">
                 <button class="action-btn edit-btn" onclick="createStaff()">Create</button>
             </div>
+        </div>
+    </div>
+
+    <div id="export-filter-popup" class="popup-overlay">
+        <div class="popup-box">
+            <button class="popup-close-btn" onclick="closeExportFilterPopup()">×</button>
+            <h3 style="margin-bottom: 20px;">Export Patient Visits</h3>
+            
+            <label style="font-weight: bold; margin-bottom: 10px; display: block;">Filter By:</label>
+            <select id="export-filter-type" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;" onchange="toggleExportFilterInputs()">
+                <option value="day">Day</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+                <option value="patient">Patient Name</option>
+            </select>
+
+            <div id="export-date-inputs">
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Select Date:</label>
+                <input type="date" id="export-filter-date" style="width: calc(100% - 20px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <div id="export-week-inputs" style="display: none;">
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Select Week Range:</label>
+                <input type="date" id="export-week-start" placeholder="Week Start" style="width: calc(100% - 20px); padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                <input type="date" id="export-week-end" placeholder="Week End" style="width: calc(100% - 20px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <div id="export-month-inputs" style="display: none;">
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Select Month:</label>
+                <input type="month" id="export-filter-month" style="width: calc(100% - 20px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <div id="export-patient-inputs" style="display: none;">
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Search Patient Name:</label>
+                <input type="text" id="export-patient-search" placeholder="Type to search patient..." style="width: calc(100% - 20px); padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;" oninput="searchPatientForExport()">
+                
+                <div id="export-patient-results" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px; display: none;">
+                </div>
+                
+                <input type="hidden" id="export-selected-patient-id">
+                <div id="export-selected-patient-display" style="padding: 10px; background-color: #e8f5e9; border-radius: 5px; margin-bottom: 15px; display: none;">
+                    <strong>Selected Patient:</strong> <span id="export-selected-patient-name"></span>
+                    <button onclick="clearSelectedPatient()" style="float: right; background: #ff5252; color: white; border: none; padding: 3px 8px; border-radius: 3px; cursor: pointer;">Clear</button>
+                </div>
+            </div>
+
+            <button class="patient-module-btn btn-export" onclick="executeExport()" style="width: 100%; margin-top: 10px;">Export PDF</button>
         </div>
     </div>
 
@@ -1723,14 +1768,7 @@
 
             try {
                 const today = getLocalDateISOString();
-                const exportDateInput = document.getElementById('export-date');
-
-                if (exportDateInput) {
-                    exportDateInput.value = today;
-                    exportDateInput.max = today;
-                }
                 
-                // Set patient date to today and make it readonly
                 const patientDateInput = document.getElementById('patient-date');
                 patientDateInput.value = today;
                 patientDateInput.max = today;
@@ -2070,6 +2108,280 @@
 
         function searchPatients() {
             applyFilters();
+        }
+
+        function openExportFilterPopup() {
+            window.chrome.webview.postMessage("getPatients");
+            
+            setTimeout(() => {
+                const popup = document.getElementById('export-filter-popup');
+                popup.style.display = 'flex';
+                
+                const today = getLocalDateISOString();
+                document.getElementById('export-filter-date').value = today;
+                document.getElementById('export-filter-date').max = today;
+                document.getElementById('export-week-start').max = today;
+                document.getElementById('export-week-end').max = today;
+                
+                const currentMonth = new Date().toISOString().slice(0, 7);
+                document.getElementById('export-filter-month').value = currentMonth;
+                document.getElementById('export-filter-month').max = currentMonth;
+                
+                toggleExportFilterInputs();
+            }, 300);
+        }
+
+        function closeExportFilterPopup() {
+            document.getElementById('export-filter-popup').style.display = 'none';
+        }
+
+        function toggleExportFilterInputs() {
+            const filterType = document.getElementById('export-filter-type').value;
+            
+            document.getElementById('export-date-inputs').style.display = 'none';
+            document.getElementById('export-week-inputs').style.display = 'none';
+            document.getElementById('export-month-inputs').style.display = 'none';
+            document.getElementById('export-patient-inputs').style.display = 'none';
+            
+            if (filterType === 'day') {
+                document.getElementById('export-date-inputs').style.display = 'block';
+            } else if (filterType === 'week') {
+                document.getElementById('export-week-inputs').style.display = 'block';
+            } else if (filterType === 'month') {
+                document.getElementById('export-month-inputs').style.display = 'block';
+            } else if (filterType === 'patient') {
+                document.getElementById('export-patient-inputs').style.display = 'block';
+                clearSelectedPatient();
+            }
+        }
+
+        function searchPatientForExport() {
+            const searchTerm = document.getElementById('export-patient-search').value.trim().toLowerCase();
+            const resultsDiv = document.getElementById('export-patient-results');
+            
+            if (searchTerm.length === 0) {
+                resultsDiv.style.display = 'none';
+                resultsDiv.innerHTML = '';
+                return;
+            }
+            
+            const matchingPatients = patientRecords.filter(patient =>
+                patient.name && patient.name.toLowerCase().includes(searchTerm)
+            );
+            
+            if (matchingPatients.length === 0) {
+                resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center; color: #999;">No patients found</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+            
+            resultsDiv.innerHTML = matchingPatients.map(patient => `
+                <div onclick="selectPatientForExport(${patient.id}, '${patient.name.replace(/'/g, "\\'")}')" 
+                     style="padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; transition: background-color 0.2s;"
+                     onmouseover="this.style.backgroundColor='#f5f5f5'" 
+                     onmouseout="this.style.backgroundColor='white'">
+                    <strong>${patient.name}</strong><br>
+                    <small style="color: #666;">ID: ${patient.uniqueId || patient.id} | Contact: ${patient.contact || 'N/A'}</small>
+                </div>
+            `).join('');
+            
+            resultsDiv.style.display = 'block';
+        }
+
+        function selectPatientForExport(patientId, patientName) {
+            document.getElementById('export-selected-patient-id').value = patientId;
+            document.getElementById('export-selected-patient-name').textContent = patientName;
+            document.getElementById('export-selected-patient-display').style.display = 'block';
+            document.getElementById('export-patient-results').style.display = 'none';
+            document.getElementById('export-patient-search').value = '';
+        }
+
+        function clearSelectedPatient() {
+            document.getElementById('export-selected-patient-id').value = '';
+            document.getElementById('export-selected-patient-name').textContent = '';
+            document.getElementById('export-selected-patient-display').style.display = 'none';
+            document.getElementById('export-patient-search').value = '';
+            document.getElementById('export-patient-results').style.display = 'none';
+            document.getElementById('export-patient-results').innerHTML = '';
+        }
+
+        async function executeExport() {
+            if (typeof window.jspdf === 'undefined') {
+                console.error("jsPDF library is not loaded. Cannot export.");
+                showInfo("Error: PDF library (jsPDF) is not loaded. Make sure 'jspdf.umd.min.js' is in the wwwroot folder.");
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+
+            if (!patientRecords || patientRecords.length === 0) {
+                showInfo("No patient data available to export.");
+                return;
+            }
+
+            const filterType = document.getElementById('export-filter-type').value;
+            let recordsToExport = [];
+            let exportTitle = '';
+
+            if (filterType === 'day') {
+                const selectedDate = document.getElementById('export-filter-date').value;
+                if (!selectedDate) {
+                    showInfo("Error: Please select a date to export.");
+                    return;
+                }
+                
+                recordsToExport = patientRecords.filter(patient =>
+                    patient.visits && patient.visits.some(visit => visit.date === selectedDate)
+                );
+                exportTitle = `Patient Visits Report - ${selectedDate}`;
+                
+                if (recordsToExport.length === 0) {
+                    showInfo(`No patient visits recorded on ${selectedDate}.`);
+                    return;
+                }
+                
+                recordsToExport = recordsToExport.map(patient => ({
+                    ...patient,
+                    visits: patient.visits.filter(visit => visit.date === selectedDate)
+                }));
+                
+            } else if (filterType === 'week') {
+                const weekStart = document.getElementById('export-week-start').value;
+                const weekEnd = document.getElementById('export-week-end').value;
+                
+                if (!weekStart || !weekEnd) {
+                    showInfo("Error: Please select both start and end dates for the week.");
+                    return;
+                }
+                
+                if (new Date(weekStart) > new Date(weekEnd)) {
+                    showInfo("Error: Start date cannot be after end date.");
+                    return;
+                }
+                
+                recordsToExport = patientRecords.filter(patient =>
+                    patient.visits && patient.visits.some(visit => 
+                        visit.date >= weekStart && visit.date <= weekEnd
+                    )
+                );
+                exportTitle = `Patient Visits Report - Week (${weekStart} to ${weekEnd})`;
+                
+                if (recordsToExport.length === 0) {
+                    showInfo(`No patient visits recorded between ${weekStart} and ${weekEnd}.`);
+                    return;
+                }
+                
+                recordsToExport = recordsToExport.map(patient => ({
+                    ...patient,
+                    visits: patient.visits.filter(visit => 
+                        visit.date >= weekStart && visit.date <= weekEnd
+                    )
+                }));
+                
+            } else if (filterType === 'month') {
+                const selectedMonth = document.getElementById('export-filter-month').value;
+                if (!selectedMonth) {
+                    showInfo("Error: Please select a month to export.");
+                    return;
+                }
+                
+                recordsToExport = patientRecords.filter(patient =>
+                    patient.visits && patient.visits.some(visit => 
+                        visit.date && visit.date.startsWith(selectedMonth)
+                    )
+                );
+                
+                const monthName = new Date(selectedMonth + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                exportTitle = `Patient Visits Report - ${monthName}`;
+                
+                if (recordsToExport.length === 0) {
+                    showInfo(`No patient visits recorded in ${monthName}.`);
+                    return;
+                }
+                
+                recordsToExport = recordsToExport.map(patient => ({
+                    ...patient,
+                    visits: patient.visits.filter(visit => 
+                        visit.date && visit.date.startsWith(selectedMonth)
+                    )
+                }));
+                
+            } else if (filterType === 'patient') {
+                const selectedPatientId = document.getElementById('export-selected-patient-id').value;
+                if (!selectedPatientId) {
+                    showInfo("Error: Please search and select a patient from the list.");
+                    return;
+                }
+                
+                const selectedPatient = patientRecords.find(patient => patient.id == selectedPatientId);
+                if (!selectedPatient) {
+                    showInfo("Error: Selected patient not found.");
+                    return;
+                }
+                
+                recordsToExport = [selectedPatient];
+                exportTitle = `Patient Visits Report - ${selectedPatient.name}`;
+            }
+
+            const doc = new jsPDF();
+            doc.setFontSize(18);
+            doc.text(exportTitle, 14, 20);
+            doc.setFontSize(12);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+            let y = 40;
+
+            recordsToExport.forEach((patient, idx) => {
+                if (idx > 0) {
+                    y += 6;
+                    doc.setDrawColor(200, 200, 200);
+                    doc.line(10, y, 200, y);
+                    y += 8;
+                }
+
+                if (y > 260) {
+                    doc.addPage();
+                    y = 20;
+                }
+
+                doc.setFontSize(14);
+                doc.text(`${idx + 1}. ${patient.name}`, 14, y);
+                y += 7;
+                doc.setFontSize(11);
+                doc.text(`Contact: ${patient.contact}`, 14, y);
+                y += 6;
+
+                if (patient.visits && patient.visits.length > 0) {
+                    doc.text(`Visit${patient.visits.length > 1 ? 's' : ''}:`, 14, y);
+                    y += 6;
+
+                    patient.visits.forEach((visit) => {
+                        const visitType = visit.isFirstVisit ? "(1st Visit)" : "(Follow-up)";
+                        const visitDate = visit.date || 'N/A';
+                        const visitInfo = `    • ${visitDate} - ${visit.purpose} ${visitType}`;
+
+                        if (y > 270) {
+                            doc.addPage();
+                            y = 20;
+                        }
+                        doc.text(visitInfo, 20, y);
+                        y += 6;
+
+                        if (visit.notes) {
+                            const splitNotes = doc.splitTextToSize(`Notes: ${visit.notes}`, 160);
+                            if (y + (splitNotes.length * 6) > 280) {
+                                doc.addPage();
+                                y = 20;
+                            }
+                            doc.text(splitNotes, 24, y);
+                            y += splitNotes.length * 6;
+                        }
+                    });
+                }
+            });
+
+            const fileName = `Patient_Records_${filterType}_${new Date().toISOString().slice(0, 10)}.pdf`;
+            doc.save(fileName);
+            showInfo(`PDF export completed successfully!`);
+            closeExportFilterPopup();
         }
 
         async function exportPatientDataByDate() {
