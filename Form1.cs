@@ -132,9 +132,8 @@
                             cmd.ExecuteNonQuery();
                         }
 
-                        // Log Account Created
-                        string logQuery = "INSERT INTO LoginHistory (UserId, Username, Action) " +
-                                          "VALUES ((SELECT Id FROM Users WHERE Username=@user), @user, 'Account Created')";
+                        // Log Account Created (with NULL UserId to preserve history if account is deleted)
+                        string logQuery = "INSERT INTO LoginHistory (UserId, Username, Action) VALUES (NULL, @user, 'Account Created')";
                         using (SqlCommand logCmd = new SqlCommand(logQuery, conn))
                         {
                             logCmd.Parameters.AddWithValue("@user", username);
@@ -172,11 +171,10 @@
                             cmd.ExecuteNonQuery();
                         }
 
-                        // Log Account Modified
-                        string logQuery = "INSERT INTO LoginHistory (UserId, Username, Action) VALUES (@id,@user,'Account Modified')";
+                        // Log Account Modified (with NULL UserId to preserve history if account is deleted)
+                        string logQuery = "INSERT INTO LoginHistory (UserId, Username, Action) VALUES (NULL, @user, 'Account Modified')";
                         using (SqlCommand logCmd = new SqlCommand(logQuery, conn))
                         {
-                            logCmd.Parameters.AddWithValue("@id", id);
                             logCmd.Parameters.AddWithValue("@user", username);
                             logCmd.ExecuteNonQuery();
                         }
@@ -197,24 +195,23 @@
                             if (result != null) username = result.ToString();
                         }
 
-                        // Log Account Deleted
-                        if (!string.IsNullOrEmpty(username))
-                        {
-                            string logQuery = "INSERT INTO LoginHistory (UserId, Username, Action) VALUES (@id,@user,'Account Deleted')";
-                            using (SqlCommand logCmd = new SqlCommand(logQuery, conn))
-                            {
-                                logCmd.Parameters.AddWithValue("@id", id);
-                                logCmd.Parameters.AddWithValue("@user", username);
-                                logCmd.ExecuteNonQuery();
-                            }
-                        }
-
-                        // Delete account
+                        // Delete account first
                         string deleteQuery = "DELETE FROM Users WHERE Id=@id";
                         using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
                         {
                             cmd.Parameters.AddWithValue("@id", id);
                             cmd.ExecuteNonQuery();
+                        }
+
+                        // Log Account Deleted after deletion (without UserId to avoid FK constraint issues)
+                        if (!string.IsNullOrEmpty(username))
+                        {
+                            string logQuery = "INSERT INTO LoginHistory (UserId, Username, Action) VALUES (NULL, @user, 'Account Deleted')";
+                            using (SqlCommand logCmd = new SqlCommand(logQuery, conn))
+                            {
+                                logCmd.Parameters.AddWithValue("@user", username);
+                                logCmd.ExecuteNonQuery();
+                            }
                         }
 
                         SendMessage("Account deleted successfully!");
