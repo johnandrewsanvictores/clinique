@@ -359,7 +359,7 @@
         /**
          * Core function to generate queue number, send it to Admin, and show print popup.
          */
-        function showQueuePopup(code, serviceText) {
+        function showQueuePopup(code, serviceText, serviceType) {
             let number;
 
             // Increment the local counter based on service type
@@ -383,6 +383,7 @@
             const queueData = {
                 number: queueNumber,
                 service: serviceText,
+                serviceType: serviceType,
                 staff: localStorage.getItem("loggedInUser") || "Staff",
                 datetime: new Date().toLocaleString(),
             };
@@ -505,7 +506,7 @@
             const serviceText = selectedRadio ? selectedRadio.value : null;
 
             if (serviceText) {
-                showQueuePopup("CHK", serviceText);
+                showQueuePopup("CHK", serviceText, "Check-Up");
             } else {
                 alert("Please select a Check-Up type.");
             }
@@ -517,7 +518,7 @@
             const serviceText = selectedCheckbox.length > 0 ? selectedCheckbox.join(", ") : null;
 
             if (serviceText) {
-                showQueuePopup("VCINE", serviceText);
+                showQueuePopup("VCINE", serviceText, "Vaccine");
             } else {
                 alert("Please select at least one Vaccine.");
             }
@@ -528,7 +529,7 @@
             const serviceText = selectedRadio ? selectedRadio.value : null;
 
             if (serviceText) {
-                showQueuePopup("CSR", serviceText);
+                showQueuePopup("CSR", serviceText, "Cashier");
             } else {
                 alert("Please select a Cashier service.");
             }

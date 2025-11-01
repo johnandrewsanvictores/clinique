@@ -293,6 +293,7 @@
 
                         string number = queueData.number;
                         string service = queueData.service;
+                        string serviceType = queueData.serviceType;
                         string datetimeStr = queueData.datetime;
 
                         int staffId = 0;
@@ -303,11 +304,12 @@
                             var result = getCmd.ExecuteScalar();
                             if (result != null) staffId = Convert.ToInt32(result);
                         }
-                        string insertQuery = "INSERT INTO Queue (QueueNumber, Service, StaffId, CreatedAt, Status) VALUES (@number, @service, @staffId, @dateTime, @status)";
+                        string insertQuery = "INSERT INTO Queue (QueueNumber, Service, ServiceType, StaffId, CreatedAt, Status) VALUES (@number, @service, @serviceType, @staffId, @dateTime, @status)";
                         using (SqlCommand cmd = new SqlCommand(insertQuery, conn))
                         {
                             cmd.Parameters.AddWithValue("@number", number);
                             cmd.Parameters.AddWithValue("@service", service);
+                            cmd.Parameters.AddWithValue("@serviceType", serviceType);
                             cmd.Parameters.AddWithValue("@staffId", staffId);
                             cmd.Parameters.AddWithValue("@dateTime", DateTime.Parse(datetimeStr));
                             cmd.Parameters.AddWithValue("@status", "Pending");
