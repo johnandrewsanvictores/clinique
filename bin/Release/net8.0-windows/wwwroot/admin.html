@@ -765,189 +765,274 @@
         }
 
                 .popup-box-queue-selection {
-                        background: #1976d2;
-                        height: 660px;
-                        border-radius: 10px;
-                        width: 1100px;
+                        background: #0057e7;
+                        height: 680px;
+                        border-radius: 15px;
+                        width: 1200px;
                         max-width: 100%;
-                        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+                        box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.4);
                         position: relative;
                         display: flex;
                         flex-direction: column;
-                        align-items: center;
-
+                        padding: 25px;
+                        overflow: hidden;
         }
+        
+                .queue-selection-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 20px;
+                        padding-right: 40px;
+                }
+                
+                .queue-selection-title {
+                        color: white;
+                        font-size: 32px;
+                        font-weight: 700;
+                        margin: 0;
+                        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                }
+                
+                .queue-action-buttons {
+                        display: flex;
+                        gap: 12px;
+                }
+        
+                .queue-selection-content {
+                        display: flex;
+                        gap: 20px;
+                        flex: 1;
+                        min-height: 0;
+                        overflow: hidden;
+                }
 
                     .popup-box-queue-selection .queue-btn {
-                            padding: 10px 25px;
-                            margin: 5px;
-                            font-size: 16px;
-                            border-radius: 5px;
+                            padding: 12px 28px;
+                            font-size: 15px;
+                            border-radius: 100px;
                             border: none;
-                            font-weight: bold;
+                            font-weight: 600;
                             cursor: pointer;
-                            transition: background-color 0.2s;
-
+                            transition: all 0.3s ease;
+                            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
         }
 
                         .popup-box-queue-selection .queue-btn.call {
                                 background-color: #4CAF50;
                                 color: white;
-
         }
 
                             .popup-box-queue-selection .queue-btn.call:hover {
-                                    background-color: #388E3C;
-
+                                    background-color: #45a049;
+                                    transform: translateY(-2px);
+                                    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
         }
 
-                     
-
-
                         .popup-box-queue-selection .queue-btn.next {
-                                background-color: #2196F3;
+                                background-color: #73C8D2;
                                 color: white;
-
         }
 
                             .popup-box-queue-selection .queue-btn.next:hover {
-                                    background-color: #1565C0;
-
+                                    background-color: #5ab3bf;
+                                    transform: translateY(-2px);
+                                    box-shadow: 0 6px 12px rgba(115, 200, 210, 0.4);
         }
 
                         .popup-box-queue-selection .queue-btn.delete {
                                 background-color: #F44336;
                                 color: white;
-
         }
 
                             .popup-box-queue-selection .queue-btn.delete:hover {
-                                    background-color: #D32F2F;
-
+                                    background-color: #da190b;
+                                    transform: translateY(-2px);
+                                    box-shadow: 0 6px 12px rgba(244, 67, 54, 0.4);
         }
 
-                        .popup-box-queue-selection .queue-btn.refresh {
-                                background-color: #ff9800;
-                                color: white;
-
+                        .popup-box-queue-selection .queue-btn:disabled {
+                                background: #9e9e9e;
+                                color: #e0e0e0;
+                                cursor: not-allowed;
+                                opacity: 0.5;
+                                box-shadow: none;
         }
 
-                            .popup-box-queue-selection .queue-btn.refresh:hover {
-                                    background-color: #D32F2F;
-
+                            .popup-box-queue-selection .queue-btn:disabled:hover {
+                                    transform: none;
+                                    box-shadow: none;
         }
 
                     .popup-box-queue-selection .queue-preview {
-                            position: absolute;
-                            margin-top: 160px;
-                            left: 50px;
-                            width: 500px;
-                            height: 380px;
-                            overflow-y: auto;
-                            border: 1px solid #ccc;
-                            padding: 10px;
-                            border-radius: 5px;
-                            background-color: #ffffff;
+                            flex: 0 0 calc(38% - 50px);
+                            background: white;
+                            border-radius: 15px;
+                            padding: 30px 20px;
                             display: flex;
                             flex-direction: column;
                             align-items: center;
-
+                            justify-content: center;
+                            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
 
-                        .popup-box-queue-selection .queue-preview p {
-                                margin: 5px 0;
-                                font-size: 16px;
-                                font-weight: bold;
-                                color: #45a049;
-
+                        #serving-datetime {
+                                text-align: center;
+                                font-size: 15px;
+                                color: #666;
+                                font-weight: 600;
+                                margin-top: 20px;
+                                padding: 8px 20px;
+                                background: #f5f5f5;
+                                border-radius: 20px;
         }
 
                     .popup-box-queue-selection .queue-list {
-                            position: absolute;
-                            margin-top: 160px;
-                            right: 50px;
-                            width: 500px;
-                            height: 380px;
+                            flex: 0 0 calc(62% - 50px);
                             overflow-y: auto;
-                            border: 1px solid #ccc;
-                            padding: 10px;
-                            border-radius: 5px;
-                            background-color: #4CAF50;
-
+                            overflow-x: hidden;
+                            background: rgba(255, 255, 255, 0.98);
+                            border-radius: 15px;
+                            padding: 20px 15px;
+                            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+                            max-height: 590px;
+        }
+        
+                        .popup-box-queue-selection .queue-list h3 {
+                                color: #333;
+                                margin: 0 0 15px 0;
+                                font-size: 24px;
+                                font-weight: 700;
+                                text-align: center;
         }
 
-
-                        .popup-box-queue-selection .queue-list p {
-                                margin: 5px 0;
-                                font-size: 16px;
-                                font-weight: bold;
-
+        /* Category Section Styles */
+                .category-section {
+                        margin-bottom: 15px;
+                        background: white;
+                        border-radius: 12px;
+                        padding: 12px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
+                .category-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 10px 15px;
+                        background: #0057e7;
+                        border-radius: 8px;
+                        margin-bottom: 10px;
+        }
 
+                .category-name {
+                        font-size: 16px;
+                        font-weight: 700;
+                        color: white;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+        }
 
-        /* Added style for clickable queue items */
-                .queue-list > div {
+                .status-badge {
+                        padding: 5px 12px;
+                        border-radius: 20px;
+                        font-size: 10px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+        }
+
+                .status-open {
+                        background-color: #90a4ae;
+                        color: white;
+        }
+
+                .status-serving {
+                        background-color: #4CAF50;
+                        color: white;
+                        animation: pulse 2s infinite;
+        }
+
+                @keyframes pulse {
+                        0%, 100% { opacity: 1; transform: scale(1); }
+                        50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+                .category-items {
+                        padding: 5px;
+        }
+                
+                .category-items p {
+                        text-align: center;
+                        color: #999;
+                        font-style: italic;
+                        margin: 8px 0;
+                        font-size: 14px;
+        }
+
+                .queue-item {
+                        background: #f5f7fa;
+                        color: #333;
+                        padding: 12px 14px;
+                        margin: 6px 0;
+                        border-radius: 8px;
                         cursor: pointer;
-                        transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-
+                        font-weight: 600;
+                        font-size: 15px;
+                        transition: all 0.3s ease;
+                        border: 2px solid transparent;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+                .queue-item.pending {
+                        background: #E8F5E9;
+                        border-left: 5px solid #4CAF50;
+        }
 
+                .queue-item.called {
+                        background: #FFF3E0;
+                        border-left: 5px solid #FF9800;
+                        font-weight: 700;
+        }
 
-        /* Hover effect added to the list item */
-                    .queue-list > div:hover {
-                            transform: scale(1.02);
-                            box-shadow: 0 0 7px rgba(255, 255, 255, 0.8);
+                .queue-item:hover {
+                        transform: translateX(5px);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
 
+                .queue-item.selected {
+                        border: 3px solid #73C8D2;
+                        background: #E3F2FD;
+                        transform: scale(1.02);
+                        box-shadow: 0 4px 16px rgba(115, 200, 210, 0.4);
         }
 
                 .now-serving-label {
-                        font-size: 28px;
-                        font-weight: bold;
+                        font-size: 26px;
+                        font-weight: 700;
                         color: #333;
-                        margin-bottom: 10px;
-
-        }
-
-                .center-box {
+                        margin: 0 0 20px 0;
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+        }                .center-box {
                         display: flex;
                         justify-content: center;
                         align-items: center;
-                        width: 250px;
-                        height: 90px;
-                        background-color: blue;
+                        width: 100%;
+                        max-width: 380px;
+                        height: 150px;
+                        background: #0057e7;
                         border-radius: 20px;
-                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-                        font-size: 40px;
-                        font-weight: bold;
+                        box-shadow: 0 8px 24px rgba(0, 87, 231, 0.4);
+                        font-size: 56px;
+                        font-weight: 800;
                         color: white;
                         user-select: none;
-                        margin: 0 auto;
-
-        }
-
-
-
-        /* Serving Timer Styles */
-                #servingTimeContainer {
-                        margin-top: auto;
-                        margin-bottom: 20px;
-                        text-align: center;
-
-        }
-
-                    #servingTimeContainer h1 {
-                            margin-top: 10px;
-
-        }
-
-                #servingTime {
-                        font-size: 50px;
-                        font-weight: bold;
-                        color: #333;
-                        margin-top: 5px;
-
+                        margin: 0;
+                        letter-spacing: 2px;
+                        text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
         }
 
 
@@ -1683,32 +1768,64 @@
     <div id="queue-selection-popup" class="popup-overlay-queue-selection">
         <div class="popup-box-queue-selection">
             <button class="popup-close-btn" onclick="closeQueueSelectionPopup()">×</button>
-            <h3>Queue Selection</h3>
-            <div style="margin-top:15px;">
-                <button class="queue-btn call" onclick="callQueue()">Call</button>
-                <button class="queue-btn next" onclick="nextQueue()">Next</button>
-                <button class="queue-btn delete" onclick="deleteCurrentQueue()">Delete</button>
-            </div>
-
-            <div class="queue-preview" id="queue-preview">
-                <p id="current-time" style="text-align:center; font-weight:bold; font-size:18px; color:#45a049;">
-                </p>
-                <h2 class="now-serving-label">Now Serving</h2>
-                <div class="center-box">--</div>
-
-                <div id="servingTimeContainer">
-                    <h1 style="margin-top:40px;">Serving Time</h1>
-                    <div id="servingTime">00:00</div>
+            
+            <div class="queue-selection-header">
+                <h2 class="queue-selection-title">Queue Management</h2>
+                <div class="queue-action-buttons">
+                    <button class="queue-btn call" onclick="callQueue()">Call</button>
+                    <button class="queue-btn next" onclick="nextQueue()">Next</button>
+                    <button class="queue-btn delete" onclick="deleteCurrentQueue()">Delete</button>
                 </div>
             </div>
 
-            <div class="queue-list" id="queue-list">
-                <h3 style="text-align:center; color:white; margin-bottom:10px; font-size:28px;">Queue List</h3>
+            <div class="queue-selection-content">
+                <div class="queue-preview" id="queue-preview">
+                    <h2 class="now-serving-label">Now Serving</h2>
+                    <div class="center-box">--</div>
+                    <div id="serving-datetime">--</div>
+                </div>
+
+                <div class="queue-list" id="queue-list">
+                    <h3>Queue List</h3>
+                    
+                    <!-- Check-Up Category -->
+                    <div class="category-section" id="checkup-section">
+                        <div class="category-header">
+                            <span class="category-name">Check-Up</span>
+                            <span class="status-badge status-open" id="checkup-status">OPEN</span>
+                        </div>
+                        <div class="category-items" id="checkup-items">
+                            <p style="text-align:center; color:#ccc; font-size:14px;">No queues</p>
+                        </div>
+                    </div>
+
+                    <!-- Vaccine Category -->
+                    <div class="category-section" id="vaccine-section">
+                        <div class="category-header">
+                            <span class="category-name">Vaccine</span>
+                            <span class="status-badge status-open" id="vaccine-status">OPEN</span>
+                        </div>
+                        <div class="category-items" id="vaccine-items">
+                            <p style="text-align:center; color:#ccc; font-size:14px;">No queues</p>
+                        </div>
+                    </div>
+
+                    <!-- Cashier Category -->
+                    <div class="category-section" id="cashier-section">
+                        <div class="category-header">
+                            <span class="category-name">Cashier</span>
+                            <span class="status-badge status-open" id="cashier-status">OPEN</span>
+                        </div>
+                        <div class="category-items" id="cashier-items">
+                            <p style="text-align:center; color:#ccc; font-size:14px;">No queues</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <audio id="beepSound" src="beepbeep.mp3" preload="auto"></audio>
+    <audio id="beepSound" src="Sound Effect/beepbeep.mp3" preload="auto"></audio>
     <script src="jspdf.umd.min.js"></script>
     <script>
         document.getElementById("btn-queue-preview").addEventListener("click", function () {
@@ -1717,27 +1834,126 @@
         });
 
         // =========================================================================
-        // === ORIGINAL QUEUE MANAGEMENT SYSTEM (QMS) VARIABLES ===
+        // === QUEUE MANAGEMENT SYSTEM (QMS) VARIABLES - REDESIGNED ===
         // =========================================================================
-        let chkQueueNumber = 0; // Check-up counter
-        let vcineQueueNumber = 0; // Vaccine counter
-        let csrQueueNumber = 0; // Cashier counter
-        const MAX_QUEUE_NUMBER = 100;
+        
+        // New categorized queue structure
+        let queuesByCategory = {
+            checkup: [],
+            vaccine: [],
+            cashier: []
+        };
 
-        let queueList = [];
-        let currentIndex = -1;
-        let previousIndex = -1;
-        let tempSelectedIndex = -1;
-        let isNextPressed = false;
+        // Track which queue is actively serving (displayed in Queue Preview)
+        let servingQueue = {
+            number: null,      // e.g., "CHK-001"
+            category: null,    // 'checkup', 'vaccine', 'cashier'
+            id: null          // database ID
+        };
 
-        let timerInterval = null;
-        let seconds = 0;
-        const TIMER_LIMIT = 90; // 1 minute and 30 seconds (90 seconds)
+        // Track which queue is selected (for next call/delete)
+        let selectedQueue = {
+            number: null,
+            category: null,
+            id: null,
+            status: null
+        };
 
         const beepSound = document.getElementById('beepSound');
 
-        // 🟢 NEW GLOBAL VARIABLE: Admin ID
         let adminId = null;
+
+        let queuePollingInterval = null;
+        let clockUpdateInterval = null;
+
+        // =========================================================================
+        // === HELPER FUNCTIONS ===
+        // =========================================================================
+        
+        /**
+         * Categorize queue number based on prefix
+         * @param {string} queueNumber - e.g., "CHK-001", "VCINE-001", "CSR-001"
+         * @returns {string} - 'checkup', 'vaccine', or 'cashier'
+         */
+        function categorizeQueueNumber(queueNumber) {
+            if (!queueNumber) return null;
+            if (queueNumber.startsWith('CHK')) return 'checkup';
+            if (queueNumber.startsWith('VCINE')) return 'vaccine';
+            if (queueNumber.startsWith('CSR')) return 'cashier';
+            return null;
+        }
+
+        /**
+         * Get display name for category
+         * @param {string} category - 'checkup', 'vaccine', 'cashier'
+         * @returns {string} - Display name
+         */
+        function getCategoryDisplayName(category) {
+            const names = {
+                'checkup': 'Check-Up',
+                'vaccine': 'Vaccine',
+                'cashier': 'Cashier'
+            };
+            return names[category] || category;
+        }
+
+        /**
+         * Check if category has an active serving queue
+         * @param {string} category - 'checkup', 'vaccine', 'cashier'
+         * @returns {boolean}
+         */
+        function isCategoryServing(category) {
+            // Check if there's a Called status queue in this category
+            const categoryQueues = queuesByCategory[category] || [];
+            const hasCalledQueue = categoryQueues.some(q => (q.Status || q.status) === 'Called');
+            return hasCalledQueue;
+        }
+
+        /**
+         * Get category status badge text
+         * @param {string} category
+         * @returns {string} - "OPEN" or "In Service"
+         */
+        function getCategoryStatus(category) {
+            const hasQueues = queuesByCategory[category] && queuesByCategory[category].length > 0;
+            if (!hasQueues) return 'OPEN';
+            return isCategoryServing(category) ? 'In Service' : 'OPEN';
+        }
+
+        function findNextCalledQueue() {
+            let allCalledQueues = [];
+            
+            ['checkup', 'vaccine', 'cashier'].forEach(category => {
+                const categoryQueues = queuesByCategory[category] || [];
+                const calledQueues = categoryQueues.filter(q => (q.Status || q.status) === 'Called');
+                allCalledQueues = allCalledQueues.concat(calledQueues);
+            });
+            
+            if (allCalledQueues.length === 0) {
+                return null;
+            }
+            
+            allCalledQueues.sort((a, b) => {
+                const dateA = new Date(a.CreatedAt || a.createdAt);
+                const dateB = new Date(b.CreatedAt || b.createdAt);
+                return dateA - dateB;
+            });
+            
+            return allCalledQueues[0];
+        }
+
+        /**
+         * Update category status badge
+         * @param {string} category
+         */
+        function updateCategoryStatus(category) {
+            const statusElement = document.getElementById(`${category}-status`);
+            if (!statusElement) return;
+            
+            const isServing = isCategoryServing(category);
+            statusElement.textContent = isServing ? 'In Service' : 'OPEN';
+            statusElement.className = isServing ? 'status-badge status-serving' : 'status-badge status-open';
+        }
 
         // =========================================================================
         // === NEW: PATIENT RECORD MODULE VARIABLES & DUMMY DATA (UPDATED: NO DUMMY) ===
@@ -2491,24 +2707,35 @@
          * Saves the current queue state (queueList and currentIndex) to localStorage.
          * This is called after every action that modifies the queue to notify the display screen.
          */
+        /**
+         * Save queue state to localStorage for Queue Preview sync
+         */
         function saveQueueState() {
-            // 1. I-save ang buong Queue List at ang index ng kasalukuyang tinatawag
-            localStorage.setItem('queueList', JSON.stringify(queueList));
-            localStorage.setItem('currentIndex', currentIndex.toString());
-
-            // 2. Optional: Para sa C# WebView communication (para ma-broadcast sa kabilang window)
+            // Save serving queue info
+            localStorage.setItem('servingQueue', JSON.stringify(servingQueue));
+            
+            // Save categorized queues
+            localStorage.setItem('queuesByCategory', JSON.stringify(queuesByCategory));
+            
+            // For Queue Preview - get next 3 queues from serving category
             const nextInline = [];
-            const startNext = currentIndex + 1;
-            for (let i = 0; i < 3; i++) {
-                if (startNext + i < queueList.length) {
-                    nextInline.push(queueList[startNext + i]);
+            if (servingQueue.category) {
+                const categoryQueues = queuesByCategory[servingQueue.category] || [];
+                const servingIndex = categoryQueues.findIndex(q => 
+                    (q.QueueNumber || q.queueNumber) === servingQueue.number
+                );
+                
+                for (let i = 1; i <= 3; i++) {
+                    const nextIndex = servingIndex + i;
+                    if (nextIndex < categoryQueues.length) {
+                        nextInline.push(categoryQueues[nextIndex].QueueNumber || categoryQueues[nextIndex].queueNumber);
+                    }
                 }
             }
-
-            const nowServing = currentIndex >= 0 ? queueList[currentIndex] : "--";
-
-            // Kung gumagamit kayo ng C# WebView:
-            // window.chrome.webview.postMessage(`updateDisplay:${nowServing}:${nextInline.join(',')}`);
+            
+            // Save for Queue Preview
+            localStorage.setItem('nowServing', servingQueue.number || '--');
+            localStorage.setItem('nextInLine', JSON.stringify(nextInline));
         }
 
         // =========================================================================
@@ -2553,12 +2780,38 @@
         function openQueueSelectionPopup() {
             document.getElementById("queue-selection-popup").style.display = "flex";
             window.chrome.webview.postMessage("getQueueList");
+            
+            updateDateTimeDisplay();
+            
+            if (queuePollingInterval) {
+                clearInterval(queuePollingInterval);
+            }
+            queuePollingInterval = setInterval(() => {
+                window.chrome.webview.postMessage("getQueueList");
+            }, 3000);
+            
+            if (clockUpdateInterval) {
+                clearInterval(clockUpdateInterval);
+            }
+            clockUpdateInterval = setInterval(() => {
+                updateDateTimeDisplay();
+            }, 1000);
         }
 
          
 
         function closeQueueSelectionPopup() {
             document.getElementById("queue-selection-popup").style.display = "none";
+            
+            if (queuePollingInterval) {
+                clearInterval(queuePollingInterval);
+                queuePollingInterval = null;
+            }
+            
+            if (clockUpdateInterval) {
+                clearInterval(clockUpdateInterval);
+                clockUpdateInterval = null;
+            }
         }
 
         function openCreateStaffPopup() {
@@ -2653,36 +2906,6 @@
             document.getElementById("queue-popup").style.display = "none";
             document.querySelectorAll("input[type='radio']").forEach(r => r.checked = false);
             document.querySelectorAll("input[type='checkbox']").forEach(c => c.checked = false);
-        }
-
-        function startTimer() {
-            clearInterval(timerInterval);
-            seconds = 0;
-            const TIMER_LIMIT = 10;
-            const display = document.getElementById('servingTime');
-            display.style.color = "#333";
-
-            function updateTimerDisplay() {
-                if (seconds > TIMER_LIMIT) {
-                    clearInterval(timerInterval);
-                    display.textContent = "TIMEOUT";
-                    display.style.color = "red";
-                    return;
-                }
-                const mins = Math.floor(seconds / 60);
-                const secs = seconds % 60;
-                display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-                seconds++;
-            }
-            updateTimerDisplay();
-            timerInterval = setInterval(updateTimerDisplay, 1000);
-        }
-
-        function resetTimer() {
-            clearInterval(timerInterval);
-            seconds = 0;
-            document.getElementById('servingTime').textContent = "00:00";
-            document.getElementById('servingTime').style.color = "#333";
         }
 
         function generateQueue(code) {
@@ -2785,201 +3008,357 @@
             closeQueuePopup();
         }
 
-        function updateQueueListDisplay() {
-            const listContainer = document.getElementById('queue-list');
-            if (!listContainer) return;
+        // =========================================================================
+        // === RENDERING FUNCTIONS ===
+        // =========================================================================
 
-            listContainer.innerHTML = '<h3 style="text-align:center; color:white; margin-bottom:10px; font-size:28px;">Queue List</h3>';
+        /**
+         * Render categorized queue list with all categories
+         */
+        function renderCategorizedQueueList() {
+            // Render each category
+            renderCategorySection('checkup');
+            renderCategorySection('vaccine');
+            renderCategorySection('cashier');
+        }
 
-            if (queueList.length === 0) {
-                listContainer.innerHTML += `<p style="text-align:center; color:white; font-size:20px;">N/A</p>`;
+        /**
+         * Render a specific category section
+         * @param {string} category - 'checkup', 'vaccine', 'cashier'
+         */
+        function renderCategorySection(category) {
+            const itemsContainer = document.getElementById(`${category}-items`);
+            if (!itemsContainer) return;
+
+            const queues = queuesByCategory[category] || [];
+            
+            // Clear container
+            itemsContainer.innerHTML = '';
+
+            // If no queues, show empty message
+            if (queues.length === 0) {
+                itemsContainer.innerHTML = '<p style="text-align:center; color:#ccc; font-size:14px;">No queues</p>';
+                updateCategoryStatus(category);
                 return;
             }
 
-            queueList.forEach((queueNum, index) => {
-                if (isNextPressed && index < currentIndex) {
-                    return;
-                }
-
+            // Render each queue item
+            queues.forEach(queue => {
                 const item = document.createElement('div');
-
-                let bgColor = index === currentIndex ? '#388E3C' : 'white';
-                let textColor = index === currentIndex ? 'white' : 'black';
-
-                let borderStyle = index === previousIndex ? '3px solid #FFC107' : 'none';
-
-                item.style.background = bgColor;
-                item.style.color = textColor;
-                item.style.fontWeight = 'bold';
-                item.style.fontSize = '18px';
-                item.style.margin = '5px';
-                item.style.padding = '8px';
-                item.style.borderRadius = '8px';
-                item.style.border = borderStyle;
-                item.style.display = 'flex';
-                item.style.justifyContent = 'space-between';
-                item.setAttribute('onclick', `selectQueue(${index})`);
-                item.innerHTML = `<span>${queueNum}</span>`;
-                listContainer.appendChild(item);
+                item.className = 'queue-item';
+                item.dataset.queueNumber = queue.QueueNumber || queue.queueNumber;
+                item.dataset.category = category;
+                item.dataset.id = queue.Id || queue.id;
+                
+                const status = queue.Status || queue.status || 'Pending';
+                
+                if (status === 'Pending') {
+                    item.classList.add('pending');
+                } else if (status === 'Called') {
+                    item.classList.add('called');
+                }
+                
+                if (servingQueue.number === queue.QueueNumber || servingQueue.number === queue.queueNumber) {
+                    item.classList.add('serving');
+                }
+                if (selectedQueue.number === queue.QueueNumber || selectedQueue.number === queue.queueNumber) {
+                    item.classList.add('selected');
+                }
+                
+                item.textContent = queue.QueueNumber || queue.queueNumber;
+                item.onclick = () => selectQueueItem(queue.QueueNumber || queue.queueNumber, category, queue.Id || queue.id);
+                
+                itemsContainer.appendChild(item);
             });
+
+            // Update category status badge
+            updateCategoryStatus(category);
         }
 
-        function updateBlueBox(code) {
+        /**
+         * Select a queue item (click handler)
+         * @param {string} queueNumber
+         * @param {string} category
+         * @param {number} id
+         */
+        function selectQueueItem(queueNumber, category, id) {
+            const previousCategory = selectedQueue.category;
+            
+            // Toggle: if clicking the same item, deselect it
+            if (selectedQueue.number === queueNumber && selectedQueue.category === category) {
+                selectedQueue = {
+                    number: null,
+                    category: null,
+                    id: null,
+                    status: null
+                };
+                console.log('Deselected queue item');
+                renderCategorySection(category);
+            } else {
+                const queue = queuesByCategory[category].find(q => 
+                    (q.QueueNumber || q.queueNumber) === queueNumber
+                );
+                
+                selectedQueue = {
+                    number: queueNumber,
+                    category: category,
+                    id: id,
+                    status: queue ? (queue.Status || queue.status || 'Pending') : 'Pending'
+                };
+                
+                console.log(`Selected: ${queueNumber} from ${category}, Status: ${selectedQueue.status}`);
+                
+                // Re-render BOTH categories if switching between different categories
+                if (previousCategory && previousCategory !== category) {
+                    renderCategorySection(previousCategory);
+                }
+                renderCategorySection(category);
+            }
+            
+            updateButtonStates();
+        }
+
+        /**
+         * Update NOW SERVING display box
+         * @param {string} queueNumber - Queue number to display
+         */
+        function updateNowServingDisplay(queueNumber) {
             const box = document.querySelector('.center-box');
-            if (box) box.textContent = code || "--";
-
+            const datetimeBox = document.getElementById('serving-datetime');
+            
+            if (box) box.textContent = queueNumber || "--";
+            
+            updateDateTimeDisplay();
         }
 
+        function updateDateTimeDisplay() {
+            const datetimeBox = document.getElementById('serving-datetime');
+            if (datetimeBox) {
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                datetimeBox.textContent = `${dateStr} • ${timeStr}`;
+            }
+        }
+
+        /**
+         * Update button states based on selected queue status
+         */
+        function updateButtonStates() {
+            const callBtn = document.querySelector('.queue-btn.call');
+            const nextBtn = document.querySelector('.queue-btn.next');
+            const deleteBtn = document.querySelector('.queue-btn.delete');
+            
+            if (!selectedQueue.number) {
+                if (callBtn) callBtn.disabled = true;
+                if (nextBtn) nextBtn.disabled = true;
+                if (deleteBtn) deleteBtn.disabled = true;
+                return;
+            }
+            
+            const status = selectedQueue.status || 'Pending';
+            const category = selectedQueue.category;
+            
+            const isFirstInQueue = () => {
+                const queues = queuesByCategory[category] || [];
+                const pendingQueues = queues.filter(q => (q.Status || q.status) === 'Pending');
+                if (pendingQueues.length === 0) return false;
+                const firstQueue = pendingQueues[0];
+                return (firstQueue.QueueNumber || firstQueue.queueNumber) === selectedQueue.number;
+            };
+            
+            if (status === 'Called') {
+                if (callBtn) callBtn.disabled = true;
+                if (nextBtn) nextBtn.disabled = false;
+                if (deleteBtn) deleteBtn.disabled = true;
+            } else if (status === 'Pending') {
+                if (callBtn) callBtn.disabled = !isFirstInQueue();
+                if (nextBtn) nextBtn.disabled = true;
+                if (deleteBtn) deleteBtn.disabled = false;
+            } else {
+                if (callBtn) callBtn.disabled = true;
+                if (nextBtn) nextBtn.disabled = true;
+                if (deleteBtn) deleteBtn.disabled = true;
+            }
+        }
+
+
+        // =========================================================================
+        // === BUTTON ACTION FUNCTIONS ===
+        // =========================================================================
+
+        /**
+         * CALL button - Call the selected queue
+         */
         function callQueue() {
-            if (queueList.length === 0) return;
-
-            if (currentIndex < 0) currentIndex = 0;
-
-            const queueItem = queueList[currentIndex];
-            if (!queueItem) return;
-
-            // Mark the current number as called
-            queueItem.called = true;
-
-            tempSelectedIndex = -1;
-
-            if (currentIndex >= 0 && currentIndex < queueList.length) {
-                const code = queueList[currentIndex];
-
-                updateBlueBox(code);
-
-
-                updateQueueListDisplay();
-                startTimer();
-                playBeep();
-
-                // 🟢 NEW LOGIC: Update the activity counter when a number is called
-                if (adminId) {
-                    // Magpapadala ng message sa C# backend para i-increment ang counter ng ADMIN
-                    window.chrome.webview.postMessage(`incrementActivity:${adminId}`);
-                }
-
-                // === I-SYNC ANG QUEUE STATE SA LOCAL STORAGE ===
-                saveQueueState();
-                localStorage.setItem("calledNow", Date.now().toString());
-
-
-            } else {
-                console.log("Invalid current queue index on callQueue.");
-
+            // Validation: Must have a queue selected
+            if (!selectedQueue.number) {
+                showInfo("Please select a queue to call.");
+                return;
             }
+
+            // Send to backend to update status to 'Called'
+            window.chrome.webview.postMessage(`callQueue:${selectedQueue.number}`);
+
+            // Update serving queue
+            servingQueue = {
+                number: selectedQueue.number,
+                category: selectedQueue.category,
+                id: selectedQueue.id
+            };
+
+            selectedQueue.status = 'Called';
+
+            // Update NOW SERVING display
+            updateNowServingDisplay(servingQueue.number);
+
+            // Update category status
+            updateCategoryStatus(servingQueue.category);
+
+            // Re-render category to show serving state
+            renderCategorySection(servingQueue.category);
+
+            updateButtonStates();
+
+            // Play beep sound
+            playBeep();
+
+            // Save state (for admin session persistence)
+            saveQueueState();
+
+            // Increment admin activity counter
+            if (adminId) {
+                window.chrome.webview.postMessage(`incrementActivity:${adminId}`);
+            }
+
+            console.log(`Called: ${servingQueue.number} from ${servingQueue.category}`);
         }
 
-
+        /**
+         * NEXT button - Mark current serving as completed and move selection
+         */
         function nextQueue() {
-            if (queueList.length === 0) {
-                currentIndex = -1;
-                previousIndex = -1;
-                tempSelectedIndex = -1;
-                updateBlueBox("--");
-                queueList.splice(currentIndex, 1);
-                resetTimer();
-
-                // === I-SYNC ANG QUEUE STATE SA LOCAL STORAGE ===
-                saveQueueState();
+            if (!selectedQueue.number) {
+                showInfo("Please select a queue to mark as completed.");
                 return;
             }
-
-
-            isNextPressed = true;
-
-            if (tempSelectedIndex !== -1) {
-                currentIndex = tempSelectedIndex;
-                tempSelectedIndex = -1;
-            }
-
-            if (currentIndex < 0) {
-                currentIndex = 0;
-                previousIndex = -1;
-            } else {
-                previousIndex = currentIndex;
-
-                currentIndex++;
-
-                if (currentIndex >= queueList.length) {
-                    if (currentIndex >= queueList.length) {
-                        currentIndex = -1; // No number to serve
-                        updateBlueBox("--"); // Clear Now Serving
-                        queueList = [];      // Clear the queue
-                        updateQueueListDisplay(); // Show N/A
-                        resetTimer();
-                        saveQueueState();
-                        console.log("Last number reached. Queue list is now empty.");
-                        return;
-                    }
-
+            
+            const queueToComplete = selectedQueue.number;
+            const categoryToUpdate = selectedQueue.category;
+            
+            window.chrome.webview.postMessage(`completeQueue:${queueToComplete}`);
+            
+            console.log(`Completed: ${queueToComplete}`);
+            
+            if (servingQueue.number === queueToComplete) {
+                servingQueue = { number: null, category: null, id: null };
+                
+                const nextCalled = findNextCalledQueue();
+                
+                if (nextCalled) {
+                    const queueNumber = nextCalled.QueueNumber || nextCalled.queueNumber;
+                    const category = categorizeQueueNumber(queueNumber);
+                    
+                    servingQueue = {
+                        number: queueNumber,
+                        category: category,
+                        id: nextCalled.Id || nextCalled.id
+                    };
+                    
+                    updateNowServingDisplay(queueNumber);
+                    console.log(`Now serving next Called queue: ${queueNumber} from ${category}`);
+                } else {
+                    updateNowServingDisplay("--");
+                    console.log('No more Called queues, NOW SERVING cleared');
                 }
             }
+            
+            if (categoryToUpdate) {
+                updateCategoryStatus(categoryToUpdate);
+            }
+            if (servingQueue.category && servingQueue.category !== categoryToUpdate) {
+                updateCategoryStatus(servingQueue.category);
+            }
 
-            const code = queueList[currentIndex];
+            if (selectedQueue.category) {
+                const categoryQueues = queuesByCategory[selectedQueue.category] || [];
+                const currentIndex = categoryQueues.findIndex(q => 
+                    (q.QueueNumber || q.queueNumber) === selectedQueue.number
+                );
 
-            updateBlueBox(code);
-            updateQueueListDisplay();
+                if (currentIndex >= 0 && currentIndex < categoryQueues.length - 1) {
+                    const nextQueue = categoryQueues[currentIndex + 1];
+                    selectedQueue = {
+                        number: nextQueue.QueueNumber || nextQueue.queueNumber,
+                        category: selectedQueue.category,
+                        id: nextQueue.Id || nextQueue.id
+                    };
+                } else {
+                    if (categoryQueues.length > 0) {
+                        const firstQueue = categoryQueues[0];
+                        selectedQueue = {
+                            number: firstQueue.QueueNumber || firstQueue.queueNumber,
+                            category: selectedQueue.category,
+                            id: firstQueue.Id || firstQueue.id
+                        };
+                    }
+                }
 
-            resetTimer();
+                renderCategorySection(selectedQueue.category);
+            }
 
-            // === I-SYNC ANG QUEUE STATE SA LOCAL STORAGE ===
-            saveQueueState();
-
-            console.log(`Skipped to next customer. Current customer (pending call) is at index ${currentIndex}: ${code}`);
+            console.log(`Next - Selection moved to: ${selectedQueue.number || 'none'}`);
         }
 
-        function deleteCurrentQueue() {
-            isNextPressed = false;
-
-            if (queueList.length === 0) {
+        /**
+         * DELETE button - Delete the selected queue
+         */
+        function deleteSelectedQueue() {
+            // Validation: Must have a queue selected
+            if (!selectedQueue.number) {
+                showInfo("Please select a queue to delete.");
                 return;
             }
 
-            // Gamitin natin ang currentIndex/tempSelectedIndex (kung may highlighted) or default sa 0 (top)
-            let indexToDelete = -1;
+            const queueToDelete = selectedQueue.number;
+            const categoryToUpdate = selectedQueue.category;
+            const isServingQueue = servingQueue.number === queueToDelete;
 
-            if (tempSelectedIndex !== -1) {
-                indexToDelete = tempSelectedIndex;
-            } else if (currentIndex !== -1 && currentIndex < queueList.length) {
-                indexToDelete = currentIndex;
-            } else if (queueList.length > 0) {
-                indexToDelete = 0;
+            // Send to backend to delete
+            window.chrome.webview.postMessage(`deleteQueue:${queueToDelete}`);
+
+            // If deleting the serving queue, clear NOW SERVING
+            if (isServingQueue) {
+                servingQueue = { number: null, category: null, id: null };
+                updateNowServingDisplay("--");
+                
+                // Update Queue Preview to show "--"
+                localStorage.setItem("calledNow", Date.now().toString());
+                saveQueueState();
             }
 
-            if (indexToDelete === -1) return;
+            // Remove from local array
+            queuesByCategory[categoryToUpdate] = queuesByCategory[categoryToUpdate].filter(q =>
+                (q.QueueNumber || q.queueNumber) !== queueToDelete
+            );
 
+            // Clear selection
+            selectedQueue = { number: null, category: null, id: null, status: null };
 
-            const deletedQueueNumber = queueList.splice(indexToDelete, 1)[0];
+            // Re-render category
+            renderCategorySection(categoryToUpdate);
 
-            console.log(`Deleted queue number: ${deletedQueueNumber} at index ${indexToDelete}`);
+            // Update category status
+            updateCategoryStatus(categoryToUpdate);
 
-            // Ayusin ang mga index pagkatapos mag-delete
-            if (currentIndex > indexToDelete) {
-                currentIndex--;
-            } else if (currentIndex === indexToDelete) {
-                currentIndex = -1; // Cleared the currently serving
-            }
+            updateButtonStates();
 
-            if (previousIndex > indexToDelete) {
-                previousIndex--;
-            } else if (previousIndex === indexToDelete) {
-                previousIndex = -1;
-            }
-            tempSelectedIndex = -1;
+            console.log(`Deleted: ${queueToDelete}`);
+        }
 
-            // Update Blue Box display
-            const blueBox = document.querySelector('.center-box');
-            if (blueBox.textContent === deletedQueueNumber || currentIndex === -1) {
-                const nextCode = currentIndex !== -1 ? queueList[currentIndex] : "--";
-                updateBlueBox(nextCode);
-                resetTimer();
-            }
-
-            updateQueueListDisplay();
-
-            // === I-SYNC ANG QUEUE STATE SA LOCAL STORAGE ===
-            saveQueueState();
+        // Alias for compatibility
+        function deleteCurrentQueue() {
+            deleteSelectedQueue();
         }
 
         // ❌ TINANGGAL ANG refreshQueueList() FUNCTION
@@ -3082,22 +3461,80 @@
                 // Backend sent queued rows (DataTable serialized as JSON)
                 try {
                     const rows = JSON.parse(data.replace("queueList:", ""));
+                    
+                    // Clear current categories
+                    queuesByCategory = {
+                        checkup: [],
+                        vaccine: [],
+                        cashier: []
+                    };
+                    
+                    // Categorize queues
                     if (Array.isArray(rows)) {
-                        // Map to simple queue number strings (backwards-compatible with previous localStorage format)
-                        queueList = rows.map(r => r.QueueNumber || r.Queuenumber || r.queueNumber || r.queue_number || r.QueueNumber);
-                    } else {
-                        queueList = [];
+                        rows.forEach(row => {
+                            const queueNumber = row.QueueNumber || row.queueNumber;
+                            const status = row.Status || row.status;
+                            const category = categorizeQueueNumber(queueNumber);
+                            
+                            if (category && queuesByCategory[category]) {
+                                if (status === 'Called') {
+                                    const existingCalled = queuesByCategory[category].find(q => (q.Status || q.status) === 'Called');
+                                    if (!existingCalled) {
+                                        queuesByCategory[category].push(row);
+                                    }
+                                } else {
+                                    queuesByCategory[category].push(row);
+                                }
+                            }
+                        });
                     }
+                    
+                    // Render categorized list
+                    renderCategorizedQueueList();
+                    
+                    console.log('Queue list updated:', queuesByCategory);
+                    
                 } catch (e) {
                     console.error('Failed to parse queueList from backend:', e);
-                    queueList = [];
+                    queuesByCategory = { checkup: [], vaccine: [], cashier: [] };
                 }
-
-                // Default to first item if present
-                currentIndex = queueList.length > 0 ? 0 : -1;
-                updateQueueListDisplay();
-                const currentServing = currentIndex >= 0 && currentIndex < queueList.length ? queueList[currentIndex] : "--";
-                updateBlueBox(currentServing);
+            } else if (data.startsWith("queueCalled:")) {
+                // Backend confirmed queue was called
+                const queueNumber = data.replace("queueCalled:", "");
+                console.log(`Backend confirmed call: ${queueNumber}`);
+            } else if (data.startsWith("queueCompleted:")) {
+                const queueNumber = data.replace("queueCompleted:", "");
+                console.log(`Backend confirmed completion: ${queueNumber}`);
+                
+                const category = categorizeQueueNumber(queueNumber);
+                if (category) {
+                    queuesByCategory[category] = queuesByCategory[category].filter(q =>
+                        (q.QueueNumber || q.queueNumber) !== queueNumber
+                    );
+                    renderCategorySection(category);
+                    
+                    const nextCalled = findNextCalledQueue();
+                    if (nextCalled) {
+                        const nextQueueNumber = nextCalled.QueueNumber || nextCalled.queueNumber;
+                        const nextCategory = categorizeQueueNumber(nextQueueNumber);
+                        
+                        servingQueue = {
+                            number: nextQueueNumber,
+                            category: nextCategory,
+                            id: nextCalled.Id || nextCalled.id
+                        };
+                        
+                        updateNowServingDisplay(nextQueueNumber);
+                        updateCategoryStatus(nextCategory);
+                    } else {
+                        servingQueue = { number: null, category: null, id: null };
+                        updateNowServingDisplay("--");
+                    }
+                }
+            } else if (data.startsWith("queueDeleted:")) {
+                // Backend confirmed queue was deleted
+                const queueNumber = data.replace("queueDeleted:", "");
+                console.log(`Backend confirmed deletion: ${queueNumber}`);
             } else if (data.startsWith("totalGenerated:")) {
                 // Format: totalGenerated:username:value
                 const parts = data.split(":");
@@ -3153,7 +3590,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             const user = localStorage.getItem("loggedInUser");
             const role = localStorage.getItem("userRole");
-            // 🟢 NEW: Get Admin ID from localStorage
+            // Get Admin ID from localStorage
             adminId = localStorage.getItem("userId");
 
             const display = document.getElementById("user-display");
@@ -3164,29 +3601,7 @@
                 console.log("Not logged in as Admin. (Simulated redirect to login.html)");
             }
 
-            updateLiveTime();
-            setInterval(updateLiveTime, 1000);
-
-            // Initial queue state load (para ma-sync ang display ng admin)
-            const storedQueueList = localStorage.getItem('queueList');
-            const storedIndex = localStorage.getItem('currentIndex');
-
-            if (storedQueueList) {
-                try {
-                    queueList = JSON.parse(storedQueueList);
-                } catch (e) {
-                    console.error("Error loading queueList:", e);
-                }
-            }
-
-            if (storedIndex) {
-                currentIndex = parseInt(storedIndex, 10);
-            }
-
-            // Initial queue list display for the control panel
-            updateQueueListDisplay();
-            const currentServing = currentIndex >= 0 ? queueList[currentIndex] : "--";
-            updateBlueBox(currentServing);
+            updateButtonStates();
 
             // Set current date to the Patient Form on load
             document.getElementById('patient-date').value = getLocalDateISOString();
@@ -3215,38 +3630,13 @@
         });
 
         // 🟢 MODIFIED: Listener for new queue entries from staff (AUTOMATIC REFRESH)
+        // Listen for queue updates from staff (via localStorage)
         window.addEventListener("storage", function (event) {
-            // Tanging ang queueList lang ang kailangan i-monitor
-            if (event.key === "queueList" && document.getElementById("queue-selection-popup").style.display === "flex") {
-
-                // I-sync ang mga global variables ni Admin
-                const storedQueueList = localStorage.getItem('queueList');
-                const storedIndex = localStorage.getItem('currentIndex');
-
-                if (storedQueueList) {
-                    try {
-                        // I-update ang global queueList ni Admin
-                        queueList = JSON.parse(storedQueueList);
-                    } catch (e) {
-                        console.error("Error loading queueList from storage event:", e);
-                    }
-                }
-
-                if (storedIndex) {
-                    // I-update ang global currentIndex ni Admin
-                    currentIndex = parseInt(storedIndex, 10);
-                } else {
-                    currentIndex = -1;
-                }
-
-                // I-update ang display agad
-                updateQueueListDisplay();
-
-                // I-update ang Now Serving box
-                const currentServing = currentIndex >= 0 && currentIndex < queueList.length ? queueList[currentIndex] : "--";
-                updateBlueBox(currentServing);
-
-                console.log("Admin Queue List automatically refreshed via storage event.");
+            // Monitor for queue updates when admin has queue selection popup open
+            if (event.key === "queueUpdated" && document.getElementById("queue-selection-popup").style.display === "flex") {
+                // Request fresh queue list from backend
+                window.chrome.webview.postMessage("getQueueList");
+                console.log("Admin detected new queue from staff - refreshing list");
             }
         });
         // =========================================================================

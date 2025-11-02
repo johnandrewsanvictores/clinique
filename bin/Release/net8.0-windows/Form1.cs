@@ -322,7 +322,7 @@
                         // Send updated queue list to frontend so admin can refresh automatically
                         try
                         {
-                            string selectQuery = "SELECT Id, QueueNumber, Service, StaffId, CreatedAt, Status FROM Queue WHERE Status IN ('Pending','Called') ORDER BY CreatedAt ASC";
+                            string selectQuery = "SELECT Id, QueueNumber, Service, ServiceType, StaffId, CreatedAt, Status FROM Queue WHERE Status IN ('Pending','Called') ORDER BY CreatedAt ASC";
                             using (SqlDataAdapter da = new SqlDataAdapter(selectQuery, conn))
                             {
                                 DataTable dt2 = new DataTable();
@@ -348,6 +348,58 @@ else if (message.StartsWith("incrementActivity:"))
         cmd.ExecuteNonQuery();
     }
 }
+                    else if (message == "getLastQueueNumbers")
+                    {
+                        int lastCHK = 0, lastVCINE = 0, lastCSR = 0;
+
+                        string queryCHK = "SELECT TOP 1 QueueNumber FROM Queue WHERE QueueNumber LIKE 'CHK-%' AND Status IN ('Pending','Called') ORDER BY CreatedAt DESC";
+                        using (SqlCommand cmd = new SqlCommand(queryCHK, conn))
+                        {
+                            var result = cmd.ExecuteScalar();
+                            if (result != null)
+                            {
+                                string qNum = result.ToString();
+                                if (qNum.StartsWith("CHK-"))
+                                {
+                                    if (int.TryParse(qNum.Substring(4), out int num))
+                                        lastCHK = num;
+                                }
+                            }
+                        }
+
+                        string queryVCINE = "SELECT TOP 1 QueueNumber FROM Queue WHERE QueueNumber LIKE 'VCINE-%' AND Status IN ('Pending','Called') ORDER BY CreatedAt DESC";
+                        using (SqlCommand cmd = new SqlCommand(queryVCINE, conn))
+                        {
+                            var result = cmd.ExecuteScalar();
+                            if (result != null)
+                            {
+                                string qNum = result.ToString();
+                                if (qNum.StartsWith("VCINE-"))
+                                {
+                                    if (int.TryParse(qNum.Substring(6), out int num))
+                                        lastVCINE = num;
+                                }
+                            }
+                        }
+
+                        string queryCSR = "SELECT TOP 1 QueueNumber FROM Queue WHERE QueueNumber LIKE 'CSR-%' AND Status IN ('Pending','Called') ORDER BY CreatedAt DESC";
+                        using (SqlCommand cmd = new SqlCommand(queryCSR, conn))
+                        {
+                            var result = cmd.ExecuteScalar();
+                            if (result != null)
+                            {
+                                string qNum = result.ToString();
+                                if (qNum.StartsWith("CSR-"))
+                                {
+                                    if (int.TryParse(qNum.Substring(4), out int num))
+                                        lastCSR = num;
+                                }
+                            }
+                        }
+
+                        string response = $"{{\"CHK\":{lastCHK},\"VCINE\":{lastVCINE},\"CSR\":{lastCSR}}}";
+                        webView21.CoreWebView2.PostWebMessageAsString($"lastQueueNumbers:{response}");
+                    }
                     else if (message.StartsWith("getTotalGenerated:"))
                     {
                         // message: getTotalGenerated:<username>
@@ -364,13 +416,58 @@ else if (message.StartsWith("incrementActivity:"))
                     else if (message == "getQueueList")
                     {
                         // Fetch pending/called queue entries from DB and send to frontend
-                        string selectQuery = "SELECT Id, QueueNumber, Service, StaffId, CreatedAt, Status FROM Queue WHERE Status IN ('Pending','Called') ORDER BY CreatedAt ASC";
+                        string selectQuery = "SELECT Id, QueueNumber, Service, ServiceType, StaffId, CreatedAt, Status FROM Queue WHERE Status IN ('Pending','Called') ORDER BY CreatedAt ASC";
                         using (SqlDataAdapter da = new SqlDataAdapter(selectQuery, conn))
                         {
                             DataTable dt = new DataTable();
                             da.Fill(dt);
                             string json = Newtonsoft.Json.JsonConvert.SerializeObject(dt);
                             webView21.CoreWebView2.PostWebMessageAsString("queueList:" + json);
+                        }
+                    }
+                    else if (message.StartsWith("callQueue:"))
+                    {
+                        // Admin calls a queue - set status to 'Called'
+                        string queueNumber = message.Substring("callQueue:".Length);
+                        string updateQuery = "UPDATE Queue SET Status='Called' WHERE QueueNumber=@queueNumber";
+                        using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@queueNumber", queueNumber);
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                webView21.CoreWebView2.PostWebMessageAsString($"queueCalled:{queueNumber}");
+                            }
+                        }
+                    }
+                    else if (message.StartsWith("completeQueue:"))
+                    {
+                        // Admin clicks NEXT - mark queue as completed
+                        string queueNumber = message.Substring("completeQueue:".Length);
+                        string updateQuery = "UPDATE Queue SET Status='Completed' WHERE QueueNumber=@queueNumber";
+                        using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@queueNumber", queueNumber);
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                webView21.CoreWebView2.PostWebMessageAsString($"queueCompleted:{queueNumber}");
+                            }
+                        }
+                    }
+                    else if (message.StartsWith("deleteQueue:"))
+                    {
+                        // Admin clicks DELETE - remove queue from database
+                        string queueNumber = message.Substring("deleteQueue:".Length);
+                        string deleteQuery = "DELETE FROM Queue WHERE QueueNumber=@queueNumber";
+                        using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@queueNumber", queueNumber);
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                webView21.CoreWebView2.PostWebMessageAsString($"queueDeleted:{queueNumber}");
+                            }
                         }
                     }
                     else if (message.StartsWith("resetTotalGenerated:"))
@@ -385,6 +482,48 @@ else if (message.StartsWith("incrementActivity:"))
                         }
                         // Notify frontend
                         webView21.CoreWebView2.PostWebMessageAsString($"totalGenerated:{username}:0");
+                    }
+                    else if (message == "getQueuePreview")
+                    {
+                        // Get currently serving queue (Status = 'Called')
+                        string nowServing = "--";
+                        string selectServingQuery = "SELECT TOP 1 QueueNumber FROM Queue WHERE Status='Called' ORDER BY CreatedAt DESC";
+                        using (SqlCommand cmd = new SqlCommand(selectServingQuery, conn))
+                        {
+                            object result = cmd.ExecuteScalar();
+                            if (result != null)
+                            {
+                                nowServing = result.ToString();
+                            }
+                        }
+
+                        // Get next 3 queues in line (Status = 'Pending')
+                        string[] nextInLine = new string[3] { "---", "---", "---" };
+                        string selectNextQuery = "SELECT TOP 3 QueueNumber FROM Queue WHERE Status='Pending' ORDER BY CreatedAt ASC";
+                        using (SqlCommand cmd = new SqlCommand(selectNextQuery, conn))
+                        {
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                int index = 0;
+                                while (reader.Read() && index < 3)
+                                {
+                                    nextInLine[index] = reader.GetString(0);
+                                    index++;
+                                }
+                            }
+                        }
+
+                        // Send to Queue Preview
+                        var previewData = new
+                        {
+                            nowServing = nowServing,
+                            next1 = nextInLine[0],
+                            next2 = nextInLine[1],
+                            next3 = nextInLine[2],
+                            timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                        };
+                        string json = Newtonsoft.Json.JsonConvert.SerializeObject(previewData);
+                        webView21.CoreWebView2.PostWebMessageAsString("queuePreview:" + json);
                     }
                     else if (message == "getPatients")
                     {

@@ -141,8 +141,7 @@
     <script>
         const nowBox = document.getElementById("nowServing");
         const beepSound = document.getElementById("beepSound");
-        let lastCalledTime = null;
-        let lastNow = null;
+        let lastNowServing = null;
 
         // --- Unlock sound playback when user clicks anywhere once ---
         document.body.addEventListener("click", () => {
@@ -167,37 +166,63 @@
             beepSound.play().catch(() => { });
         }
 
+        /**
+         * Request queue preview data from database via C# backend
+         */
+        function requestQueueUpdate() {
+            if (window.chrome && window.chrome.webview) {
+                window.chrome.webview.postMessage("getQueuePreview");
+            }
+        }
 
-        function updateQueue() {
-            const calledNow = localStorage.getItem("calledNow");
-            if (!calledNow || calledNow === lastCalledTime) return;
+        /**
+         * Update display with data from backend
+         */
+        function updateQueueDisplay(data) {
+            const nowServing = data.nowServing || "--";
+            const next1 = data.next1 || "---";
+            const next2 = data.next2 || "---";
+            const next3 = data.next3 || "---";
 
-            lastCalledTime = calledNow;
-
-            const queueList = JSON.parse(localStorage.getItem("queueList") || "[]");
-            const currentIndex = parseInt(localStorage.getItem("currentIndex") || "-1");
-
-            const nowServing = queueList[currentIndex] || "--";
-            const next1 = queueList[currentIndex + 1] || "---";
-            const next2 = queueList[currentIndex + 2] || "---";
-            const next3 = queueList[currentIndex + 3] || "---";
-
-            if (nowServing !== lastNow && nowServing !== "--") {
+            // Check if now serving changed (new call)
+            if (nowServing !== lastNowServing && nowServing !== "--") {
                 playBeep();
                 nowBox.classList.add("flash");
                 setTimeout(() => nowBox.classList.remove("flash"), 3000);
-                lastNow = nowServing;
+                lastNowServing = nowServing;
             }
 
+            // Update display
             nowBox.textContent = nowServing;
             document.getElementById("next1").textContent = next1;
             document.getElementById("next2").textContent = next2;
             document.getElementById("next3").textContent = next3;
         }
 
-        setInterval(updateQueue, 500);
+        // Listen for messages from C# backend
+        if (window.chrome && window.chrome.webview) {
+            window.chrome.webview.addEventListener('message', event => {
+                const message = event.data;
+                
+                if (message.startsWith("queuePreview:")) {
+                    try {
+                        const data = JSON.parse(message.replace("queuePreview:", ""));
+                        updateQueueDisplay(data);
+                    } catch (e) {
+                        console.error("Error parsing queue preview data:", e);
+                    }
+                }
+            });
+        }
+
+        // Poll database every 2 seconds for updates
+        setInterval(requestQueueUpdate, 2000);
+
+        // Update clock every second
         setInterval(updateClock, 1000);
-        updateQueue();
+
+        // Initial requests
+        requestQueueUpdate();
         updateClock();
     </script>
 </body>

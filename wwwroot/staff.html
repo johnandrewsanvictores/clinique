@@ -327,6 +327,32 @@
         let vcineNumber = 0;
         let csrNumber = 0;
 
+        // Request last queue numbers from backend on page load
+        if (window.chrome && window.chrome.webview) {
+            // Listen for response from backend
+            window.chrome.webview.addEventListener('message', event => {
+                const message = event.data;
+                if (typeof message === 'string' && message.startsWith('lastQueueNumbers:')) {
+                    try {
+                        const jsonStr = message.substring('lastQueueNumbers:'.length);
+                        const lastNumbers = JSON.parse(jsonStr);
+                        
+                        // Initialize counters with last numbers from database
+                        chkNumber = lastNumbers.CHK || 0;
+                        vcineNumber = lastNumbers.VCINE || 0;
+                        csrNumber = lastNumbers.CSR || 0;
+                        
+                        console.log('Initialized queue counters from database:', lastNumbers);
+                    } catch (e) {
+                        console.error('Failed to parse lastQueueNumbers:', e);
+                    }
+                }
+            });
+
+            // Request last queue numbers from backend
+            window.chrome.webview.postMessage('getLastQueueNumbers');
+        }
+
         // ---- LOGOUT FUNCTIONS ----
         function confirmLogout() {
             // Ipakita ang custom confirmation popup
