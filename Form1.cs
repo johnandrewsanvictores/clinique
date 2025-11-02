@@ -14,6 +14,7 @@
         private System.Windows.Forms.Timer queueRefreshTimer;
         private string connectionString = @"Server=.\SQLEXPRESS;Database=QueueSystemDB;Trusted_Connection=True;";  //original
         //private string connectionString = @"Server=localhost\SQLEXPRESS;Database=QueueSystemDB;Trusted_Connection=True;";
+        private QueuePreviewForm queuePreviewForm;
 
         public Form1()
         {
@@ -250,6 +251,23 @@
 
                         SendMessage("Activity reset successfully!");
                     }
+                    else if (message == "openQueuePreview")
+                    {
+                        // Open Queue Preview in a new WebView2 form
+                        this.Invoke((Action)(() =>
+                        {
+                            if (queuePreviewForm == null || queuePreviewForm.IsDisposed)
+                            {
+                                queuePreviewForm = new QueuePreviewForm(connectionString);
+                                queuePreviewForm.Show();
+                            }
+                            else
+                            {
+                                queuePreviewForm.BringToFront();
+                                queuePreviewForm.Focus();
+                            }
+                        }));
+                    }
                     else if (message == "logout")
                     {
                         // Get current logged-in user
@@ -485,41 +503,93 @@ else if (message.StartsWith("incrementActivity:"))
                     }
                     else if (message == "getQueuePreview")
                     {
-                        // Get currently serving queue (Status = 'Called')
-                        string nowServing = "--";
-                        string selectServingQuery = "SELECT TOP 1 QueueNumber FROM Queue WHERE Status='Called' ORDER BY CreatedAt DESC";
-                        using (SqlCommand cmd = new SqlCommand(selectServingQuery, conn))
+                        // Helper function to get category prefix
+                        string GetCategoryFromQueue(string queueNumber)
                         {
-                            object result = cmd.ExecuteScalar();
-                            if (result != null)
-                            {
-                                nowServing = result.ToString();
-                            }
+                            if (string.IsNullOrEmpty(queueNumber)) return "unknown";
+                            if (queueNumber.StartsWith("CHK")) return "checkup";
+                            if (queueNumber.StartsWith("VCINE")) return "vaccine";
+                            if (queueNumber.StartsWith("CSR")) return "cashier";
+                            return "unknown";
                         }
 
-                        // Get next 3 queues in line (Status = 'Pending')
-                        string[] nextInLine = new string[3] { "---", "---", "---" };
-                        string selectNextQuery = "SELECT TOP 3 QueueNumber FROM Queue WHERE Status='Pending' ORDER BY CreatedAt ASC";
-                        using (SqlCommand cmd = new SqlCommand(selectNextQuery, conn))
+                        // Get all Called queues (NOW SERVING per category)
+                        var nowServingDict = new Dictionary<string, string>
+                        {
+                            { "checkup", "--" },
+                            { "vaccine", "--" },
+                            { "cashier", "--" }
+                        };
+                        
+                        string selectServingQuery = "SELECT QueueNumber FROM Queue WHERE Status='Called' ORDER BY CreatedAt ASC";
+                        using (SqlCommand cmd = new SqlCommand(selectServingQuery, conn))
                         {
                             using (SqlDataReader reader = cmd.ExecuteReader())
                             {
-                                int index = 0;
-                                while (reader.Read() && index < 3)
+                                while (reader.Read())
                                 {
-                                    nextInLine[index] = reader.GetString(0);
-                                    index++;
+                                    string queueNum = reader.GetString(0);
+                                    string category = GetCategoryFromQueue(queueNum);
+                                    if (category != "unknown" && nowServingDict[category] == "--")
+                                    {
+                                        nowServingDict[category] = queueNum;
+                                    }
                                 }
                             }
                         }
 
-                        // Send to Queue Preview
+                        // Get next queues per category (NEXT IN LINE per category)
+                        var nextQueuesDict = new Dictionary<string, List<string>>
+                        {
+                            { "checkup", new List<string>() },
+                            { "vaccine", new List<string>() },
+                            { "cashier", new List<string>() }
+                        };
+                        
+                        string selectNextQuery = "SELECT QueueNumber FROM Queue WHERE Status='Pending' ORDER BY CreatedAt ASC";
+                        using (SqlCommand cmd = new SqlCommand(selectNextQuery, conn))
+                        {
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    string queueNum = reader.GetString(0);
+                                    string category = GetCategoryFromQueue(queueNum);
+                                    if (category != "unknown" && nextQueuesDict[category].Count < 3)
+                                    {
+                                        nextQueuesDict[category].Add(queueNum);
+                                    }
+                                }
+                            }
+                        }
+
+                        // Ensure each category has exactly 3 slots (fill with "---" if needed)
+                        foreach (var category in nextQueuesDict.Keys.ToList())
+                        {
+                            while (nextQueuesDict[category].Count < 3)
+                            {
+                                nextQueuesDict[category].Add("---");
+                            }
+                        }
+
+                        // Send categorized data to Queue Preview
                         var previewData = new
                         {
-                            nowServing = nowServing,
-                            next1 = nextInLine[0],
-                            next2 = nextInLine[1],
-                            next3 = nextInLine[2],
+                            checkup = new
+                            {
+                                nowServing = nowServingDict["checkup"],
+                                next = nextQueuesDict["checkup"].ToArray()
+                            },
+                            vaccine = new
+                            {
+                                nowServing = nowServingDict["vaccine"],
+                                next = nextQueuesDict["vaccine"].ToArray()
+                            },
+                            cashier = new
+                            {
+                                nowServing = nowServingDict["cashier"],
+                                next = nextQueuesDict["cashier"].ToArray()
+                            },
                             timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                         };
                         string json = Newtonsoft.Json.JsonConvert.SerializeObject(previewData);
@@ -812,6 +882,196 @@ else if (message.StartsWith("incrementActivity:"))
         private void webView21_Click(object sender, EventArgs e)
         {
 
+        }
+    }
+
+    // ============================================================
+    // Queue Preview Form - Separate Window with WebView2
+    // ============================================================
+    public class QueuePreviewForm : Form
+    {
+        private Microsoft.Web.WebView2.WinForms.WebView2 webView;
+        private string connectionString;
+        private System.Windows.Forms.Timer refreshTimer;
+
+        public QueuePreviewForm(string connString)
+        {
+            connectionString = connString;
+            InitializeQueuePreviewForm();
+        }
+
+        private void InitializeQueuePreviewForm()
+        {
+            // Form settings
+            this.Text = "Queue Preview";
+            this.Size = new System.Drawing.Size(1400, 800);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+
+            // Create WebView2
+            webView = new Microsoft.Web.WebView2.WinForms.WebView2();
+            webView.Dock = DockStyle.Fill;
+            this.Controls.Add(webView);
+
+            // Initialize WebView2
+            InitializeWebView();
+
+            // Setup refresh timer (500ms for smooth updates)
+            refreshTimer = new System.Windows.Forms.Timer();
+            refreshTimer.Interval = 500;
+            refreshTimer.Tick += RefreshTimer_Tick;
+            refreshTimer.Start();
+        }
+
+        private async void InitializeWebView()
+        {
+            await webView.EnsureCoreWebView2Async(null);
+
+            // Load queue preview HTML
+            string queuePreviewPath = Path.Combine(Application.StartupPath, "wwwroot", "queuepreview.html");
+            string queuePreviewUri = $"file:///{queuePreviewPath.Replace("\\", "/")}";
+            webView.Source = new Uri(queuePreviewUri);
+
+            // Handle messages from JavaScript
+            webView.CoreWebView2.WebMessageReceived += QueuePreview_WebMessageReceived;
+        }
+
+        private void QueuePreview_WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
+        {
+            string message = e.TryGetWebMessageAsString();
+
+            if (message == "getQueuePreview")
+            {
+                // Send queue data to preview
+                SendQueueDataToPreview();
+            }
+        }
+
+        private void RefreshTimer_Tick(object sender, EventArgs e)
+        {
+            // Automatically send queue data every 500ms
+            SendQueueDataToPreview();
+        }
+
+        private void SendQueueDataToPreview()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    // Helper function to get category prefix
+                    string GetCategoryFromQueue(string queueNumber)
+                    {
+                        if (string.IsNullOrEmpty(queueNumber)) return "unknown";
+                        if (queueNumber.StartsWith("CHK")) return "checkup";
+                        if (queueNumber.StartsWith("VCINE")) return "vaccine";
+                        if (queueNumber.StartsWith("CSR")) return "cashier";
+                        return "unknown";
+                    }
+
+                    // Get all Called queues (NOW SERVING per category)
+                    var nowServingDict = new Dictionary<string, string>
+                    {
+                        { "checkup", "--" },
+                        { "vaccine", "--" },
+                        { "cashier", "--" }
+                    };
+
+                    string selectServingQuery = "SELECT QueueNumber FROM Queue WHERE Status='Called' ORDER BY CreatedAt ASC";
+                    using (SqlCommand cmd = new SqlCommand(selectServingQuery, conn))
+                    {
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string queueNum = reader.GetString(0);
+                                string category = GetCategoryFromQueue(queueNum);
+                                if (category != "unknown" && nowServingDict[category] == "--")
+                                {
+                                    nowServingDict[category] = queueNum;
+                                }
+                            }
+                        }
+                    }
+
+                    // Get next queues per category (NEXT IN LINE per category)
+                    var nextQueuesDict = new Dictionary<string, List<string>>
+                    {
+                        { "checkup", new List<string>() },
+                        { "vaccine", new List<string>() },
+                        { "cashier", new List<string>() }
+                    };
+
+                    string selectNextQuery = "SELECT QueueNumber FROM Queue WHERE Status='Pending' ORDER BY CreatedAt ASC";
+                    using (SqlCommand cmd = new SqlCommand(selectNextQuery, conn))
+                    {
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string queueNum = reader.GetString(0);
+                                string category = GetCategoryFromQueue(queueNum);
+                                if (category != "unknown" && nextQueuesDict[category].Count < 3)
+                                {
+                                    nextQueuesDict[category].Add(queueNum);
+                                }
+                            }
+                        }
+                    }
+
+                    // Ensure each category has exactly 3 slots (fill with "---" if needed)
+                    foreach (var category in nextQueuesDict.Keys.ToList())
+                    {
+                        while (nextQueuesDict[category].Count < 3)
+                        {
+                            nextQueuesDict[category].Add("---");
+                        }
+                    }
+
+                    // Send categorized data to Queue Preview
+                    var previewData = new
+                    {
+                        checkup = new
+                        {
+                            nowServing = nowServingDict["checkup"],
+                            next = nextQueuesDict["checkup"].ToArray()
+                        },
+                        vaccine = new
+                        {
+                            nowServing = nowServingDict["vaccine"],
+                            next = nextQueuesDict["vaccine"].ToArray()
+                        },
+                        cashier = new
+                        {
+                            nowServing = nowServingDict["cashier"],
+                            next = nextQueuesDict["cashier"].ToArray()
+                        },
+                        timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    };
+
+                    string json = Newtonsoft.Json.JsonConvert.SerializeObject(previewData);
+                    
+                    // Send to WebView
+                    if (webView?.CoreWebView2 != null)
+                    {
+                        webView.CoreWebView2.PostWebMessageAsString("queuePreview:" + json);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Silent fail - don't interrupt the preview
+                System.Diagnostics.Debug.WriteLine($"Queue Preview Error: {ex.Message}");
+            }
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            refreshTimer?.Stop();
+            refreshTimer?.Dispose();
+            base.OnFormClosing(e);
         }
     }
 }

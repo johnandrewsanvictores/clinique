@@ -359,7 +359,7 @@
         }
 
                     .cancel-btn:hover {
-                            background-color: #d32f2f;C
+                            background-color: #d32f2f;
                             transform: translateY(-1px);
 
         }
@@ -765,190 +765,274 @@
         }
 
                 .popup-box-queue-selection {
-                        background: #1976d2;
-                        height: 660px;
-                        border-radius: 10px;
-                        width: 1100px;
+                        background: #0057e7;
+                        height: 680px;
+                        border-radius: 15px;
+                        width: 1200px;
                         max-width: 100%;
-                        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+                        box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.4);
                         position: relative;
                         display: flex;
                         flex-direction: column;
-                        align-items: center;
-
+                        padding: 25px;
+                        overflow: hidden;
         }
+        
+                .queue-selection-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 20px;
+                        padding-right: 40px;
+                }
+                
+                .queue-selection-title {
+                        color: white;
+                        font-size: 32px;
+                        font-weight: 700;
+                        margin: 0;
+                        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                }
+                
+                .queue-action-buttons {
+                        display: flex;
+                        gap: 12px;
+                }
+        
+                .queue-selection-content {
+                        display: flex;
+                        gap: 20px;
+                        flex: 1;
+                        min-height: 0;
+                        overflow: hidden;
+                }
 
                     .popup-box-queue-selection .queue-btn {
-                            padding: 10px 25px;
-                            margin: 5px;
-                            font-size: 16px;
-                            border-radius: 5px;
+                            padding: 12px 28px;
+                            font-size: 15px;
+                            border-radius: 100px;
                             border: none;
-                            font-weight: bold;
+                            font-weight: 600;
                             cursor: pointer;
-                            transition: background-color 0.2s;
-
+                            transition: all 0.3s ease;
+                            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
         }
 
                         .popup-box-queue-selection .queue-btn.call {
                                 background-color: #4CAF50;
                                 color: white;
-
         }
 
                             .popup-box-queue-selection .queue-btn.call:hover {
-                                    background-color: #388E3C;
-
-        }
-
-                     
-
+                                    background-color: #45a049;
+                                    transform: translateY(-2px);
+                                    box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
         }
 
                         .popup-box-queue-selection .queue-btn.next {
-                                background-color: #2196F3;
+                                background-color: #73C8D2;
                                 color: white;
-
         }
 
                             .popup-box-queue-selection .queue-btn.next:hover {
-                                    background-color: #1565C0;
-
+                                    background-color: #5ab3bf;
+                                    transform: translateY(-2px);
+                                    box-shadow: 0 6px 12px rgba(115, 200, 210, 0.4);
         }
 
                         .popup-box-queue-selection .queue-btn.delete {
                                 background-color: #F44336;
                                 color: white;
-
         }
 
                             .popup-box-queue-selection .queue-btn.delete:hover {
-                                    background-color: #D32F2F;
-
+                                    background-color: #da190b;
+                                    transform: translateY(-2px);
+                                    box-shadow: 0 6px 12px rgba(244, 67, 54, 0.4);
         }
 
-                        .popup-box-queue-selection .queue-btn.refresh {
-                                background-color: #ff9800;
-                                color: white;
-
+                        .popup-box-queue-selection .queue-btn:disabled {
+                                background: #9e9e9e;
+                                color: #e0e0e0;
+                                cursor: not-allowed;
+                                opacity: 0.5;
+                                box-shadow: none;
         }
 
-                            .popup-box-queue-selection .queue-btn.refresh:hover {
-                                    background-color: #D32F2F;
-
+                            .popup-box-queue-selection .queue-btn:disabled:hover {
+                                    transform: none;
+                                    box-shadow: none;
         }
 
                     .popup-box-queue-selection .queue-preview {
-                            position: absolute;
-                            margin-top: 160px;
-                            left: 50px;
-                            width: 500px;
-                            height: 380px;
-                            overflow-y: auto;
-                            border: 1px solid #ccc;
-                            padding: 10px;
-                            border-radius: 5px;
-                            background-color: #ffffff;
+                            flex: 0 0 calc(38% - 50px);
+                            background: white;
+                            border-radius: 15px;
+                            padding: 30px 20px;
                             display: flex;
                             flex-direction: column;
                             align-items: center;
-
+                            justify-content: center;
+                            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
 
-                        .popup-box-queue-selection .queue-preview p {
-                                margin: 5px 0;
-                                font-size: 16px;
-                                font-weight: bold;
-                                color: #45a049;
-
+                        #serving-datetime {
+                                text-align: center;
+                                font-size: 15px;
+                                color: #666;
+                                font-weight: 600;
+                                margin-top: 20px;
+                                padding: 8px 20px;
+                                background: #f5f5f5;
+                                border-radius: 20px;
         }
 
                     .popup-box-queue-selection .queue-list {
-                            position: absolute;
-                            margin-top: 160px;
-                            right: 50px;
-                            width: 500px;
-                            height: 380px;
+                            flex: 0 0 calc(62% - 50px);
                             overflow-y: auto;
-                            border: 1px solid #ccc;
-                            padding: 10px;
-                            border-radius: 5px;
-                            background-color: #4CAF50;
-
+                            overflow-x: hidden;
+                            background: rgba(255, 255, 255, 0.98);
+                            border-radius: 15px;
+                            padding: 20px 15px;
+                            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+                            max-height: 590px;
+        }
+        
+                        .popup-box-queue-selection .queue-list h3 {
+                                color: #333;
+                                margin: 0 0 15px 0;
+                                font-size: 24px;
+                                font-weight: 700;
+                                text-align: center;
         }
 
-
-                        .popup-box-queue-selection .queue-list p {
-                                margin: 5px 0;
-                                font-size: 16px;
-                                font-weight: bold;
-
+        /* Category Section Styles */
+                .category-section {
+                        margin-bottom: 15px;
+                        background: white;
+                        border-radius: 12px;
+                        padding: 12px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
+                .category-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 10px 15px;
+                        background: #0057e7;
+                        border-radius: 8px;
+                        margin-bottom: 10px;
+        }
 
+                .category-name {
+                        font-size: 16px;
+                        font-weight: 700;
+                        color: white;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+        }
 
-        /* Added style for clickable queue items */
-                .queue-list > div {
+                .status-badge {
+                        padding: 5px 12px;
+                        border-radius: 20px;
+                        font-size: 10px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+        }
+
+                .status-open {
+                        background-color: #90a4ae;
+                        color: white;
+        }
+
+                .status-serving {
+                        background-color: #4CAF50;
+                        color: white;
+                        animation: pulse 2s infinite;
+        }
+
+                @keyframes pulse {
+                        0%, 100% { opacity: 1; transform: scale(1); }
+                        50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+                .category-items {
+                        padding: 5px;
+        }
+                
+                .category-items p {
+                        text-align: center;
+                        color: #999;
+                        font-style: italic;
+                        margin: 8px 0;
+                        font-size: 14px;
+        }
+
+                .queue-item {
+                        background: #f5f7fa;
+                        color: #333;
+                        padding: 12px 14px;
+                        margin: 6px 0;
+                        border-radius: 8px;
                         cursor: pointer;
-                        transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-
+                        font-weight: 600;
+                        font-size: 15px;
+                        transition: all 0.3s ease;
+                        border: 2px solid transparent;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+                .queue-item.pending {
+                        background: #E8F5E9;
+                        border-left: 5px solid #4CAF50;
+        }
 
+                .queue-item.called {
+                        background: #FFF3E0;
+                        border-left: 5px solid #FF9800;
+                        font-weight: 700;
+        }
 
-        /* Hover effect added to the list item */
-                    .queue-list > div:hover {
-                            transform: scale(1.02);
-                            box-shadow: 0 0 7px rgba(255, 255, 255, 0.8);
+                .queue-item:hover {
+                        transform: translateX(5px);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
 
+                .queue-item.selected {
+                        border: 3px solid #73C8D2;
+                        background: #E3F2FD;
+                        transform: scale(1.02);
+                        box-shadow: 0 4px 16px rgba(115, 200, 210, 0.4);
         }
 
                 .now-serving-label {
-                        font-size: 28px;
-                        font-weight: bold;
+                        font-size: 26px;
+                        font-weight: 700;
                         color: #333;
-                        margin-bottom: 10px;
-
-        }
-
-                .center-box {
+                        margin: 0 0 20px 0;
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+        }                .center-box {
                         display: flex;
                         justify-content: center;
                         align-items: center;
-                        width: 250px;
-                        height: 90px;
-                        background-color: blue;
+                        width: 100%;
+                        max-width: 380px;
+                        height: 150px;
+                        background: #0057e7;
                         border-radius: 20px;
-                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-                        font-size: 40px;
-                        font-weight: bold;
+                        box-shadow: 0 8px 24px rgba(0, 87, 231, 0.4);
+                        font-size: 56px;
+                        font-weight: 800;
                         color: white;
                         user-select: none;
-                        margin: 0 auto;
-
-        }
-
-
-
-        /* Serving Timer Styles */
-                #servingTimeContainer {
-                        margin-top: auto;
-                        margin-bottom: 20px;
-                        text-align: center;
-
-        }
-
-                    #servingTimeContainer h1 {
-                            margin-top: 10px;
-
-        }
-
-                #servingTime {
-                        font-size: 50px;
-                        font-weight: bold;
-                        color: #333;
-                        margin-top: 5px;
-
+                        margin: 0;
+                        letter-spacing: 2px;
+                        text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
         }
 
 
@@ -1094,6 +1178,84 @@
                         box-sizing: border-box;
                         margin-bottom: 10px;
                         flex-shrink: 0;
+
+        }
+
+                .filter-controls {
+                        margin-bottom: 10px;
+                        flex-shrink: 0;
+
+        }
+
+                .filter-label {
+                        font-size: 12px;
+                        font-weight: bold;
+                        color: #555;
+                        margin-bottom: 5px;
+                        display: block;
+
+        }
+
+                .letter-filters {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 3px;
+                        margin-bottom: 8px;
+
+        }
+
+                .letter-btn {
+                        padding: 3px 7px;
+                        font-size: 11px;
+                        border: 1px solid #ddd;
+                        background-color: #fff;
+                        color: #333;
+                        cursor: pointer;
+                        border-radius: 3px;
+                        transition: all 0.2s;
+
+        }
+
+                    .letter-btn:hover {
+                            background-color: #f0f0f0;
+
+        }
+
+                    .letter-btn.active {
+                            background-color: #ff9800;
+                            color: white;
+                            border-color: #ff9800;
+
+        }
+
+                .age-filters {
+                        display: flex;
+                        gap: 5px;
+                        flex-wrap: wrap;
+
+        }
+
+                .age-btn {
+                        padding: 4px 10px;
+                        font-size: 11px;
+                        border: 1px solid #ddd;
+                        background-color: #fff;
+                        color: #333;
+                        cursor: pointer;
+                        border-radius: 3px;
+                        transition: all 0.2s;
+
+        }
+
+                    .age-btn:hover {
+                            background-color: #f0f0f0;
+
+        }
+
+                    .age-btn.active {
+                            background-color: #007bff;
+                            color: white;
+                            border-color: #007bff;
 
         }
 
@@ -1362,7 +1524,13 @@
             <div class="patient-module-content">
 
                 <div class="patient-column patient-list-container">
-                    <input type="search" placeholder="Search Patient Name..." class="patient-search" id="patient-search-input" onkeyup="searchPatients()">
+                    <div class="filter-controls">
+                        <label class="filter-label">Filter by First Letter:</label>
+                        <div class="letter-filters" id="letter-filters"></div>
+                        <label class="filter-label">Filter by Age:</label>
+                        <div class="age-filters" id="age-filters"></div>
+                    </div>
+                    <input type="search" placeholder="Search by Name or ID..." class="patient-search" id="patient-search-input" onkeyup="searchPatients()">
                     <div class="patient-list" id="patient-list">
                     </div>
                     <button class="btn-plus" onclick="clearPatientForm()">+</button>
@@ -1380,22 +1548,40 @@
                         <input type="hidden" id="patient-id">
                         <h4 style="margin-top: 0; color: #ff9800;">Patient Information Form</h4>
 
-                        <label for="patient-name">Name:</label>
-                        <input type="text" id="patient-name" placeholder="Patient's Full Name">
+                        <label for="patient-name">Name:<span style="color:red;">*</span></label>
+                        <input type="text" id="patient-name" placeholder="Patient's Full Name" required>
 
-                        <label for="patient-contact">Contact:</label>
-                        <input type="tel" id="patient-contact" placeholder="Contact Number (e.g. 09xxxxxxxxx)" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)">
+                        <label for="patient-contact">Contact:<span style="color:red;">*</span></label>
+                        <input type="tel" id="patient-contact" placeholder="Contact Number (e.g. 09xxxxxxxxx)" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" required>
 
-                        <label for="patient-date">Date of Visit:</label>
-                        <input type="date" id="patient-date">
+                        <label for="patient-birthday">Birthday:</label>
+                        <input type="date" id="patient-birthday">
+
+                        <label for="patient-age">Age:</label>
+                        <input type="number" id="patient-age" placeholder="Age" min="0" max="150" readonly>
+
+                        <label for="patient-weight">Weight (kg):</label>
+                        <input type="number" id="patient-weight" placeholder="Weight in kg" step="0.01" min="0" max="999.99">
+
+                        <label for="patient-height">Height (cm):</label>
+                        <input type="number" id="patient-height" placeholder="Height in cm" step="0.01" min="0" max="999.99">
+
+                        <label for="patient-notes">Patient Notes:</label>
+                        <input type="text" id="patient-notes" placeholder="Additional notes about patient">
+
+                        <hr style="margin: 15px 0; border: 1px solid #ddd;">
+                        <h4 style="color: #ff9800;">Visit Information</h4>
+
+                        <label for="patient-date">Date of Visit:<span style="color:red;">*</span></label>
+                        <input type="date" id="patient-date" required readonly disabled style="background-color: #f0f0f0; cursor: not-allowed;">
 
                         <div class="form-group-checkbox">
                             <input type="checkbox" id="patient-first-visit">
                             <label for="patient-first-visit">First Visit</label>
                         </div>
 
-                        <label for="patient-purpose">Purpose of Visit:</label>
-                        <select id="patient-purpose">
+                        <label for="patient-purpose">Purpose of Visit:<span style="color:red;">*</span></label>
+                        <select id="patient-purpose" required>
                             <option value="" disabled selected>-- Select Purpose --</option>
                             <option value="Prenatal Check-Up">Prenatal Check-Up</option>
                             <option value="Vaccination">Vaccination</option>
@@ -1404,14 +1590,15 @@
                             <option value="Payment / Billing">Payment / Billing</option>
                         </select>
 
+                        <label for="patient-visit-notes">Visit Notes:</label>
+                        <input type="text" id="patient-visit-notes" placeholder="Notes for this visit">
+
                         <div class="patient-form-buttons">
                             <button class="patient-module-btn btn-add" onclick="addPatientRecord()">Add New Record</button>
                             <button class="patient-module-btn btn-update" onclick="updatePatientRecord()">Update Selected Patient</button>
                         </div>
                     </div>                 <div style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 15px;">
-                        <label for="export-date" style="font-weight: bold; margin-bottom: 5px; display: block;">Select Date to Export:</label>
-                        <input type="date" id="export-date" style="width: calc(100% - 20px); padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
-                        <button class="patient-module-btn btn-export" onclick="exportPatientDataByDate()">Export Selected Date (PDF)</button>
+                        <button class="patient-module-btn btn-export" onclick="openExportFilterPopup()">Choose Selected Export (PDF)</button>
                     </div>
 
                 </div>    
@@ -1445,6 +1632,53 @@
         </div>
     </div>
 
+    <div id="export-filter-popup" class="popup-overlay">
+        <div class="popup-box">
+            <button class="popup-close-btn" onclick="closeExportFilterPopup()">×</button>
+            <h3 style="margin-bottom: 20px;">Export Patient Visits</h3>
+            
+            <label style="font-weight: bold; margin-bottom: 10px; display: block;">Filter By:</label>
+            <select id="export-filter-type" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;" onchange="toggleExportFilterInputs()">
+                <option value="day">Day</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+                <option value="patient">Patient Name</option>
+            </select>
+
+            <div id="export-date-inputs">
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Select Date:</label>
+                <input type="date" id="export-filter-date" style="width: calc(100% - 20px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <div id="export-week-inputs" style="display: none;">
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Select Week Range:</label>
+                <input type="date" id="export-week-start" placeholder="Week Start" style="width: calc(100% - 20px); padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                <input type="date" id="export-week-end" placeholder="Week End" style="width: calc(100% - 20px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <div id="export-month-inputs" style="display: none;">
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Select Month:</label>
+                <input type="month" id="export-filter-month" style="width: calc(100% - 20px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <div id="export-patient-inputs" style="display: none;">
+                <label style="font-weight: bold; margin-bottom: 5px; display: block;">Search Patient Name:</label>
+                <input type="text" id="export-patient-search" placeholder="Type to search patient..." style="width: calc(100% - 20px); padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;" oninput="searchPatientForExport()">
+                
+                <div id="export-patient-results" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px; display: none;">
+                </div>
+                
+                <input type="hidden" id="export-selected-patient-id">
+                <div id="export-selected-patient-display" style="padding: 10px; background-color: #e8f5e9; border-radius: 5px; margin-bottom: 15px; display: none;">
+                    <strong>Selected Patient:</strong> <span id="export-selected-patient-name"></span>
+                    <button onclick="clearSelectedPatient()" style="float: right; background: #ff5252; color: white; border: none; padding: 3px 8px; border-radius: 3px; cursor: pointer;">Clear</button>
+                </div>
+            </div>
+
+            <button class="patient-module-btn btn-export" onclick="executeExport()" style="width: 100%; margin-top: 10px;">Export PDF</button>
+        </div>
+    </div>
+
     <div id="manage-accounts-popup" class="popup-overlay">
         <div class="popup-box-manage-account">
             <button class="popup-close-btn" onclick="closeManageAccountsPopup()">×</button>
@@ -1465,7 +1699,10 @@
             <div style="margin-top:15px;">
                 <input type="hidden" id="edit-id">
                 <input type="text" id="edit-username" placeholder="Username">
-                <input type="password" id="edit-password" placeholder="New Password">
+                <div style="position: relative;">
+                    <input type="password" id="edit-password" placeholder="New Password" style="padding-right: 40px;">
+                    <span onclick="togglePasswordVisibility()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none;" id="toggle-password-icon">👁️</span>
+                </div>
                 <button class="action-btn edit-btn" onclick="updateAccount()">Update</button>
             </div>
         </div>
@@ -1508,9 +1745,6 @@
             <button class="popup-close-btn" onclick="closeLoginHistoryPopup()">×</button>
             <div style="display:flex; align-items:center; gap: 15px; margin-bottom: 10px; flex-shrink: 0;">
                 <h3>Login History</h3>
-                <button class="action-btn delete-btn" onclick="clearLoginHistoryFromPopup()" style="width:150px;">
-                    Clear Login History
-                </button>
             </div>
             <div id="login-history-content"></div>
         </div>
@@ -1534,154 +1768,246 @@
     <div id="queue-selection-popup" class="popup-overlay-queue-selection">
         <div class="popup-box-queue-selection">
             <button class="popup-close-btn" onclick="closeQueueSelectionPopup()">×</button>
-            <h3>Queue Selection</h3>
-            <div style="margin-top:15px;">
-                <button class="queue-btn call" onclick="callQueue()">Call</button>
-                <button class="queue-btn next" onclick="nextQueue()">Next</button>
-                <button class="queue-btn delete" onclick="deleteCurrentQueue()">Delete</button>
-            </div>
-
-            <div class="queue-preview" id="queue-preview">
-                <p id="current-time" style="text-align:center; font-weight:bold; font-size:18px; color:#45a049;">
-                </p>
-                <h2 class="now-serving-label">Now Serving</h2>
-                <div class="center-box">--</div>
-
-                <div id="servingTimeContainer">
-                    <h1 style="margin-top:40px;">Serving Time</h1>
-                    <div id="servingTime">00:00</div>
+            
+            <div class="queue-selection-header">
+                <h2 class="queue-selection-title">Queue Management</h2>
+                <div class="queue-action-buttons">
+                    <button class="queue-btn call" onclick="callQueue()">Call</button>
+                    <button class="queue-btn next" onclick="nextQueue()">Next</button>
+                    <button class="queue-btn delete" onclick="deleteCurrentQueue()">Delete</button>
                 </div>
             </div>
 
-            <div class="queue-list" id="queue-list">
-                <h3 style="text-align:center; color:white; margin-bottom:10px; font-size:28px;">Queue List</h3>
+            <div class="queue-selection-content">
+                <div class="queue-preview" id="queue-preview">
+                    <h2 class="now-serving-label">Now Serving</h2>
+                    <div class="center-box">--</div>
+                    <div id="serving-datetime">--</div>
+                </div>
+
+                <div class="queue-list" id="queue-list">
+                    <h3>Queue List</h3>
+                    
+                    <!-- Check-Up Category -->
+                    <div class="category-section" id="checkup-section">
+                        <div class="category-header">
+                            <span class="category-name">Check-Up</span>
+                            <span class="status-badge status-open" id="checkup-status">OPEN</span>
+                        </div>
+                        <div class="category-items" id="checkup-items">
+                            <p style="text-align:center; color:#ccc; font-size:14px;">No queues</p>
+                        </div>
+                    </div>
+
+                    <!-- Vaccine Category -->
+                    <div class="category-section" id="vaccine-section">
+                        <div class="category-header">
+                            <span class="category-name">Vaccine</span>
+                            <span class="status-badge status-open" id="vaccine-status">OPEN</span>
+                        </div>
+                        <div class="category-items" id="vaccine-items">
+                            <p style="text-align:center; color:#ccc; font-size:14px;">No queues</p>
+                        </div>
+                    </div>
+
+                    <!-- Cashier Category -->
+                    <div class="category-section" id="cashier-section">
+                        <div class="category-header">
+                            <span class="category-name">Cashier</span>
+                            <span class="status-badge status-open" id="cashier-status">OPEN</span>
+                        </div>
+                        <div class="category-items" id="cashier-items">
+                            <p style="text-align:center; color:#ccc; font-size:14px;">No queues</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <audio id="beepSound" src="beepbeep.mp3" preload="auto"></audio>
+    <audio id="beepSound" src="Sound Effect/beepbeep.mp3" preload="auto"></audio>
     <script src="jspdf.umd.min.js"></script>
     <script>
+        // Open Queue Preview via C# instead of window.open
         document.getElementById("btn-queue-preview").addEventListener("click", function () {
-            const features = "width=1200,height=700,resizable=yes";
-            window.open("queuepreview.html", "QueuePreview", features);
+            if (window.chrome && window.chrome.webview) {
+                window.chrome.webview.postMessage("openQueuePreview");
+            } else {
+                alert("Queue Preview requires WebView2 support.");
+            }
         });
 
         // =========================================================================
-        // === ORIGINAL QUEUE MANAGEMENT SYSTEM (QMS) VARIABLES ===
+        // === QUEUE MANAGEMENT SYSTEM (QMS) VARIABLES - REDESIGNED ===
         // =========================================================================
-        let chkQueueNumber = 0; // Check-up counter
-        let vcineQueueNumber = 0; // Vaccine counter
-        let csrQueueNumber = 0; // Cashier counter
-        const MAX_QUEUE_NUMBER = 100;
+        
+        // New categorized queue structure
+        let queuesByCategory = {
+            checkup: [],
+            vaccine: [],
+            cashier: []
+        };
 
-        let queueList = [];
-        let currentIndex = -1;
-        let previousIndex = -1;
-        let tempSelectedIndex = -1;
-        let isNextPressed = false;
+        // Track which queue is actively serving (displayed in Queue Preview)
+        let servingQueue = {
+            number: null,      // e.g., "CHK-001"
+            category: null,    // 'checkup', 'vaccine', 'cashier'
+            id: null          // database ID
+        };
 
-        let timerInterval = null;
-        let seconds = 0;
-        const TIMER_LIMIT = 90; // 1 minute and 30 seconds (90 seconds)
+        // Track which queue is selected (for next call/delete)
+        let selectedQueue = {
+            number: null,
+            category: null,
+            id: null,
+            status: null
+        };
 
         const beepSound = document.getElementById('beepSound');
 
-        // 🟢 NEW GLOBAL VARIABLE: Admin ID
         let adminId = null;
+
+        let queuePollingInterval = null;
+        let clockUpdateInterval = null;
+
+        // =========================================================================
+        // === HELPER FUNCTIONS ===
+        // =========================================================================
+        
+        /**
+         * Categorize queue number based on prefix
+         * @param {string} queueNumber - e.g., "CHK-001", "VCINE-001", "CSR-001"
+         * @returns {string} - 'checkup', 'vaccine', or 'cashier'
+         */
+        function categorizeQueueNumber(queueNumber) {
+            if (!queueNumber) return null;
+            if (queueNumber.startsWith('CHK')) return 'checkup';
+            if (queueNumber.startsWith('VCINE')) return 'vaccine';
+            if (queueNumber.startsWith('CSR')) return 'cashier';
+            return null;
+        }
+
+        /**
+         * Get display name for category
+         * @param {string} category - 'checkup', 'vaccine', 'cashier'
+         * @returns {string} - Display name
+         */
+        function getCategoryDisplayName(category) {
+            const names = {
+                'checkup': 'Check-Up',
+                'vaccine': 'Vaccine',
+                'cashier': 'Cashier'
+            };
+            return names[category] || category;
+        }
+
+        /**
+         * Check if category has an active serving queue
+         * @param {string} category - 'checkup', 'vaccine', 'cashier'
+         * @returns {boolean}
+         */
+        function isCategoryServing(category) {
+            // Check if there's a Called status queue in this category
+            const categoryQueues = queuesByCategory[category] || [];
+            const hasCalledQueue = categoryQueues.some(q => (q.Status || q.status) === 'Called');
+            return hasCalledQueue;
+        }
+
+        /**
+         * Get category status badge text
+         * @param {string} category
+         * @returns {string} - "OPEN" or "In Service"
+         */
+        function getCategoryStatus(category) {
+            const hasQueues = queuesByCategory[category] && queuesByCategory[category].length > 0;
+            if (!hasQueues) return 'OPEN';
+            return isCategoryServing(category) ? 'In Service' : 'OPEN';
+        }
+
+        function findNextCalledQueue() {
+            let allCalledQueues = [];
+            
+            ['checkup', 'vaccine', 'cashier'].forEach(category => {
+                const categoryQueues = queuesByCategory[category] || [];
+                const calledQueues = categoryQueues.filter(q => (q.Status || q.status) === 'Called');
+                allCalledQueues = allCalledQueues.concat(calledQueues);
+            });
+            
+            if (allCalledQueues.length === 0) {
+                return null;
+            }
+            
+            allCalledQueues.sort((a, b) => {
+                const dateA = new Date(a.CreatedAt || a.createdAt);
+                const dateB = new Date(b.CreatedAt || b.createdAt);
+                return dateA - dateB;
+            });
+            
+            return allCalledQueues[0];
+        }
+
+        /**
+         * Update category status badge
+         * @param {string} category
+         */
+        function updateCategoryStatus(category) {
+            const statusElement = document.getElementById(`${category}-status`);
+            if (!statusElement) return;
+            
+            const isServing = isCategoryServing(category);
+            statusElement.textContent = isServing ? 'In Service' : 'OPEN';
+            statusElement.className = isServing ? 'status-badge status-serving' : 'status-badge status-open';
+        }
 
         // =========================================================================
         // === NEW: PATIENT RECORD MODULE VARIABLES & DUMMY DATA (UPDATED: NO DUMMY) ===
         // =========================================================================
         // FIXED: Walang laman ang patientRecords array
-        // Initialize patient records
+        // Initialize patient records - will be loaded from database
         let patientRecords = [];
         let nextPatientId = 1;
         let selectedPatientId = null;
         let isAddingNewPatient = true;
-
-        // Load from localStorage
-        const storedPatients = localStorage.getItem("patientRecords");
-        if (storedPatients) {
-            try {
-                patientRecords = JSON.parse(storedPatients);
-                if (patientRecords.length > 0) {
-                    nextPatientId = Math.max(...patientRecords.map(p => p.id)) + 1;
-                }
-            } catch (e) {
-                console.error("Error loading patient records:", e);
-                patientRecords = [];
-            }
-        }
-
-        // Render patient list once DOM is ready
-        document.addEventListener("DOMContentLoaded", function () {
-            renderPatientList(patientRecords);
-        });
-
-
+        let activeLetterFilter = null;
+        let activeAgeFilter = null;
 
         // =========================================================================
         // === PATIENT RECORD MODULE FUNCTIONS (NEW/MODIFIED) ===
         // =========================================================================
-        // Para sa pag clear ng patient records pag di na active sa loob ng 12 months 
-        function clearOldPatientRecords(months = 12) {
-            const cutoffDate = new Date();
-            cutoffDate.setMonth(cutoffDate.getMonth() - months);
-
-            patientRecords = patientRecords.filter(patient =>
-                patient.visits.some(visit => new Date(visit.date) >= cutoffDate)
-            );
-
-            // 🔹 Save updated records to localStorage
-            localStorage.setItem("patientRecords", JSON.stringify(patientRecords));
-        }
-
-
         function openPatientRecordPopup() {
-            console.log("Opening Patient Record Popup..."); // Debug message
+            console.log("Opening Patient Record Popup...");
             const popupElement = document.getElementById("patient-record-popup");
             if (!popupElement) {
-                console.error("ERROR: Cannot find the patient record popup element (#patient-record-popup)!");
-                showInfo("Error: Cannot find the patient record popup element."); // Show user feedback
-                return; // Stop if the main popup element is missing
+                console.error("ERROR: Cannot find the patient record popup element!");
+                showInfo("Error: Cannot find the patient record popup element.");
+                return;
             }
-            // Show the popup *first*
+            
             popupElement.style.display = "flex";
-
-            // Reset selected patient ID
             selectedPatientId = null;
 
-            try { // Use try...catch for safety
-                clearOldPatientRecords(12);
+            try {
+                const today = getLocalDateISOString();
+                
+                const patientDateInput = document.getElementById('patient-date');
+                patientDateInput.value = today;
+                patientDateInput.max = today;
+                patientDateInput.min = today;
+                
+                document.getElementById('patient-birthday').max = today;
 
-                // --- Safely set max date and default value for export date input ---
-                const today = getLocalDateISOString(); // Use local date
-                const exportDateInput = document.getElementById('export-date'); // Find the date input element
-
-                if (exportDateInput) { // Check if the element was successfully found
-                    exportDateInput.value = today; // Set default value to today
-                    exportDateInput.max = today;  // Set the max attribute to prevent future dates
-                    console.log("Export date input found and configured. Max date:", today); // Debug message
-                } else {
-                    // Log a warning if the element is missing, but don't stop the function
-                    console.warn("WARNING: Export date input element (#export-date) not found! Date filtering/export might not work as expected.");
-                }
-                // --- END ---
-                document.getElementById('patient-date').max = today;
-
-                // Continue setting up the rest of the popup
-                renderPatientList(patientRecords);
                 clearPatientForm();
-                renderPatientDetails(null); // Clear details when opening
-                console.log("Patient Record Popup opened and configured successfully."); // Debug message
+                renderPatientDetails(null);
+                initializeFilters();
+                
+                window.chrome.webview.postMessage("getPatients");
+                console.log("Patient Record Popup opened successfully.");
 
             } catch (error) {
-                // If any error occurs during setup, log it and try to hide the popup
                 console.error("ERROR occurred inside openPatientRecordPopup:", error);
                 showInfo("An error occurred while setting up the patient record popup: " + error.message);
                 if (popupElement) {
-                    popupElement.style.display = "none"; // Hide potentially broken popup
+                    popupElement.style.display = "none";
                 }
             }
         }
@@ -1725,20 +2051,24 @@
 
             const patient = patientRecords.find(p => p.id === id);
             if (patient) {
-                // Populate the Form Column with patient's MAIN details (Name, Contact)
-                document.getElementById('patient-id').value = patient.id;
-                document.getElementById('patient-name').value = patient.name;
-                document.getElementById('patient-contact').value = patient.contact;
+                // Populate the Form Column with patient's MAIN details
+                document.getElementById('patient-id').value = patient.id || '';
+                document.getElementById('patient-name').value = patient.name || '';
+                document.getElementById('patient-contact').value = patient.contact || '';
+                document.getElementById('patient-birthday').value = patient.birthday || '';
+                document.getElementById('patient-age').value = patient.age || '';
+                document.getElementById('patient-weight').value = patient.weight || '';
+                document.getElementById('patient-height').value = patient.height || '';
+                document.getElementById('patient-notes').value = patient.notes || '';
 
                 // Clear temporary visit data fields for new entry
-                document.getElementById('patient-date').value = new Date().toISOString().slice(0, 10);
+                document.getElementById('patient-date').value = getLocalDateISOString();
                 document.getElementById('patient-purpose').value = "";
+                document.getElementById('patient-visit-notes').value = "";
 
                 // Set the checkbox state based on visit history
                 document.getElementById('patient-first-visit').checked = (patient.visits.length === 0);
-
-                // ✅ --- ADD THIS LINE ---
-                document.getElementById('patient-first-visit').disabled = true; // Make it non-clickable
+                document.getElementById('patient-first-visit').disabled = true;
 
                 // Render the visit history in the Details Column
                 renderPatientDetails(patient);
@@ -1760,9 +2090,15 @@
 
             // Display main patient info once at the top
             detailsContainer.innerHTML += `
-                                                         <h5>${patient.name}</h5>
-                                                         <p><strong>Contact No:</strong> <span>${patient.contact}</span></p>
-                                                         <hr>`;
+                <h5>${patient.name}</h5>
+                <p><strong>Patient ID:</strong> <span style="color: #ff9800; font-weight: bold;">${patient.uniqueId || 'N/A'}</span></p>
+                <p><strong>Contact No:</strong> <span>${patient.contact || 'N/A'}</span></p>
+                <p><strong>Birthday:</strong> <span>${patient.birthday || 'N/A'}</span></p>
+                <p><strong>Age:</strong> <span>${patient.age || 'N/A'}</span></p>
+                <p><strong>Weight:</strong> <span>${patient.weight ? patient.weight + ' kg' : 'N/A'}</span></p>
+                <p><strong>Height:</strong> <span>${patient.height ? patient.height + ' cm' : 'N/A'}</span></p>
+                <p><strong>Notes:</strong> <span>${patient.notes || 'N/A'}</span></p>
+                <hr>`;
 
             // Display Visit History
             if (patient.visits.length === 0) {
@@ -1770,17 +2106,17 @@
                 return;
             }
 
-            patient.visits.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date descending (latest first)
+            patient.visits.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             patient.visits.forEach(visit => {
                 const visitType = visit.isFirstVisit ? '<span style="color: blue;">(1st Visit)</span>' : '<span style="color: green;">(Follow-up)</span>';
                 detailsContainer.innerHTML += `
-                                                                         <div class="detail-record">
-                                                                             <p><strong>Date:</strong> <span>${visit.date} ${visitType}</span></p>
-                                                                             <p><strong>Purpose:</strong> <span>${visit.purpose}</span></p>
-                                                                             <p><strong>Notes:</strong> <span>${visit.notes || 'N/A'}</span></p>
-                                                                         </div>
-                                                                         `;
+                    <div class="detail-record">
+                        <p><strong>Date:</strong> <span>${visit.date} ${visitType}</span></p>
+                        <p><strong>Purpose:</strong> <span>${visit.purpose}</span></p>
+                        <p><strong>Visit Notes:</strong> <span>${visit.visitNotes || 'N/A'}</span></p>
+                    </div>
+                `;
             });
         }
 
@@ -1789,7 +2125,7 @@
          * clears patient selection (removes highlight), and clears the details column.
          */
         function clearPatientForm() {
-            selectedPatientId = null; // Huwag magkaroon ng selected patient
+            selectedPatientId = null;
             isAddingNewPatient = true;
 
             // Clear all list highlights
@@ -1797,96 +2133,90 @@
 
             // Clear form inputs
             document.getElementById('patient-id').value = '';
-            document.getElementById('patient-name').value = ''; // FIX: Nilinis ang Name field
-            document.getElementById('patient-contact').value = ''; // FIX: Nilinis ang Contact field
-            document.getElementById('patient-date').value = getLocalDateISOString(); // Set to local today
+            document.getElementById('patient-name').value = '';
+            document.getElementById('patient-contact').value = '';
+            document.getElementById('patient-birthday').value = '';
+            document.getElementById('patient-age').value = '';
+            document.getElementById('patient-weight').value = '';
+            document.getElementById('patient-height').value = '';
+            document.getElementById('patient-notes').value = '';
+            document.getElementById('patient-date').value = getLocalDateISOString();
             document.getElementById('patient-purpose').value = "";
+            document.getElementById('patient-visit-notes').value = "";
 
             // Set checkbox to checked for new patient
             document.getElementById('patient-first-visit').checked = true;
-
-            // ✅ --- ADD THIS LINE ---
-            document.getElementById('patient-first-visit').disabled = true; // Make it non-clickable
+            document.getElementById('patient-first-visit').disabled = true;
 
             // Clear details column
             renderPatientDetails(null);
 
             // Update button visibility/text
             document.querySelector('.btn-add').textContent = 'Add New Patient';
-            document.querySelector('.btn-update').style.display = 'none'; // Hide update button for new patient
+            document.querySelector('.btn-update').style.display = 'none';
         }
 
         // --- CRUD Operations ---
         function addPatientRecord() {
             const name = document.getElementById('patient-name').value.trim();
             const contact = document.getElementById('patient-contact').value.trim();
+            const birthday = document.getElementById('patient-birthday').value;
+            const age = document.getElementById('patient-age').value;
+            const weight = document.getElementById('patient-weight').value;
+            const height = document.getElementById('patient-height').value;
+            const notes = document.getElementById('patient-notes').value.trim();
             const date = document.getElementById('patient-date').value;
             const purpose = document.getElementById('patient-purpose').value;
+            const visitNotes = document.getElementById('patient-visit-notes').value.trim();
             const isFirstVisit = document.getElementById('patient-first-visit').checked;
 
-            // Simple validation (Includes contact length check)
+            // Validation
             if (!name || !contact || !date || !purpose) {
-                showInfo("Error: Please fill in all patient and visit details.");
+                showInfo("Error: Please fill in all required fields (marked with *).");
                 return;
             }
-            // 🟢 NEW: Contact specific validation
             if (contact.length !== 11 || !/^\d{11}$/.test(contact)) {
                 showInfo("Error: Contact number must be exactly 11 numeric digits.");
                 return;
             }
 
             if (isAddingNewPatient) {
-                // Add New Patient (and their first visit)
-                const newPatient = {
-                    id: nextPatientId++,
+                // Send data to backend to add new patient
+                const patientData = {
                     name: name,
                     contact: contact,
-                    visits: [{
-                        date: date,
-                        purpose: purpose,
-                        isFirstVisit: true,
-                        notes: `Initial visit for ${purpose}.`
-                    }]
+                    birthday: birthday || null,
+                    age: age || null,
+                    weight: weight || null,
+                    height: height || null,
+                    notes: notes || null,
+                    visitDate: date,
+                    visitPurpose: purpose,
+                    visitNotes: visitNotes || null,
+                    isFirstVisit: true
                 };
-                patientRecords.unshift(newPatient); // Add to the top
-                selectedPatientId = newPatient.id;
-                showInfo(`Success: New patient "${name}" added.`);
-
-                // Simulate backend call (Replace with actual backend message)
-                window.chrome.webview.postMessage(`addPatient:${JSON.stringify(newPatient)}`);
+                
+                window.chrome.webview.postMessage(`addPatient:${JSON.stringify(patientData)}`);
+                showInfo(`Adding new patient "${name}"...`);
 
             } else {
-                // Add New Visit (to an existing patient)
-                const patient = patientRecords.find(p => p.id === selectedPatientId);
-                if (patient) {
-                    const newVisit = {
-                        date: date,
-                        purpose: purpose,
-                        isFirstVisit: patient.visits.length === 0,
-                        notes: `Follow-up visit for ${purpose}.`
-                    };
-                    patient.visits.push(newVisit);
-
-                    // Also update patient's main info (Name/Contact) in case they were changed
-                    patient.name = name;
-                    patient.contact = contact;
-
-                    showInfo(`Success: New visit added for "${name}".`);
-
-                    // Simulate backend call (Replace with actual backend message)
-                    window.chrome.webview.postMessage(`addVisit:${selectedPatientId}:${JSON.stringify(newVisit)}`);
-
-                } else {
-                    showInfo("Error: Selected patient not found.");
-                    return;
-                }
+                // Add new visit to existing patient
+                const visitData = {
+                    patientId: selectedPatientId,
+                    visitDate: date,
+                    visitPurpose: purpose,
+                    visitNotes: visitNotes || null,
+                    isFirstVisit: false
+                };
+                
+                window.chrome.webview.postMessage(`addVisit:${JSON.stringify(visitData)}`);
+                showInfo(`Adding new visit for patient...`);
             }
 
-            // Re-render everything
-            // Save to localStorage
-            localStorage.setItem("patientRecords", JSON.stringify(patientRecords));
-            renderPatientList(patientRecords);
-            selectPatient(selectedPatientId); // Reload details and form context
+            // Request to reload patient list from database
+            setTimeout(() => {
+                window.chrome.webview.postMessage("getPatients");
+            }, 500);
         }
 
         function updatePatientRecord() {
@@ -1897,49 +2227,384 @@
 
             const name = document.getElementById('patient-name').value.trim();
             const contact = document.getElementById('patient-contact').value.trim();
+            const birthday = document.getElementById('patient-birthday').value;
+            const age = document.getElementById('patient-age').value;
+            const weight = document.getElementById('patient-weight').value;
+            const height = document.getElementById('patient-height').value;
+            const notes = document.getElementById('patient-notes').value.trim();
 
-            // Simple validation (Includes contact length check)
+            // Validation
             if (!name || !contact) {
                 showInfo("Error: Name and Contact cannot be empty.");
                 return;
             }
-            // 🟢 NEW: Contact specific validation
             if (contact.length !== 11 || !/^\d{11}$/.test(contact)) {
                 showInfo("Error: Contact number must be exactly 11 numeric digits.");
                 return;
             }
 
-            const patient = patientRecords.find(p => p.id === selectedPatientId);
-            if (patient) {
-                // Only update Name and Contact from the form, since visits are added separately.
-                patient.name = name;
-                patient.contact = contact;
+            const patientData = {
+                patientId: selectedPatientId,
+                name: name,
+                contact: contact,
+                birthday: birthday || null,
+                age: age || null,
+                weight: weight || null,
+                height: height || null,
+                notes: notes || null
+            };
 
-                showInfo(`Success: Patient "${name}" (ID: ${selectedPatientId}) updated.`);
+            window.chrome.webview.postMessage(`updatePatient:${JSON.stringify(patientData)}`);
+            showInfo(`Updating patient "${name}"...`);
 
-                // Simulate backend call (Replace with actual backend message)
-                window.chrome.webview.postMessage(`updatePatient:${selectedPatientId}:${name}:${contact}`);
-            } else {
-                showInfo("Error: Selected patient not found for update.");
+            // Request to reload patient list from database
+            setTimeout(() => {
+                window.chrome.webview.postMessage("getPatients");
+            }, 500);
+        }
+
+        function initializeFilters() {
+            const letterContainer = document.getElementById('letter-filters');
+            const ageContainer = document.getElementById('age-filters');
+            
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+            letterContainer.innerHTML = '<button class="letter-btn" onclick="filterByLetter(null)">All</button>';
+            letters.forEach(letter => {
+                letterContainer.innerHTML += `<button class="letter-btn" onclick="filterByLetter('${letter}')">${letter}</button>`;
+            });
+            
+            const ageRanges = [
+                { label: 'All', range: null },
+                { label: '0-12', range: [0, 12] },
+                { label: '13-17', range: [13, 17] },
+                { label: '18-35', range: [18, 35] },
+                { label: '36-59', range: [36, 59] },
+                { label: '60+', range: [60, 999] }
+            ];
+            
+            ageRanges.forEach(age => {
+                ageContainer.innerHTML += `<button class="age-btn" onclick='filterByAge(${JSON.stringify(age.range)})'>${age.label}</button>`;
+            });
+        }
+
+        function filterByLetter(letter) {
+            activeLetterFilter = letter;
+            document.querySelectorAll('.letter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            applyFilters();
+        }
+
+        function filterByAge(range) {
+            activeAgeFilter = range;
+            document.querySelectorAll('.age-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            applyFilters();
+        }
+
+        function applyFilters() {
+            let filtered = patientRecords;
+            
+            if (activeLetterFilter) {
+                filtered = filtered.filter(p => p.name.toUpperCase().startsWith(activeLetterFilter));
             }
-
-            // Re-render list/details
-            // Save to localStorage
-            localStorage.setItem("patientRecords", JSON.stringify(patientRecords));
-            renderPatientList(patientRecords);
-            renderPatientDetails(patient);
+            
+            if (activeAgeFilter) {
+                filtered = filtered.filter(p => {
+                    const age = p.age || 0;
+                    return age >= activeAgeFilter[0] && age <= activeAgeFilter[1];
+                });
+            }
+            
+            const searchTerm = document.getElementById('patient-search-input').value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(p => 
+                    p.name.toLowerCase().includes(searchTerm) || 
+                    (p.uniqueId && p.uniqueId.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            renderPatientList(filtered);
         }
 
         function searchPatients() {
-            const searchTerm = document.getElementById('patient-search-input').value.toLowerCase();
-            const filteredPatients = patientRecords.filter(patient =>
-                patient.name.toLowerCase().includes(searchTerm)
+            applyFilters();
+        }
+
+        function openExportFilterPopup() {
+            window.chrome.webview.postMessage("getPatients");
+            
+            setTimeout(() => {
+                const popup = document.getElementById('export-filter-popup');
+                popup.style.display = 'flex';
+                
+                const today = getLocalDateISOString();
+                document.getElementById('export-filter-date').value = today;
+                document.getElementById('export-filter-date').max = today;
+                document.getElementById('export-week-start').max = today;
+                document.getElementById('export-week-end').max = today;
+                
+                const currentMonth = new Date().toISOString().slice(0, 7);
+                document.getElementById('export-filter-month').value = currentMonth;
+                document.getElementById('export-filter-month').max = currentMonth;
+                
+                toggleExportFilterInputs();
+            }, 300);
+        }
+
+        function closeExportFilterPopup() {
+            document.getElementById('export-filter-popup').style.display = 'none';
+        }
+
+        function toggleExportFilterInputs() {
+            const filterType = document.getElementById('export-filter-type').value;
+            
+            document.getElementById('export-date-inputs').style.display = 'none';
+            document.getElementById('export-week-inputs').style.display = 'none';
+            document.getElementById('export-month-inputs').style.display = 'none';
+            document.getElementById('export-patient-inputs').style.display = 'none';
+            
+            if (filterType === 'day') {
+                document.getElementById('export-date-inputs').style.display = 'block';
+            } else if (filterType === 'week') {
+                document.getElementById('export-week-inputs').style.display = 'block';
+            } else if (filterType === 'month') {
+                document.getElementById('export-month-inputs').style.display = 'block';
+            } else if (filterType === 'patient') {
+                document.getElementById('export-patient-inputs').style.display = 'block';
+                clearSelectedPatient();
+            }
+        }
+
+        function searchPatientForExport() {
+            const searchTerm = document.getElementById('export-patient-search').value.trim().toLowerCase();
+            const resultsDiv = document.getElementById('export-patient-results');
+            
+            if (searchTerm.length === 0) {
+                resultsDiv.style.display = 'none';
+                resultsDiv.innerHTML = '';
+                return;
+            }
+            
+            const matchingPatients = patientRecords.filter(patient =>
+                patient.name && patient.name.toLowerCase().includes(searchTerm)
             );
-            renderPatientList(filteredPatients);
+            
+            if (matchingPatients.length === 0) {
+                resultsDiv.innerHTML = '<div style="padding: 10px; text-align: center; color: #999;">No patients found</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+            
+            resultsDiv.innerHTML = matchingPatients.map(patient => `
+                <div onclick="selectPatientForExport(${patient.id}, '${patient.name.replace(/'/g, "\\'")}')" 
+                     style="padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; transition: background-color 0.2s;"
+                     onmouseover="this.style.backgroundColor='#f5f5f5'" 
+                     onmouseout="this.style.backgroundColor='white'">
+                    <strong>${patient.name}</strong><br>
+                    <small style="color: #666;">ID: ${patient.uniqueId || patient.id} | Contact: ${patient.contact || 'N/A'}</small>
+                </div>
+            `).join('');
+            
+            resultsDiv.style.display = 'block';
+        }
+
+        function selectPatientForExport(patientId, patientName) {
+            document.getElementById('export-selected-patient-id').value = patientId;
+            document.getElementById('export-selected-patient-name').textContent = patientName;
+            document.getElementById('export-selected-patient-display').style.display = 'block';
+            document.getElementById('export-patient-results').style.display = 'none';
+            document.getElementById('export-patient-search').value = '';
+        }
+
+        function clearSelectedPatient() {
+            document.getElementById('export-selected-patient-id').value = '';
+            document.getElementById('export-selected-patient-name').textContent = '';
+            document.getElementById('export-selected-patient-display').style.display = 'none';
+            document.getElementById('export-patient-search').value = '';
+            document.getElementById('export-patient-results').style.display = 'none';
+            document.getElementById('export-patient-results').innerHTML = '';
+        }
+
+        async function executeExport() {
+            if (typeof window.jspdf === 'undefined') {
+                console.error("jsPDF library is not loaded. Cannot export.");
+                showInfo("Error: PDF library (jsPDF) is not loaded. Make sure 'jspdf.umd.min.js' is in the wwwroot folder.");
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+
+            if (!patientRecords || patientRecords.length === 0) {
+                showInfo("No patient data available to export.");
+                return;
+            }
+
+            const filterType = document.getElementById('export-filter-type').value;
+            let recordsToExport = [];
+            let exportTitle = '';
+
+            if (filterType === 'day') {
+                const selectedDate = document.getElementById('export-filter-date').value;
+                if (!selectedDate) {
+                    showInfo("Error: Please select a date to export.");
+                    return;
+                }
+                
+                recordsToExport = patientRecords.filter(patient =>
+                    patient.visits && patient.visits.some(visit => visit.date === selectedDate)
+                );
+                exportTitle = `Patient Visits Report - ${selectedDate}`;
+                
+                if (recordsToExport.length === 0) {
+                    showInfo(`No patient visits recorded on ${selectedDate}.`);
+                    return;
+                }
+                
+                recordsToExport = recordsToExport.map(patient => ({
+                    ...patient,
+                    visits: patient.visits.filter(visit => visit.date === selectedDate)
+                }));
+                
+            } else if (filterType === 'week') {
+                const weekStart = document.getElementById('export-week-start').value;
+                const weekEnd = document.getElementById('export-week-end').value;
+                
+                if (!weekStart || !weekEnd) {
+                    showInfo("Error: Please select both start and end dates for the week.");
+                    return;
+                }
+                
+                if (new Date(weekStart) > new Date(weekEnd)) {
+                    showInfo("Error: Start date cannot be after end date.");
+                    return;
+                }
+                
+                recordsToExport = patientRecords.filter(patient =>
+                    patient.visits && patient.visits.some(visit => 
+                        visit.date >= weekStart && visit.date <= weekEnd
+                    )
+                );
+                exportTitle = `Patient Visits Report - Week (${weekStart} to ${weekEnd})`;
+                
+                if (recordsToExport.length === 0) {
+                    showInfo(`No patient visits recorded between ${weekStart} and ${weekEnd}.`);
+                    return;
+                }
+                
+                recordsToExport = recordsToExport.map(patient => ({
+                    ...patient,
+                    visits: patient.visits.filter(visit => 
+                        visit.date >= weekStart && visit.date <= weekEnd
+                    )
+                }));
+                
+            } else if (filterType === 'month') {
+                const selectedMonth = document.getElementById('export-filter-month').value;
+                if (!selectedMonth) {
+                    showInfo("Error: Please select a month to export.");
+                    return;
+                }
+                
+                recordsToExport = patientRecords.filter(patient =>
+                    patient.visits && patient.visits.some(visit => 
+                        visit.date && visit.date.startsWith(selectedMonth)
+                    )
+                );
+                
+                const monthName = new Date(selectedMonth + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                exportTitle = `Patient Visits Report - ${monthName}`;
+                
+                if (recordsToExport.length === 0) {
+                    showInfo(`No patient visits recorded in ${monthName}.`);
+                    return;
+                }
+                
+                recordsToExport = recordsToExport.map(patient => ({
+                    ...patient,
+                    visits: patient.visits.filter(visit => 
+                        visit.date && visit.date.startsWith(selectedMonth)
+                    )
+                }));
+                
+            } else if (filterType === 'patient') {
+                const selectedPatientId = document.getElementById('export-selected-patient-id').value;
+                if (!selectedPatientId) {
+                    showInfo("Error: Please search and select a patient from the list.");
+                    return;
+                }
+                
+                const selectedPatient = patientRecords.find(patient => patient.id == selectedPatientId);
+                if (!selectedPatient) {
+                    showInfo("Error: Selected patient not found.");
+                    return;
+                }
+                
+                recordsToExport = [selectedPatient];
+                exportTitle = `Patient Visits Report - ${selectedPatient.name}`;
+            }
+
+            const doc = new jsPDF();
+            doc.setFontSize(18);
+            doc.text(exportTitle, 14, 20);
+            doc.setFontSize(12);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+            let y = 40;
+
+            recordsToExport.forEach((patient, idx) => {
+                if (idx > 0) {
+                    y += 6;
+                    doc.setDrawColor(200, 200, 200);
+                    doc.line(10, y, 200, y);
+                    y += 8;
+                }
+
+                if (y > 260) {
+                    doc.addPage();
+                    y = 20;
+                }
+
+                doc.setFontSize(14);
+                doc.text(`${idx + 1}. ${patient.name}`, 14, y);
+                y += 7;
+                doc.setFontSize(11);
+                doc.text(`Contact: ${patient.contact}`, 14, y);
+                y += 6;
+
+                if (patient.visits && patient.visits.length > 0) {
+                    doc.text(`Visit${patient.visits.length > 1 ? 's' : ''}:`, 14, y);
+                    y += 6;
+
+                    patient.visits.forEach((visit) => {
+                        const visitType = visit.isFirstVisit ? "(1st Visit)" : "(Follow-up)";
+                        const visitDate = visit.date || 'N/A';
+                        const visitInfo = `    • ${visitDate} - ${visit.purpose} ${visitType}`;
+
+                        if (y > 270) {
+                            doc.addPage();
+                            y = 20;
+                        }
+                        doc.text(visitInfo, 20, y);
+                        y += 6;
+
+                        if (visit.notes) {
+                            const splitNotes = doc.splitTextToSize(`Notes: ${visit.notes}`, 160);
+                            if (y + (splitNotes.length * 6) > 280) {
+                                doc.addPage();
+                                y = 20;
+                            }
+                            doc.text(splitNotes, 24, y);
+                            y += splitNotes.length * 6;
+                        }
+                    });
+                }
+            });
+
+            const fileName = `Patient_Records_${filterType}_${new Date().toISOString().slice(0, 10)}.pdf`;
+            doc.save(fileName);
+            showInfo(`PDF export completed successfully!`);
+            closeExportFilterPopup();
         }
 
         async function exportPatientDataByDate() {
-
             // 1. Check if jsPDF library is loaded
             if (typeof window.jspdf === 'undefined') {
                 console.error("jsPDF library is not loaded. Cannot export.");
@@ -1955,15 +2620,14 @@
                 return;
             }
 
-            // 3. Get and Filter Data
-            const allPatientRecords = JSON.parse(localStorage.getItem("patientRecords") || "[]");
-            if (!allPatientRecords || allPatientRecords.length === 0) {
+            // 3. Get and Filter Data from current loaded patient records
+            if (!patientRecords || patientRecords.length === 0) {
                 showInfo("No patient data available to export.");
                 return;
             }
 
             // Filter for patients who had visits on the selected date
-            const recordsToExport = allPatientRecords.filter(patient =>
+            const recordsToExport = patientRecords.filter(patient =>
                 patient.visits && patient.visits.some(visit => visit.date === selectedDate)
             );
 
@@ -2047,24 +2711,35 @@
          * Saves the current queue state (queueList and currentIndex) to localStorage.
          * This is called after every action that modifies the queue to notify the display screen.
          */
+        /**
+         * Save queue state to localStorage for Queue Preview sync
+         */
         function saveQueueState() {
-            // 1. I-save ang buong Queue List at ang index ng kasalukuyang tinatawag
-            localStorage.setItem('queueList', JSON.stringify(queueList));
-            localStorage.setItem('currentIndex', currentIndex.toString());
-
-            // 2. Optional: Para sa C# WebView communication (para ma-broadcast sa kabilang window)
+            // Save serving queue info
+            localStorage.setItem('servingQueue', JSON.stringify(servingQueue));
+            
+            // Save categorized queues
+            localStorage.setItem('queuesByCategory', JSON.stringify(queuesByCategory));
+            
+            // For Queue Preview - get next 3 queues from serving category
             const nextInline = [];
-            const startNext = currentIndex + 1;
-            for (let i = 0; i < 3; i++) {
-                if (startNext + i < queueList.length) {
-                    nextInline.push(queueList[startNext + i]);
+            if (servingQueue.category) {
+                const categoryQueues = queuesByCategory[servingQueue.category] || [];
+                const servingIndex = categoryQueues.findIndex(q => 
+                    (q.QueueNumber || q.queueNumber) === servingQueue.number
+                );
+                
+                for (let i = 1; i <= 3; i++) {
+                    const nextIndex = servingIndex + i;
+                    if (nextIndex < categoryQueues.length) {
+                        nextInline.push(categoryQueues[nextIndex].QueueNumber || categoryQueues[nextIndex].queueNumber);
+                    }
                 }
             }
-
-            const nowServing = currentIndex >= 0 ? queueList[currentIndex] : "--";
-
-            // Kung gumagamit kayo ng C# WebView:
-            // window.chrome.webview.postMessage(`updateDisplay:${nowServing}:${nextInline.join(',')}`);
+            
+            // Save for Queue Preview
+            localStorage.setItem('nowServing', servingQueue.number || '--');
+            localStorage.setItem('nextInLine', JSON.stringify(nextInline));
         }
 
         // =========================================================================
@@ -2109,12 +2784,38 @@
         function openQueueSelectionPopup() {
             document.getElementById("queue-selection-popup").style.display = "flex";
             window.chrome.webview.postMessage("getQueueList");
+            
+            updateDateTimeDisplay();
+            
+            if (queuePollingInterval) {
+                clearInterval(queuePollingInterval);
+            }
+            queuePollingInterval = setInterval(() => {
+                window.chrome.webview.postMessage("getQueueList");
+            }, 3000);
+            
+            if (clockUpdateInterval) {
+                clearInterval(clockUpdateInterval);
+            }
+            clockUpdateInterval = setInterval(() => {
+                updateDateTimeDisplay();
+            }, 1000);
         }
 
          
 
         function closeQueueSelectionPopup() {
             document.getElementById("queue-selection-popup").style.display = "none";
+            
+            if (queuePollingInterval) {
+                clearInterval(queuePollingInterval);
+                queuePollingInterval = null;
+            }
+            
+            if (clockUpdateInterval) {
+                clearInterval(clockUpdateInterval);
+                clockUpdateInterval = null;
+            }
         }
 
         function openCreateStaffPopup() {
@@ -2143,6 +2844,19 @@
 
         function closeEditPopup() {
             document.getElementById("edit-popup").style.display = "none";
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById("edit-password");
+            const toggleIcon = document.getElementById("toggle-password-icon");
+            
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleIcon.textContent = "🙈";
+            } else {
+                passwordInput.type = "password";
+                toggleIcon.textContent = "👁️";
+            }
         }
 
         function openDeletePopup(id) {
@@ -2196,36 +2910,6 @@
             document.getElementById("queue-popup").style.display = "none";
             document.querySelectorAll("input[type='radio']").forEach(r => r.checked = false);
             document.querySelectorAll("input[type='checkbox']").forEach(c => c.checked = false);
-        }
-
-        function startTimer() {
-            clearInterval(timerInterval);
-            seconds = 0;
-            const TIMER_LIMIT = 10;
-            const display = document.getElementById('servingTime');
-            display.style.color = "#333";
-
-            function updateTimerDisplay() {
-                if (seconds > TIMER_LIMIT) {
-                    clearInterval(timerInterval);
-                    display.textContent = "TIMEOUT";
-                    display.style.color = "red";
-                    return;
-                }
-                const mins = Math.floor(seconds / 60);
-                const secs = seconds % 60;
-                display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-                seconds++;
-            }
-            updateTimerDisplay();
-            timerInterval = setInterval(updateTimerDisplay, 1000);
-        }
-
-        function resetTimer() {
-            clearInterval(timerInterval);
-            seconds = 0;
-            document.getElementById('servingTime').textContent = "00:00";
-            document.getElementById('servingTime').style.color = "#333";
         }
 
         function generateQueue(code) {
@@ -2328,201 +3012,356 @@
             closeQueuePopup();
         }
 
-        function updateQueueListDisplay() {
-            const listContainer = document.getElementById('queue-list');
-            if (!listContainer) return;
+        // =========================================================================
+        // === RENDERING FUNCTIONS ===
+        // =========================================================================
 
-            listContainer.innerHTML = '<h3 style="text-align:center; color:white; margin-bottom:10px; font-size:28px;">Queue List</h3>';
+        /**
+         * Render categorized queue list with all categories
+         */
+        function renderCategorizedQueueList() {
+            // Render each category
+            renderCategorySection('checkup');
+            renderCategorySection('vaccine');
+            renderCategorySection('cashier');
+        }
 
-            if (queueList.length === 0) {
-                listContainer.innerHTML += `<p style="text-align:center; color:white; font-size:20px;">N/A</p>`;
+        /**
+         * Render a specific category section
+         * @param {string} category - 'checkup', 'vaccine', 'cashier'
+         */
+        function renderCategorySection(category) {
+            const itemsContainer = document.getElementById(`${category}-items`);
+            if (!itemsContainer) return;
+
+            const queues = queuesByCategory[category] || [];
+            
+            // Clear container
+            itemsContainer.innerHTML = '';
+
+            // If no queues, show empty message
+            if (queues.length === 0) {
+                itemsContainer.innerHTML = '<p style="text-align:center; color:#ccc; font-size:14px;">No queues</p>';
+                updateCategoryStatus(category);
                 return;
             }
 
-            queueList.forEach((queueNum, index) => {
-                if (isNextPressed && index < currentIndex) {
-                    return;
-                }
-
+            // Render each queue item
+            queues.forEach(queue => {
                 const item = document.createElement('div');
-
-                let bgColor = index === currentIndex ? '#388E3C' : 'white';
-                let textColor = index === currentIndex ? 'white' : 'black';
-
-                let borderStyle = index === previousIndex ? '3px solid #FFC107' : 'none';
-
-                item.style.background = bgColor;
-                item.style.color = textColor;
-                item.style.fontWeight = 'bold';
-                item.style.fontSize = '18px';
-                item.style.margin = '5px';
-                item.style.padding = '8px';
-                item.style.borderRadius = '8px';
-                item.style.border = borderStyle;
-                item.style.display = 'flex';
-                item.style.justifyContent = 'space-between';
-                item.setAttribute('onclick', `selectQueue(${index})`);
-                item.innerHTML = `<span>${queueNum}</span>`;
-                listContainer.appendChild(item);
+                item.className = 'queue-item';
+                item.dataset.queueNumber = queue.QueueNumber || queue.queueNumber;
+                item.dataset.category = category;
+                item.dataset.id = queue.Id || queue.id;
+                
+                const status = queue.Status || queue.status || 'Pending';
+                
+                if (status === 'Pending') {
+                    item.classList.add('pending');
+                } else if (status === 'Called') {
+                    item.classList.add('called');
+                }
+                
+                if (servingQueue.number === queue.QueueNumber || servingQueue.number === queue.queueNumber) {
+                    item.classList.add('serving');
+                }
+                if (selectedQueue.number === queue.QueueNumber || selectedQueue.number === queue.queueNumber) {
+                    item.classList.add('selected');
+                }
+                
+                item.textContent = queue.QueueNumber || queue.queueNumber;
+                item.onclick = () => selectQueueItem(queue.QueueNumber || queue.queueNumber, category, queue.Id || queue.id);
+                
+                itemsContainer.appendChild(item);
             });
+
+            // Update category status badge
+            updateCategoryStatus(category);
         }
 
-        function updateBlueBox(code) {
+        /**
+         * Select a queue item (click handler)
+         * @param {string} queueNumber
+         * @param {string} category
+         * @param {number} id
+         */
+        function selectQueueItem(queueNumber, category, id) {
+            const previousCategory = selectedQueue.category;
+            
+            // Toggle: if clicking the same item, deselect it
+            if (selectedQueue.number === queueNumber && selectedQueue.category === category) {
+                selectedQueue = {
+                    number: null,
+                    category: null,
+                    id: null,
+                    status: null
+                };
+                console.log('Deselected queue item');
+                renderCategorySection(category);
+            } else {
+                const queue = queuesByCategory[category].find(q => 
+                    (q.QueueNumber || q.queueNumber) === queueNumber
+                );
+                
+                selectedQueue = {
+                    number: queueNumber,
+                    category: category,
+                    id: id,
+                    status: queue ? (queue.Status || queue.status || 'Pending') : 'Pending'
+                };
+                
+                console.log(`Selected: ${queueNumber} from ${category}, Status: ${selectedQueue.status}`);
+                
+                // Re-render BOTH categories if switching between different categories
+                if (previousCategory && previousCategory !== category) {
+                    renderCategorySection(previousCategory);
+                }
+                renderCategorySection(category);
+            }
+            
+            updateButtonStates();
+        }
+
+        /**
+         * Update NOW SERVING display box
+         * @param {string} queueNumber - Queue number to display
+         */
+        function updateNowServingDisplay(queueNumber) {
             const box = document.querySelector('.center-box');
-            if (box) box.textContent = code || "--";
-
+            const datetimeBox = document.getElementById('serving-datetime');
+            
+            if (box) box.textContent = queueNumber || "--";
+            
+            updateDateTimeDisplay();
         }
 
+        function updateDateTimeDisplay() {
+            const datetimeBox = document.getElementById('serving-datetime');
+            if (datetimeBox) {
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                datetimeBox.textContent = `${dateStr} • ${timeStr}`;
+            }
+        }
+
+        /**
+         * Update button states based on selected queue status
+         */
+        function updateButtonStates() {
+            const callBtn = document.querySelector('.queue-btn.call');
+            const nextBtn = document.querySelector('.queue-btn.next');
+            const deleteBtn = document.querySelector('.queue-btn.delete');
+            
+            if (!selectedQueue.number) {
+                if (callBtn) callBtn.disabled = true;
+                if (nextBtn) nextBtn.disabled = true;
+                if (deleteBtn) deleteBtn.disabled = true;
+                return;
+            }
+            
+            const status = selectedQueue.status || 'Pending';
+            const category = selectedQueue.category;
+            
+            const isFirstInQueue = () => {
+                const queues = queuesByCategory[category] || [];
+                const pendingQueues = queues.filter(q => (q.Status || q.status) === 'Pending');
+                if (pendingQueues.length === 0) return false;
+                const firstQueue = pendingQueues[0];
+                return (firstQueue.QueueNumber || firstQueue.queueNumber) === selectedQueue.number;
+            };
+            
+            if (status === 'Called') {
+                if (callBtn) callBtn.disabled = true;
+                if (nextBtn) nextBtn.disabled = false;
+                if (deleteBtn) deleteBtn.disabled = true;
+            } else if (status === 'Pending') {
+                if (callBtn) callBtn.disabled = !isFirstInQueue();
+                if (nextBtn) nextBtn.disabled = true;
+                if (deleteBtn) deleteBtn.disabled = false;
+            } else {
+                if (callBtn) callBtn.disabled = true;
+                if (nextBtn) nextBtn.disabled = true;
+                if (deleteBtn) deleteBtn.disabled = true;
+            }
+        }
+
+
+        // =========================================================================
+        // === BUTTON ACTION FUNCTIONS ===
+        // =========================================================================
+
+        /**
+         * CALL button - Call the selected queue
+         */
         function callQueue() {
-            if (queueList.length === 0) return;
-
-            if (currentIndex < 0) currentIndex = 0;
-
-            const queueItem = queueList[currentIndex];
-            if (!queueItem) return;
-
-            // Mark the current number as called
-            queueItem.called = true;
-
-            tempSelectedIndex = -1;
-
-            if (currentIndex >= 0 && currentIndex < queueList.length) {
-                const code = queueList[currentIndex];
-
-                updateBlueBox(code);
-
-
-                updateQueueListDisplay();
-                startTimer();
-                playBeep();
-
-                // 🟢 NEW LOGIC: Update the activity counter when a number is called
-                if (adminId) {
-                    // Magpapadala ng message sa C# backend para i-increment ang counter ng ADMIN
-                    window.chrome.webview.postMessage(`incrementActivity:${adminId}`);
-                }
-
-                // === I-SYNC ANG QUEUE STATE SA LOCAL STORAGE ===
-                saveQueueState();
-                localStorage.setItem("calledNow", Date.now().toString());
-
-
-            } else {
-                console.log("Invalid current queue index on callQueue.");
-
+            // Validation: Must have a queue selected
+            if (!selectedQueue.number) {
+                showInfo("Please select a queue to call.");
+                return;
             }
+
+            // Send to backend to update status to 'Called'
+            window.chrome.webview.postMessage(`callQueue:${selectedQueue.number}`);
+
+            // Update serving queue
+            servingQueue = {
+                number: selectedQueue.number,
+                category: selectedQueue.category,
+                id: selectedQueue.id
+            };
+
+            // Store category for re-rendering
+            const categoryToRender = selectedQueue.category;
+
+            selectedQueue.status = 'Called';
+
+            // Update NOW SERVING display
+            updateNowServingDisplay(servingQueue.number);
+
+            // Update category status
+            updateCategoryStatus(servingQueue.category);
+
+            // Clear selection after calling
+            selectedQueue = {
+                number: null,
+                category: null,
+                id: null,
+                status: null
+            };
+
+            // Re-render category to show serving state and remove selection highlight
+            renderCategorySection(categoryToRender);
+
+            updateButtonStates();
+
+            // Play beep sound
+            playBeep();
+
+            // Save state (for admin session persistence)
+            saveQueueState();
+
+            // Increment admin activity counter
+            if (adminId) {
+                window.chrome.webview.postMessage(`incrementActivity:${adminId}`);
+            }
+
+            console.log(`Called: ${servingQueue.number} from ${servingQueue.category}`);
         }
 
-
+        /**
+         * NEXT button - Mark current serving as completed and move selection
+         */
         function nextQueue() {
-            if (queueList.length === 0) {
-                currentIndex = -1;
-                previousIndex = -1;
-                tempSelectedIndex = -1;
-                updateBlueBox("--");
-                queueList.splice(currentIndex, 1);
-                resetTimer();
-
-                // === I-SYNC ANG QUEUE STATE SA LOCAL STORAGE ===
-                saveQueueState();
+            if (!selectedQueue.number) {
+                showInfo("Please select a queue to mark as completed.");
                 return;
             }
-
-
-            isNextPressed = true;
-
-            if (tempSelectedIndex !== -1) {
-                currentIndex = tempSelectedIndex;
-                tempSelectedIndex = -1;
-            }
-
-            if (currentIndex < 0) {
-                currentIndex = 0;
-                previousIndex = -1;
-            } else {
-                previousIndex = currentIndex;
-
-                currentIndex++;
-
-                if (currentIndex >= queueList.length) {
-                    if (currentIndex >= queueList.length) {
-                        currentIndex = -1; // No number to serve
-                        updateBlueBox("--"); // Clear Now Serving
-                        queueList = [];      // Clear the queue
-                        updateQueueListDisplay(); // Show N/A
-                        resetTimer();
-                        saveQueueState();
-                        console.log("Last number reached. Queue list is now empty.");
-                        return;
-                    }
-
+            
+            const queueToComplete = selectedQueue.number;
+            const categoryToUpdate = selectedQueue.category;
+            
+            window.chrome.webview.postMessage(`completeQueue:${queueToComplete}`);
+            
+            console.log(`Completed: ${queueToComplete}`);
+            
+            if (servingQueue.number === queueToComplete) {
+                servingQueue = { number: null, category: null, id: null };
+                
+                const nextCalled = findNextCalledQueue();
+                
+                if (nextCalled) {
+                    const queueNumber = nextCalled.QueueNumber || nextCalled.queueNumber;
+                    const category = categorizeQueueNumber(queueNumber);
+                    
+                    servingQueue = {
+                        number: queueNumber,
+                        category: category,
+                        id: nextCalled.Id || nextCalled.id
+                    };
+                    
+                    updateNowServingDisplay(queueNumber);
+                    console.log(`Now serving next Called queue: ${queueNumber} from ${category}`);
+                } else {
+                    updateNowServingDisplay("--");
+                    console.log('No more Called queues, NOW SERVING cleared');
                 }
             }
+            
+            if (categoryToUpdate) {
+                updateCategoryStatus(categoryToUpdate);
+            }
+            if (servingQueue.category && servingQueue.category !== categoryToUpdate) {
+                updateCategoryStatus(servingQueue.category);
+            }
 
-            const code = queueList[currentIndex];
+            // Clear selection after completing
+            selectedQueue = {
+                number: null,
+                category: null,
+                id: null,
+                status: null
+            };
 
-            updateBlueBox(code);
-            updateQueueListDisplay();
+            // Re-render the category to remove selection highlight
+            if (categoryToUpdate) {
+                renderCategorySection(categoryToUpdate);
+            }
 
-            resetTimer();
+            updateButtonStates();
 
-            // === I-SYNC ANG QUEUE STATE SA LOCAL STORAGE ===
-            saveQueueState();
-
-            console.log(`Skipped to next customer. Current customer (pending call) is at index ${currentIndex}: ${code}`);
+            console.log(`Next - Selection cleared`);
         }
 
-        function deleteCurrentQueue() {
-            isNextPressed = false;
-
-            if (queueList.length === 0) {
+        /**
+         * DELETE button - Delete the selected queue
+         */
+        function deleteSelectedQueue() {
+            // Validation: Must have a queue selected
+            if (!selectedQueue.number) {
+                showInfo("Please select a queue to delete.");
                 return;
             }
 
-            // Gamitin natin ang currentIndex/tempSelectedIndex (kung may highlighted) or default sa 0 (top)
-            let indexToDelete = -1;
+            const queueToDelete = selectedQueue.number;
+            const categoryToUpdate = selectedQueue.category;
+            const isServingQueue = servingQueue.number === queueToDelete;
 
-            if (tempSelectedIndex !== -1) {
-                indexToDelete = tempSelectedIndex;
-            } else if (currentIndex !== -1 && currentIndex < queueList.length) {
-                indexToDelete = currentIndex;
-            } else if (queueList.length > 0) {
-                indexToDelete = 0;
+            // Send to backend to delete
+            window.chrome.webview.postMessage(`deleteQueue:${queueToDelete}`);
+
+            // If deleting the serving queue, clear NOW SERVING
+            if (isServingQueue) {
+                servingQueue = { number: null, category: null, id: null };
+                updateNowServingDisplay("--");
+                
+                // Update Queue Preview to show "--"
+                localStorage.setItem("calledNow", Date.now().toString());
+                saveQueueState();
             }
 
-            if (indexToDelete === -1) return;
+            // Remove from local array
+            queuesByCategory[categoryToUpdate] = queuesByCategory[categoryToUpdate].filter(q =>
+                (q.QueueNumber || q.queueNumber) !== queueToDelete
+            );
 
+            // Clear selection
+            selectedQueue = { number: null, category: null, id: null, status: null };
 
-            const deletedQueueNumber = queueList.splice(indexToDelete, 1)[0];
+            // Re-render category
+            renderCategorySection(categoryToUpdate);
 
-            console.log(`Deleted queue number: ${deletedQueueNumber} at index ${indexToDelete}`);
+            // Update category status
+            updateCategoryStatus(categoryToUpdate);
 
-            // Ayusin ang mga index pagkatapos mag-delete
-            if (currentIndex > indexToDelete) {
-                currentIndex--;
-            } else if (currentIndex === indexToDelete) {
-                currentIndex = -1; // Cleared the currently serving
-            }
+            updateButtonStates();
 
-            if (previousIndex > indexToDelete) {
-                previousIndex--;
-            } else if (previousIndex === indexToDelete) {
-                previousIndex = -1;
-            }
-            tempSelectedIndex = -1;
+            console.log(`Deleted: ${queueToDelete}`);
+        }
 
-            // Update Blue Box display
-            const blueBox = document.querySelector('.center-box');
-            if (blueBox.textContent === deletedQueueNumber || currentIndex === -1) {
-                const nextCode = currentIndex !== -1 ? queueList[currentIndex] : "--";
-                updateBlueBox(nextCode);
-                resetTimer();
-            }
-
-            updateQueueListDisplay();
-
-            // === I-SYNC ANG QUEUE STATE SA LOCAL STORAGE ===
-            saveQueueState();
+        // Alias for compatibility
+        function deleteCurrentQueue() {
+            deleteSelectedQueue();
         }
 
         // ❌ TINANGGAL ANG refreshQueueList() FUNCTION
@@ -2588,7 +3427,7 @@
 
                                 ${acc.Role !== 'admin' ? `<button class="action-btn delete-btn" onclick="openDeletePopup(${acc.Id})">Delete</button>` : ''}
 
-                                <button class="action-btn view-btn" onclick="showActivityPopup('${acc.Username}',${acc.Id})">View Activity</button>
+                                ${acc.Role !== 'admin' ? `<button class="action-btn view-btn" onclick="showActivityPopup('${acc.Username}',${acc.Id})">View Activity</button>` : ''}
                             </td>
                         </tr>`;
                 });
@@ -2621,18 +3460,140 @@
                 }
             } else if (data.startsWith("error:")) {
                 showInfo(data.replace("error:", ""));
+            } else if (data.startsWith("queueList:")) {
+                // Backend sent queued rows (DataTable serialized as JSON)
+                try {
+                    const rows = JSON.parse(data.replace("queueList:", ""));
+                    
+                    // Clear current categories
+                    queuesByCategory = {
+                        checkup: [],
+                        vaccine: [],
+                        cashier: []
+                    };
+                    
+                    // Categorize queues
+                    if (Array.isArray(rows)) {
+                        rows.forEach(row => {
+                            const queueNumber = row.QueueNumber || row.queueNumber;
+                            const status = row.Status || row.status;
+                            const category = categorizeQueueNumber(queueNumber);
+                            
+                            if (category && queuesByCategory[category]) {
+                                if (status === 'Called') {
+                                    const existingCalled = queuesByCategory[category].find(q => (q.Status || q.status) === 'Called');
+                                    if (!existingCalled) {
+                                        queuesByCategory[category].push(row);
+                                    }
+                                } else {
+                                    queuesByCategory[category].push(row);
+                                }
+                            }
+                        });
+                    }
+                    
+                    // Render categorized list
+                    renderCategorizedQueueList();
+                    
+                    console.log('Queue list updated:', queuesByCategory);
+                    
+                } catch (e) {
+                    console.error('Failed to parse queueList from backend:', e);
+                    queuesByCategory = { checkup: [], vaccine: [], cashier: [] };
+                }
+            } else if (data.startsWith("queueCalled:")) {
+                // Backend confirmed queue was called
+                const queueNumber = data.replace("queueCalled:", "");
+                console.log(`Backend confirmed call: ${queueNumber}`);
+            } else if (data.startsWith("queueCompleted:")) {
+                const queueNumber = data.replace("queueCompleted:", "");
+                console.log(`Backend confirmed completion: ${queueNumber}`);
+                
+                const category = categorizeQueueNumber(queueNumber);
+                if (category) {
+                    queuesByCategory[category] = queuesByCategory[category].filter(q =>
+                        (q.QueueNumber || q.queueNumber) !== queueNumber
+                    );
+                    renderCategorySection(category);
+                    
+                    const nextCalled = findNextCalledQueue();
+                    if (nextCalled) {
+                        const nextQueueNumber = nextCalled.QueueNumber || nextCalled.queueNumber;
+                        const nextCategory = categorizeQueueNumber(nextQueueNumber);
+                        
+                        servingQueue = {
+                            number: nextQueueNumber,
+                            category: nextCategory,
+                            id: nextCalled.Id || nextCalled.id
+                        };
+                        
+                        updateNowServingDisplay(nextQueueNumber);
+                        updateCategoryStatus(nextCategory);
+                    } else {
+                        servingQueue = { number: null, category: null, id: null };
+                        updateNowServingDisplay("--");
+                    }
+                }
+            } else if (data.startsWith("queueDeleted:")) {
+                // Backend confirmed queue was deleted
+                const queueNumber = data.replace("queueDeleted:", "");
+                console.log(`Backend confirmed deletion: ${queueNumber}`);
             } else if (data.startsWith("totalGenerated:")) {
                 // Format: totalGenerated:username:value
                 const parts = data.split(":");
                 const total = parts[2];
                 document.getElementById("activity-served").innerText = total;
+            } else if (data.startsWith("patients:")) {
+                try {
+                    patientRecords = JSON.parse(data.replace("patients:", ""));
+                    if (patientRecords.length > 0) {
+                        nextPatientId = Math.max(...patientRecords.map(p => p.id)) + 1;
+                    }
+                    activeLetterFilter = null;
+                    activeAgeFilter = null;
+                    const letterBtns = document.querySelectorAll('.letter-btn');
+                    const ageBtns = document.querySelectorAll('.age-btn');
+                    if (letterBtns.length > 0) letterBtns[0].classList.add('active');
+                    if (ageBtns.length > 0) ageBtns[0].classList.add('active');
+                    renderPatientList(patientRecords);
+                    console.log("Patient records loaded from database:", patientRecords.length);
+                } catch (e) {
+                    console.error("Failed to parse patient records:", e);
+                    patientRecords = [];
+                }
+            } else if (data.startsWith("patientAdded:")) {
+                // Format: patientAdded:{patientId}
+                const patientId = parseInt(data.replace("patientAdded:", ""));
+                showInfo("Patient added successfully!");
+                window.chrome.webview.postMessage("getPatients");
+                setTimeout(() => {
+                    if (patientId) {
+                        selectPatient(patientId);
+                    }
+                }, 500);
+            } else if (data.startsWith("visitAdded:")) {
+                showInfo("Visit added successfully!");
+                window.chrome.webview.postMessage("getPatients");
+                if (selectedPatientId) {
+                    setTimeout(() => {
+                        selectPatient(selectedPatientId);
+                    }, 500);
+                }
+            } else if (data.startsWith("patientUpdated:")) {
+                showInfo("Patient updated successfully!");
+                window.chrome.webview.postMessage("getPatients");
+                if (selectedPatientId) {
+                    setTimeout(() => {
+                        selectPatient(selectedPatientId);
+                    }, 500);
+                }
             }
         });
         // ---- ON PAGE LOAD ----
         document.addEventListener("DOMContentLoaded", function () {
             const user = localStorage.getItem("loggedInUser");
             const role = localStorage.getItem("userRole");
-            // 🟢 NEW: Get Admin ID from localStorage
+            // Get Admin ID from localStorage
             adminId = localStorage.getItem("userId");
 
             const display = document.getElementById("user-display");
@@ -2643,32 +3604,27 @@
                 console.log("Not logged in as Admin. (Simulated redirect to login.html)");
             }
 
-            updateLiveTime();
-            setInterval(updateLiveTime, 1000);
-
-            // Initial queue state load (para ma-sync ang display ng admin)
-            const storedQueueList = localStorage.getItem('queueList');
-            const storedIndex = localStorage.getItem('currentIndex');
-
-            if (storedQueueList) {
-                try {
-                    queueList = JSON.parse(storedQueueList);
-                } catch (e) {
-                    console.error("Error loading queueList:", e);
-                }
-            }
-
-            if (storedIndex) {
-                currentIndex = parseInt(storedIndex, 10);
-            }
-
-            // Initial queue list display for the control panel
-            updateQueueListDisplay();
-            const currentServing = currentIndex >= 0 ? queueList[currentIndex] : "--";
-            updateBlueBox(currentServing);
+            updateButtonStates();
 
             // Set current date to the Patient Form on load
             document.getElementById('patient-date').value = getLocalDateISOString();
+
+            // Auto-calculate age from birthday
+            document.getElementById('patient-birthday').addEventListener('change', function() {
+                const birthday = this.value;
+                if (birthday) {
+                    const birthDate = new Date(birthday);
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+                    document.getElementById('patient-age').value = age >= 0 ? age : 0;
+                } else {
+                    document.getElementById('patient-age').value = '';
+                }
+            });
 
             // WALANG patient selection sa simula pa lang
             selectedPatientId = null;
@@ -2677,38 +3633,13 @@
         });
 
         // 🟢 MODIFIED: Listener for new queue entries from staff (AUTOMATIC REFRESH)
+        // Listen for queue updates from staff (via localStorage)
         window.addEventListener("storage", function (event) {
-            // Tanging ang queueList lang ang kailangan i-monitor
-            if (event.key === "queueList" && document.getElementById("queue-selection-popup").style.display === "flex") {
-
-                // I-sync ang mga global variables ni Admin
-                const storedQueueList = localStorage.getItem('queueList');
-                const storedIndex = localStorage.getItem('currentIndex');
-
-                if (storedQueueList) {
-                    try {
-                        // I-update ang global queueList ni Admin
-                        queueList = JSON.parse(storedQueueList);
-                    } catch (e) {
-                        console.error("Error loading queueList from storage event:", e);
-                    }
-                }
-
-                if (storedIndex) {
-                    // I-update ang global currentIndex ni Admin
-                    currentIndex = parseInt(storedIndex, 10);
-                } else {
-                    currentIndex = -1;
-                }
-
-                // I-update ang display agad
-                updateQueueListDisplay();
-
-                // I-update ang Now Serving box
-                const currentServing = currentIndex >= 0 && currentIndex < queueList.length ? queueList[currentIndex] : "--";
-                updateBlueBox(currentServing);
-
-                console.log("Admin Queue List automatically refreshed via storage event.");
+            // Monitor for queue updates when admin has queue selection popup open
+            if (event.key === "queueUpdated" && document.getElementById("queue-selection-popup").style.display === "flex") {
+                // Request fresh queue list from backend
+                window.chrome.webview.postMessage("getQueueList");
+                console.log("Admin detected new queue from staff - refreshing list");
             }
         });
         // =========================================================================

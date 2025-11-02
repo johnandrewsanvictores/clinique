@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Queue System")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9fa2b832c82b678d794dcd582ac3eced32a89685")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1a87d86b8fa85b700afb8acd5a4f7392ba536100")]
 [assembly: System.Reflection.AssemblyProductAttribute("Queue System")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Queue System")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

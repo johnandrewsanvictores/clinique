@@ -327,6 +327,32 @@
         let vcineNumber = 0;
         let csrNumber = 0;
 
+        // Request last queue numbers from backend on page load
+        if (window.chrome && window.chrome.webview) {
+            // Listen for response from backend
+            window.chrome.webview.addEventListener('message', event => {
+                const message = event.data;
+                if (typeof message === 'string' && message.startsWith('lastQueueNumbers:')) {
+                    try {
+                        const jsonStr = message.substring('lastQueueNumbers:'.length);
+                        const lastNumbers = JSON.parse(jsonStr);
+                        
+                        // Initialize counters with last numbers from database
+                        chkNumber = lastNumbers.CHK || 0;
+                        vcineNumber = lastNumbers.VCINE || 0;
+                        csrNumber = lastNumbers.CSR || 0;
+                        
+                        console.log('Initialized queue counters from database:', lastNumbers);
+                    } catch (e) {
+                        console.error('Failed to parse lastQueueNumbers:', e);
+                    }
+                }
+            });
+
+            // Request last queue numbers from backend
+            window.chrome.webview.postMessage('getLastQueueNumbers');
+        }
+
         // ---- LOGOUT FUNCTIONS ----
         function confirmLogout() {
             // Ipakita ang custom confirmation popup
@@ -359,7 +385,7 @@
         /**
          * Core function to generate queue number, send it to Admin, and show print popup.
          */
-        function showQueuePopup(code, serviceText) {
+        function showQueuePopup(code, serviceText, serviceType) {
             let number;
 
             // Increment the local counter based on service type
@@ -383,6 +409,7 @@
             const queueData = {
                 number: queueNumber,
                 service: serviceText,
+                serviceType: serviceType,
                 staff: localStorage.getItem("loggedInUser") || "Staff",
                 datetime: new Date().toLocaleString(),
             };
@@ -422,11 +449,17 @@
             const popupElement = document.getElementById("queue-message");
             const popupHTML = popupElement.innerHTML;
 
-            // Printing logic
-            const printWindow = window.open('', '', 'width=800,height=600');
-            printWindow.document.write('<html><head><title>Queue Ticket</title>');
-            printWindow.document.write('<style>');
-            printWindow.document.write(`
+            console.log("=== PRINT QUEUE FUNCTION CALLED ===");
+            console.log("Queue message HTML:", popupHTML);
+            console.log("Timestamp:", new Date().toISOString());
+
+            try {
+                const printWindow = window.open('', '', 'width=800,height=600');
+                console.log("Print window opened successfully");
+                
+                printWindow.document.write('<html><head><title>Queue Ticket</title>');
+                printWindow.document.write('<style>');
+                printWindow.document.write(`
                             @media print {
                                 @page {
                                     size: auto;
@@ -460,18 +493,37 @@
                                 margin-bottom: 10px;
                             }
                         `);
-            printWindow.document.write('</style>');
-            printWindow.document.write('</head><body>');
-            printWindow.document.write(popupHTML);
-            printWindow.document.write('</body></html>');
+                printWindow.document.write('</style>');
+                printWindow.document.write('</head><body>');
+                printWindow.document.write(popupHTML);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                
+                console.log("Print window document prepared");
+                
+                printWindow.focus();
+                console.log("Print window focused");
+                
+                setTimeout(() => {
+                    printWindow.print();
+                    console.log("Print dialog triggered");
+                    
+                    setTimeout(() => {
+                        printWindow.close();
+                        console.log("Print window closed");
+                    }, 500);
+                }, 100);
+                
+                console.log("Print process initiated successfully");
+            } catch (error) {
+                console.error("Error during print process:", error);
+                console.error("Error details:", error.message);
+                console.error("Error stack:", error.stack);
+            }
 
-            printWindow.document.close();
-            printWindow.focus();
-            printWindow.print();
-            printWindow.close();
-
-            // 🎯 ITO ANG DINAGDAG NA LINYA: Awtomatikong isara ang popup pagkatapos ng print
             closeQueuePopup();
+            console.log("Queue popup closed");
+            console.log("=== PRINT QUEUE FUNCTION COMPLETED ===");
         }
 
         // Functions na tinatawag ng Generate buttons
@@ -480,7 +532,7 @@
             const serviceText = selectedRadio ? selectedRadio.value : null;
 
             if (serviceText) {
-                showQueuePopup("CHK", serviceText);
+                showQueuePopup("CHK", serviceText, "Check-Up");
             } else {
                 alert("Please select a Check-Up type.");
             }
@@ -492,7 +544,7 @@
             const serviceText = selectedCheckbox.length > 0 ? selectedCheckbox.join(", ") : null;
 
             if (serviceText) {
-                showQueuePopup("VCINE", serviceText);
+                showQueuePopup("VCINE", serviceText, "Vaccine");
             } else {
                 alert("Please select at least one Vaccine.");
             }
@@ -503,7 +555,7 @@
             const serviceText = selectedRadio ? selectedRadio.value : null;
 
             if (serviceText) {
-                showQueuePopup("CSR", serviceText);
+                showQueuePopup("CSR", serviceText, "Cashier");
             } else {
                 alert("Please select a Cashier service.");
             }

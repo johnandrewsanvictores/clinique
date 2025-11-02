@@ -1,8 +1,10 @@
 ﻿    using Microsoft.Web.WebView2.Core;
     using System;
+    using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlClient;
     using System.IO;
+    using System.Linq;
     using System.Windows.Forms;
 
     namespace Queue_System
@@ -12,6 +14,7 @@
         private System.Windows.Forms.Timer queueRefreshTimer;
         private string connectionString = @"Server=.\SQLEXPRESS;Database=QueueSystemDB;Trusted_Connection=True;";  //original
         //private string connectionString = @"Server=localhost\SQLEXPRESS;Database=QueueSystemDB;Trusted_Connection=True;";
+        private QueuePreviewForm queuePreviewForm;
 
         public Form1()
         {
@@ -98,7 +101,8 @@
                                     }
                                 }
 
-                                webView21.CoreWebView2.PostWebMessageAsString($"setUser:{username}:{role}:{userId}");
+                                // Send setUser in the format expected by the frontend: ID:Username:Role
+                                webView21.CoreWebView2.PostWebMessageAsString($"setUser:{userId}:{username}:{role}");
                                 SendMessage($"{role} Login Successful!");
                             }
                             else
@@ -129,9 +133,8 @@
                             cmd.ExecuteNonQuery();
                         }
 
-                        // Log Account Created
-                        string logQuery = "INSERT INTO LoginHistory (UserId, Username, Action) " +
-                                          "VALUES ((SELECT Id FROM Users WHERE Username=@user), @user, 'Account Created')";
+                        // Log Account Created (with NULL UserId to preserve history if account is deleted)
+                        string logQuery = "INSERT INTO LoginHistory (UserId, Username, Action) VALUES (NULL, @user, 'Account Created')";
                         using (SqlCommand logCmd = new SqlCommand(logQuery, conn))
                         {
                             logCmd.Parameters.AddWithValue("@user", username);
@@ -169,11 +172,10 @@
                             cmd.ExecuteNonQuery();
                         }
 
-                        // Log Account Modified
-                        string logQuery = "INSERT INTO LoginHistory (UserId, Username, Action) VALUES (@id,@user,'Account Modified')";
+                        // Log Account Modified (with NULL UserId to preserve history if account is deleted)
+                        string logQuery = "INSERT INTO LoginHistory (UserId, Username, Action) VALUES (NULL, @user, 'Account Modified')";
                         using (SqlCommand logCmd = new SqlCommand(logQuery, conn))
                         {
-                            logCmd.Parameters.AddWithValue("@id", id);
                             logCmd.Parameters.AddWithValue("@user", username);
                             logCmd.ExecuteNonQuery();
                         }
@@ -194,24 +196,23 @@
                             if (result != null) username = result.ToString();
                         }
 
-                        // Log Account Deleted
-                        if (!string.IsNullOrEmpty(username))
-                        {
-                            string logQuery = "INSERT INTO LoginHistory (UserId, Username, Action) VALUES (@id,@user,'Account Deleted')";
-                            using (SqlCommand logCmd = new SqlCommand(logQuery, conn))
-                            {
-                                logCmd.Parameters.AddWithValue("@id", id);
-                                logCmd.Parameters.AddWithValue("@user", username);
-                                logCmd.ExecuteNonQuery();
-                            }
-                        }
-
-                        // Delete account
+                        // Delete account first
                         string deleteQuery = "DELETE FROM Users WHERE Id=@id";
                         using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
                         {
                             cmd.Parameters.AddWithValue("@id", id);
                             cmd.ExecuteNonQuery();
+                        }
+
+                        // Log Account Deleted after deletion (without UserId to avoid FK constraint issues)
+                        if (!string.IsNullOrEmpty(username))
+                        {
+                            string logQuery = "INSERT INTO LoginHistory (UserId, Username, Action) VALUES (NULL, @user, 'Account Deleted')";
+                            using (SqlCommand logCmd = new SqlCommand(logQuery, conn))
+                            {
+                                logCmd.Parameters.AddWithValue("@user", username);
+                                logCmd.ExecuteNonQuery();
+                            }
                         }
 
                         SendMessage("Account deleted successfully!");
@@ -249,6 +250,23 @@
                         }
 
                         SendMessage("Activity reset successfully!");
+                    }
+                    else if (message == "openQueuePreview")
+                    {
+                        // Open Queue Preview in a new WebView2 form
+                        this.Invoke((Action)(() =>
+                        {
+                            if (queuePreviewForm == null || queuePreviewForm.IsDisposed)
+                            {
+                                queuePreviewForm = new QueuePreviewForm(connectionString);
+                                queuePreviewForm.Show();
+                            }
+                            else
+                            {
+                                queuePreviewForm.BringToFront();
+                                queuePreviewForm.Focus();
+                            }
+                        }));
                     }
                     else if (message == "logout")
                     {
@@ -293,6 +311,7 @@
 
                         string number = queueData.number;
                         string service = queueData.service;
+                        string serviceType = queueData.serviceType;
                         string datetimeStr = queueData.datetime;
 
                         int staffId = 0;
@@ -303,11 +322,12 @@
                             var result = getCmd.ExecuteScalar();
                             if (result != null) staffId = Convert.ToInt32(result);
                         }
-                        string insertQuery = "INSERT INTO Queue (QueueNumber, Service, StaffId, CreatedAt, Status) VALUES (@number, @service, @staffId, @dateTime, @status)";
+                        string insertQuery = "INSERT INTO Queue (QueueNumber, Service, ServiceType, StaffId, CreatedAt, Status) VALUES (@number, @service, @serviceType, @staffId, @dateTime, @status)";
                         using (SqlCommand cmd = new SqlCommand(insertQuery, conn))
                         {
                             cmd.Parameters.AddWithValue("@number", number);
                             cmd.Parameters.AddWithValue("@service", service);
+                            cmd.Parameters.AddWithValue("@serviceType", serviceType);
                             cmd.Parameters.AddWithValue("@staffId", staffId);
                             cmd.Parameters.AddWithValue("@dateTime", DateTime.Parse(datetimeStr));
                             cmd.Parameters.AddWithValue("@status", "Pending");
@@ -317,8 +337,22 @@
                         // Increment total_number_generated for this staff
 
                         // Optionally: You can log this action or send a confirmation message if needed
-                        // Send success message
-                        //SendMessage($"Queue #{number} created successfully!");
+                        // Send updated queue list to frontend so admin can refresh automatically
+                        try
+                        {
+                            string selectQuery = "SELECT Id, QueueNumber, Service, ServiceType, StaffId, CreatedAt, Status FROM Queue WHERE Status IN ('Pending','Called') ORDER BY CreatedAt ASC";
+                            using (SqlDataAdapter da = new SqlDataAdapter(selectQuery, conn))
+                            {
+                                DataTable dt2 = new DataTable();
+                                da.Fill(dt2);
+                                string json2 = Newtonsoft.Json.JsonConvert.SerializeObject(dt2);
+                                webView21.CoreWebView2.PostWebMessageAsString("queueList:" + json2);
+                            }
+                        }
+                        catch
+                        {
+                            // Non-fatal: if broadcasting fails, just continue
+                        }
                     }
                    
 else if (message.StartsWith("incrementActivity:"))
@@ -332,6 +366,58 @@ else if (message.StartsWith("incrementActivity:"))
         cmd.ExecuteNonQuery();
     }
 }
+                    else if (message == "getLastQueueNumbers")
+                    {
+                        int lastCHK = 0, lastVCINE = 0, lastCSR = 0;
+
+                        string queryCHK = "SELECT TOP 1 QueueNumber FROM Queue WHERE QueueNumber LIKE 'CHK-%' AND Status IN ('Pending','Called') ORDER BY CreatedAt DESC";
+                        using (SqlCommand cmd = new SqlCommand(queryCHK, conn))
+                        {
+                            var result = cmd.ExecuteScalar();
+                            if (result != null)
+                            {
+                                string qNum = result.ToString();
+                                if (qNum.StartsWith("CHK-"))
+                                {
+                                    if (int.TryParse(qNum.Substring(4), out int num))
+                                        lastCHK = num;
+                                }
+                            }
+                        }
+
+                        string queryVCINE = "SELECT TOP 1 QueueNumber FROM Queue WHERE QueueNumber LIKE 'VCINE-%' AND Status IN ('Pending','Called') ORDER BY CreatedAt DESC";
+                        using (SqlCommand cmd = new SqlCommand(queryVCINE, conn))
+                        {
+                            var result = cmd.ExecuteScalar();
+                            if (result != null)
+                            {
+                                string qNum = result.ToString();
+                                if (qNum.StartsWith("VCINE-"))
+                                {
+                                    if (int.TryParse(qNum.Substring(6), out int num))
+                                        lastVCINE = num;
+                                }
+                            }
+                        }
+
+                        string queryCSR = "SELECT TOP 1 QueueNumber FROM Queue WHERE QueueNumber LIKE 'CSR-%' AND Status IN ('Pending','Called') ORDER BY CreatedAt DESC";
+                        using (SqlCommand cmd = new SqlCommand(queryCSR, conn))
+                        {
+                            var result = cmd.ExecuteScalar();
+                            if (result != null)
+                            {
+                                string qNum = result.ToString();
+                                if (qNum.StartsWith("CSR-"))
+                                {
+                                    if (int.TryParse(qNum.Substring(4), out int num))
+                                        lastCSR = num;
+                                }
+                            }
+                        }
+
+                        string response = $"{{\"CHK\":{lastCHK},\"VCINE\":{lastVCINE},\"CSR\":{lastCSR}}}";
+                        webView21.CoreWebView2.PostWebMessageAsString($"lastQueueNumbers:{response}");
+                    }
                     else if (message.StartsWith("getTotalGenerated:"))
                     {
                         // message: getTotalGenerated:<username>
@@ -343,6 +429,63 @@ else if (message.StartsWith("incrementActivity:"))
                             object result = cmd.ExecuteScalar();
                             int total = result != null ? Convert.ToInt32(result) : 0;
                             webView21.CoreWebView2.PostWebMessageAsString($"totalGenerated:{username}:{total}");
+                        }
+                    }
+                    else if (message == "getQueueList")
+                    {
+                        // Fetch pending/called queue entries from DB and send to frontend
+                        string selectQuery = "SELECT Id, QueueNumber, Service, ServiceType, StaffId, CreatedAt, Status FROM Queue WHERE Status IN ('Pending','Called') ORDER BY CreatedAt ASC";
+                        using (SqlDataAdapter da = new SqlDataAdapter(selectQuery, conn))
+                        {
+                            DataTable dt = new DataTable();
+                            da.Fill(dt);
+                            string json = Newtonsoft.Json.JsonConvert.SerializeObject(dt);
+                            webView21.CoreWebView2.PostWebMessageAsString("queueList:" + json);
+                        }
+                    }
+                    else if (message.StartsWith("callQueue:"))
+                    {
+                        // Admin calls a queue - set status to 'Called'
+                        string queueNumber = message.Substring("callQueue:".Length);
+                        string updateQuery = "UPDATE Queue SET Status='Called' WHERE QueueNumber=@queueNumber";
+                        using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@queueNumber", queueNumber);
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                webView21.CoreWebView2.PostWebMessageAsString($"queueCalled:{queueNumber}");
+                            }
+                        }
+                    }
+                    else if (message.StartsWith("completeQueue:"))
+                    {
+                        // Admin clicks NEXT - mark queue as completed
+                        string queueNumber = message.Substring("completeQueue:".Length);
+                        string updateQuery = "UPDATE Queue SET Status='Completed' WHERE QueueNumber=@queueNumber";
+                        using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@queueNumber", queueNumber);
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                webView21.CoreWebView2.PostWebMessageAsString($"queueCompleted:{queueNumber}");
+                            }
+                        }
+                    }
+                    else if (message.StartsWith("deleteQueue:"))
+                    {
+                        // Admin clicks DELETE - remove queue from database
+                        string queueNumber = message.Substring("deleteQueue:".Length);
+                        string deleteQuery = "DELETE FROM Queue WHERE QueueNumber=@queueNumber";
+                        using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@queueNumber", queueNumber);
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                webView21.CoreWebView2.PostWebMessageAsString($"queueDeleted:{queueNumber}");
+                            }
                         }
                     }
                     else if (message.StartsWith("resetTotalGenerated:"))
@@ -358,11 +501,361 @@ else if (message.StartsWith("incrementActivity:"))
                         // Notify frontend
                         webView21.CoreWebView2.PostWebMessageAsString($"totalGenerated:{username}:0");
                     }
+                    else if (message == "getQueuePreview")
+                    {
+                        // Helper function to get category prefix
+                        string GetCategoryFromQueue(string queueNumber)
+                        {
+                            if (string.IsNullOrEmpty(queueNumber)) return "unknown";
+                            if (queueNumber.StartsWith("CHK")) return "checkup";
+                            if (queueNumber.StartsWith("VCINE")) return "vaccine";
+                            if (queueNumber.StartsWith("CSR")) return "cashier";
+                            return "unknown";
+                        }
+
+                        // Get all Called queues (NOW SERVING per category)
+                        var nowServingDict = new Dictionary<string, string>
+                        {
+                            { "checkup", "--" },
+                            { "vaccine", "--" },
+                            { "cashier", "--" }
+                        };
+                        
+                        string selectServingQuery = "SELECT QueueNumber FROM Queue WHERE Status='Called' ORDER BY CreatedAt ASC";
+                        using (SqlCommand cmd = new SqlCommand(selectServingQuery, conn))
+                        {
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    string queueNum = reader.GetString(0);
+                                    string category = GetCategoryFromQueue(queueNum);
+                                    if (category != "unknown" && nowServingDict[category] == "--")
+                                    {
+                                        nowServingDict[category] = queueNum;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Get next queues per category (NEXT IN LINE per category)
+                        var nextQueuesDict = new Dictionary<string, List<string>>
+                        {
+                            { "checkup", new List<string>() },
+                            { "vaccine", new List<string>() },
+                            { "cashier", new List<string>() }
+                        };
+                        
+                        string selectNextQuery = "SELECT QueueNumber FROM Queue WHERE Status='Pending' ORDER BY CreatedAt ASC";
+                        using (SqlCommand cmd = new SqlCommand(selectNextQuery, conn))
+                        {
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    string queueNum = reader.GetString(0);
+                                    string category = GetCategoryFromQueue(queueNum);
+                                    if (category != "unknown" && nextQueuesDict[category].Count < 3)
+                                    {
+                                        nextQueuesDict[category].Add(queueNum);
+                                    }
+                                }
+                            }
+                        }
+
+                        // Ensure each category has exactly 3 slots (fill with "---" if needed)
+                        foreach (var category in nextQueuesDict.Keys.ToList())
+                        {
+                            while (nextQueuesDict[category].Count < 3)
+                            {
+                                nextQueuesDict[category].Add("---");
+                            }
+                        }
+
+                        // Send categorized data to Queue Preview
+                        var previewData = new
+                        {
+                            checkup = new
+                            {
+                                nowServing = nowServingDict["checkup"],
+                                next = nextQueuesDict["checkup"].ToArray()
+                            },
+                            vaccine = new
+                            {
+                                nowServing = nowServingDict["vaccine"],
+                                next = nextQueuesDict["vaccine"].ToArray()
+                            },
+                            cashier = new
+                            {
+                                nowServing = nowServingDict["cashier"],
+                                next = nextQueuesDict["cashier"].ToArray()
+                            },
+                            timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                        };
+                        string json = Newtonsoft.Json.JsonConvert.SerializeObject(previewData);
+                        webView21.CoreWebView2.PostWebMessageAsString("queuePreview:" + json);
+                    }
+                    else if (message == "getPatients")
+                    {
+                        // Fetch all patients with their visits
+                        string query = @"
+                            SELECT 
+                                p.PatientId, p.UniqueId, p.Name, p.Contact, p.Birthday, 
+                                p.Weight, p.Height, p.Age, p.Notes,
+                                v.VisitId, v.VisitDate, v.Purpose, v.IsFirstVisit, v.VisitNotes
+                            FROM Patients p
+                            LEFT JOIN Visits v ON p.PatientId = v.PatientId
+                            ORDER BY p.PatientId DESC, v.VisitDate DESC";
+                        
+                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        {
+                            SqlDataReader reader = cmd.ExecuteReader();
+                            var patientsDict = new Dictionary<int, dynamic>();
+                            
+                            while (reader.Read())
+                            {
+                                int patientId = reader.GetInt32(0);
+                                
+                                if (!patientsDict.ContainsKey(patientId))
+                                {
+                                    patientsDict[patientId] = new
+                                    {
+                                        id = patientId,
+                                        uniqueId = reader.IsDBNull(1) ? null : reader.GetString(1),
+                                        name = reader.GetString(2),
+                                        contact = reader.GetString(3),
+                                        birthday = reader.IsDBNull(4) ? null : reader.GetDateTime(4).ToString("yyyy-MM-dd"),
+                                        weight = reader.IsDBNull(5) ? (decimal?)null : reader.GetDecimal(5),
+                                        height = reader.IsDBNull(6) ? (decimal?)null : reader.GetDecimal(6),
+                                        age = reader.IsDBNull(7) ? (int?)null : reader.GetInt32(7),
+                                        notes = reader.IsDBNull(8) ? null : reader.GetString(8),
+                                        visits = new List<dynamic>()
+                                    };
+                                }
+                                
+                                // Add visit if exists
+                                if (!reader.IsDBNull(9))
+                                {
+                                    ((List<dynamic>)patientsDict[patientId].visits).Add(new
+                                    {
+                                        visitId = reader.GetInt32(9),
+                                        date = reader.GetDateTime(10).ToString("yyyy-MM-dd"),
+                                        purpose = reader.GetString(11),
+                                        isFirstVisit = reader.GetBoolean(12),
+                                        visitNotes = reader.IsDBNull(13) ? null : reader.GetString(13)
+                                    });
+                                }
+                            }
+                            reader.Close();
+                            
+                            var patientsList = patientsDict.Values.ToList();
+                            string json = Newtonsoft.Json.JsonConvert.SerializeObject(patientsList);
+                            webView21.CoreWebView2.PostWebMessageAsString("patients:" + json);
+                        }
+                    }
+                    else if (message.StartsWith("addPatient:"))
+                    {
+                        string json = message.Substring("addPatient:".Length);
+                        var data = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                        
+                        string name = data["name"]?.ToString() ?? "";
+                        
+                        // Check if patient with same name already exists
+                        string checkQuery = "SELECT COUNT(*) FROM Patients WHERE Name = @name";
+                        using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
+                        {
+                            checkCmd.Parameters.AddWithValue("@name", name);
+                            int existingCount = (int)checkCmd.ExecuteScalar();
+                            
+                            if (existingCount > 0)
+                            {
+                                webView21.CoreWebView2.PostWebMessageAsString($"error:A patient with the name '{name}' already exists in the system.");
+                                return;
+                            }
+                        }
+                        
+                        // Generate UniqueId (e.g., DELACRUZ-001)
+                        string lastName = name.Split(' ').LastOrDefault()?.ToUpper() ?? "PATIENT";
+                        string uniqueId = GenerateUniquePatientId(conn, lastName);
+                        
+                        // Insert patient
+                        string insertPatient = @"
+                            INSERT INTO Patients (UniqueId, Name, Contact, Birthday, Weight, Height, Age, Notes, CurrentTime)
+                            VALUES (@uniqueId, @name, @contact, @birthday, @weight, @height, @age, @notes, GETDATE());
+                            SELECT CAST(SCOPE_IDENTITY() as int);";
+                        
+                        int patientId;
+                        using (SqlCommand cmd = new SqlCommand(insertPatient, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@uniqueId", uniqueId);
+                            cmd.Parameters.AddWithValue("@name", name);
+                            cmd.Parameters.AddWithValue("@contact", data["contact"]?.ToString() ?? "");
+                            cmd.Parameters.AddWithValue("@birthday", data.ContainsKey("birthday") && data["birthday"] != null && !string.IsNullOrEmpty(data["birthday"].ToString()) ? (object)data["birthday"].ToString() : DBNull.Value);
+                            cmd.Parameters.AddWithValue("@weight", data.ContainsKey("weight") && data["weight"] != null && !string.IsNullOrEmpty(data["weight"].ToString()) ? (object)Convert.ToDecimal(data["weight"]) : DBNull.Value);
+                            cmd.Parameters.AddWithValue("@height", data.ContainsKey("height") && data["height"] != null && !string.IsNullOrEmpty(data["height"].ToString()) ? (object)Convert.ToDecimal(data["height"]) : DBNull.Value);
+                            cmd.Parameters.AddWithValue("@age", data.ContainsKey("age") && data["age"] != null && !string.IsNullOrEmpty(data["age"].ToString()) ? (object)Convert.ToInt32(data["age"]) : DBNull.Value);
+                            cmd.Parameters.AddWithValue("@notes", data.ContainsKey("notes") && data["notes"] != null ? (object)data["notes"].ToString() : DBNull.Value);
+                            patientId = (int)cmd.ExecuteScalar();
+                        }
+                        
+                        // Validate visit date is today
+                        string visitDateStr = data["visitDate"]?.ToString() ?? "";
+                        if (!string.IsNullOrEmpty(visitDateStr))
+                        {
+                            DateTime visitDate;
+                            if (DateTime.TryParse(visitDateStr, out visitDate))
+                            {
+                                if (visitDate.Date != DateTime.Today)
+                                {
+                                    webView21.CoreWebView2.PostWebMessageAsString("error:Visit date must be today's date. Past or future dates are not allowed.");
+                                    return;
+                                }
+                            }
+                        }
+                        
+                        // Insert first visit
+                        string insertVisit = @"
+                            INSERT INTO Visits (PatientId, VisitDate, Purpose, IsFirstVisit, VisitNotes)
+                            VALUES (@patientId, @visitDate, @purpose, @isFirstVisit, @visitNotes)";
+                        
+                        using (SqlCommand cmd = new SqlCommand(insertVisit, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@patientId", patientId);
+                            cmd.Parameters.AddWithValue("@visitDate", DateTime.Today.ToString("yyyy-MM-dd"));
+                            cmd.Parameters.AddWithValue("@purpose", data["visitPurpose"]?.ToString() ?? "");
+                            cmd.Parameters.AddWithValue("@isFirstVisit", data.ContainsKey("isFirstVisit") && Convert.ToBoolean(data["isFirstVisit"]));
+                            cmd.Parameters.AddWithValue("@visitNotes", data.ContainsKey("visitNotes") && data["visitNotes"] != null ? (object)data["visitNotes"].ToString() : DBNull.Value);
+                            cmd.ExecuteNonQuery();
+                        }
+                        
+                        webView21.CoreWebView2.PostWebMessageAsString($"patientAdded:{patientId}");
+                    }
+                    else if (message.StartsWith("addVisit:"))
+                    {
+                        string json = message.Substring("addVisit:".Length);
+                        var data = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                        
+                        // Validate visit date is today
+                        string visitDateStr = data["visitDate"]?.ToString() ?? "";
+                        if (!string.IsNullOrEmpty(visitDateStr))
+                        {
+                            DateTime visitDate;
+                            if (DateTime.TryParse(visitDateStr, out visitDate))
+                            {
+                                if (visitDate.Date != DateTime.Today)
+                                {
+                                    webView21.CoreWebView2.PostWebMessageAsString("error:Visit date must be today's date. Past or future dates are not allowed.");
+                                    return;
+                                }
+                            }
+                        }
+                        
+                        string insertVisit = @"
+                            INSERT INTO Visits (PatientId, VisitDate, Purpose, IsFirstVisit, VisitNotes)
+                            VALUES (@patientId, @visitDate, @purpose, @isFirstVisit, @visitNotes)";
+                        
+                        using (SqlCommand cmd = new SqlCommand(insertVisit, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@patientId", Convert.ToInt32(data["patientId"]));
+                            cmd.Parameters.AddWithValue("@visitDate", DateTime.Today.ToString("yyyy-MM-dd"));
+                            cmd.Parameters.AddWithValue("@purpose", data["visitPurpose"]?.ToString() ?? "");
+                            cmd.Parameters.AddWithValue("@isFirstVisit", Convert.ToBoolean(data["isFirstVisit"]));
+                            cmd.Parameters.AddWithValue("@visitNotes", data.ContainsKey("visitNotes") && data["visitNotes"] != null ? (object)data["visitNotes"].ToString() : DBNull.Value);
+                            cmd.ExecuteNonQuery();
+                        }
+                        
+                        webView21.CoreWebView2.PostWebMessageAsString("visitAdded:success");
+                    }
+                    else if (message.StartsWith("updatePatient:"))
+                    {
+                        string json = message.Substring("updatePatient:".Length);
+                        var data = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                        
+                        int patientId = Convert.ToInt32(data["patientId"]);
+                        string newName = data["name"]?.ToString() ?? "";
+                        
+                        string getCurrentNameQuery = "SELECT Name FROM Patients WHERE PatientId = @patientId";
+                        string currentName = "";
+                        using (SqlCommand cmd = new SqlCommand(getCurrentNameQuery, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@patientId", patientId);
+                            var result = cmd.ExecuteScalar();
+                            if (result != null) currentName = result.ToString();
+                        }
+                        
+                        // Check if another patient with the same name already exists (excluding current patient)
+                        if (currentName != newName)
+                        {
+                            string checkQuery = "SELECT COUNT(*) FROM Patients WHERE Name = @name AND PatientId != @patientId";
+                            using (SqlCommand checkCmd = new SqlCommand(checkQuery, conn))
+                            {
+                                checkCmd.Parameters.AddWithValue("@name", newName);
+                                checkCmd.Parameters.AddWithValue("@patientId", patientId);
+                                int existingCount = (int)checkCmd.ExecuteScalar();
+                                
+                                if (existingCount > 0)
+                                {
+                                    webView21.CoreWebView2.PostWebMessageAsString($"error:A patient with the name '{newName}' already exists in the system.");
+                                    return;
+                                }
+                            }
+                        }
+                        
+                        string currentLastName = currentName.Split(' ').LastOrDefault()?.ToUpper() ?? "";
+                        string newLastName = newName.Split(' ').LastOrDefault()?.ToUpper() ?? "";
+                        
+                        string updateQuery = @"
+                            UPDATE Patients 
+                            SET Name = @name, Contact = @contact, Birthday = @birthday, 
+                                Weight = @weight, Height = @height, Age = @age, Notes = @notes";
+                        
+                        if (currentLastName != newLastName && !string.IsNullOrEmpty(newLastName))
+                        {
+                            string newUniqueId = GenerateUniquePatientId(conn, newLastName);
+                            updateQuery += ", UniqueId = @uniqueId";
+                        }
+                        
+                        updateQuery += " WHERE PatientId = @patientId";
+                        
+                        using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@patientId", patientId);
+                            cmd.Parameters.AddWithValue("@name", newName);
+                            cmd.Parameters.AddWithValue("@contact", data["contact"]?.ToString() ?? "");
+                            cmd.Parameters.AddWithValue("@birthday", data.ContainsKey("birthday") && data["birthday"] != null && !string.IsNullOrEmpty(data["birthday"].ToString()) ? (object)data["birthday"].ToString() : DBNull.Value);
+                            cmd.Parameters.AddWithValue("@weight", data.ContainsKey("weight") && data["weight"] != null && !string.IsNullOrEmpty(data["weight"].ToString()) ? (object)Convert.ToDecimal(data["weight"]) : DBNull.Value);
+                            cmd.Parameters.AddWithValue("@height", data.ContainsKey("height") && data["height"] != null && !string.IsNullOrEmpty(data["height"].ToString()) ? (object)Convert.ToDecimal(data["height"]) : DBNull.Value);
+                            cmd.Parameters.AddWithValue("@age", data.ContainsKey("age") && data["age"] != null && !string.IsNullOrEmpty(data["age"].ToString()) ? (object)Convert.ToInt32(data["age"]) : DBNull.Value);
+                            cmd.Parameters.AddWithValue("@notes", data.ContainsKey("notes") && data["notes"] != null ? (object)data["notes"].ToString() : DBNull.Value);
+                            
+                            if (currentLastName != newLastName && !string.IsNullOrEmpty(newLastName))
+                            {
+                                string newUniqueId = GenerateUniquePatientId(conn, newLastName);
+                                cmd.Parameters.AddWithValue("@uniqueId", newUniqueId);
+                            }
+                            
+                            cmd.ExecuteNonQuery();
+                        }
+                        
+                        webView21.CoreWebView2.PostWebMessageAsString("patientUpdated:success");
+                    }
                 }
             }
             catch (Exception ex)
             {
                 SendMessage("Error: " + ex.Message, true);
+            }
+        }
+
+        private string GenerateUniquePatientId(SqlConnection conn, string lastName)
+        {
+            // Get the count of patients with the same last name
+            string countQuery = "SELECT COUNT(*) FROM Patients WHERE UniqueId LIKE @pattern";
+            using (SqlCommand cmd = new SqlCommand(countQuery, conn))
+            {
+                cmd.Parameters.AddWithValue("@pattern", lastName + "-%");
+                int count = (int)cmd.ExecuteScalar();
+                return $"{lastName}-{(count + 1):D3}";
             }
         }
 
@@ -389,6 +882,196 @@ else if (message.StartsWith("incrementActivity:"))
         private void webView21_Click(object sender, EventArgs e)
         {
 
+        }
+    }
+
+    // ============================================================
+    // Queue Preview Form - Separate Window with WebView2
+    // ============================================================
+    public class QueuePreviewForm : Form
+    {
+        private Microsoft.Web.WebView2.WinForms.WebView2 webView;
+        private string connectionString;
+        private System.Windows.Forms.Timer refreshTimer;
+
+        public QueuePreviewForm(string connString)
+        {
+            connectionString = connString;
+            InitializeQueuePreviewForm();
+        }
+
+        private void InitializeQueuePreviewForm()
+        {
+            // Form settings
+            this.Text = "Queue Preview";
+            this.Size = new System.Drawing.Size(1400, 800);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.FormBorderStyle = FormBorderStyle.Sizable;
+
+            // Create WebView2
+            webView = new Microsoft.Web.WebView2.WinForms.WebView2();
+            webView.Dock = DockStyle.Fill;
+            this.Controls.Add(webView);
+
+            // Initialize WebView2
+            InitializeWebView();
+
+            // Setup refresh timer (500ms for smooth updates)
+            refreshTimer = new System.Windows.Forms.Timer();
+            refreshTimer.Interval = 500;
+            refreshTimer.Tick += RefreshTimer_Tick;
+            refreshTimer.Start();
+        }
+
+        private async void InitializeWebView()
+        {
+            await webView.EnsureCoreWebView2Async(null);
+
+            // Load queue preview HTML
+            string queuePreviewPath = Path.Combine(Application.StartupPath, "wwwroot", "queuepreview.html");
+            string queuePreviewUri = $"file:///{queuePreviewPath.Replace("\\", "/")}";
+            webView.Source = new Uri(queuePreviewUri);
+
+            // Handle messages from JavaScript
+            webView.CoreWebView2.WebMessageReceived += QueuePreview_WebMessageReceived;
+        }
+
+        private void QueuePreview_WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
+        {
+            string message = e.TryGetWebMessageAsString();
+
+            if (message == "getQueuePreview")
+            {
+                // Send queue data to preview
+                SendQueueDataToPreview();
+            }
+        }
+
+        private void RefreshTimer_Tick(object sender, EventArgs e)
+        {
+            // Automatically send queue data every 500ms
+            SendQueueDataToPreview();
+        }
+
+        private void SendQueueDataToPreview()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    // Helper function to get category prefix
+                    string GetCategoryFromQueue(string queueNumber)
+                    {
+                        if (string.IsNullOrEmpty(queueNumber)) return "unknown";
+                        if (queueNumber.StartsWith("CHK")) return "checkup";
+                        if (queueNumber.StartsWith("VCINE")) return "vaccine";
+                        if (queueNumber.StartsWith("CSR")) return "cashier";
+                        return "unknown";
+                    }
+
+                    // Get all Called queues (NOW SERVING per category)
+                    var nowServingDict = new Dictionary<string, string>
+                    {
+                        { "checkup", "--" },
+                        { "vaccine", "--" },
+                        { "cashier", "--" }
+                    };
+
+                    string selectServingQuery = "SELECT QueueNumber FROM Queue WHERE Status='Called' ORDER BY CreatedAt ASC";
+                    using (SqlCommand cmd = new SqlCommand(selectServingQuery, conn))
+                    {
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string queueNum = reader.GetString(0);
+                                string category = GetCategoryFromQueue(queueNum);
+                                if (category != "unknown" && nowServingDict[category] == "--")
+                                {
+                                    nowServingDict[category] = queueNum;
+                                }
+                            }
+                        }
+                    }
+
+                    // Get next queues per category (NEXT IN LINE per category)
+                    var nextQueuesDict = new Dictionary<string, List<string>>
+                    {
+                        { "checkup", new List<string>() },
+                        { "vaccine", new List<string>() },
+                        { "cashier", new List<string>() }
+                    };
+
+                    string selectNextQuery = "SELECT QueueNumber FROM Queue WHERE Status='Pending' ORDER BY CreatedAt ASC";
+                    using (SqlCommand cmd = new SqlCommand(selectNextQuery, conn))
+                    {
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string queueNum = reader.GetString(0);
+                                string category = GetCategoryFromQueue(queueNum);
+                                if (category != "unknown" && nextQueuesDict[category].Count < 3)
+                                {
+                                    nextQueuesDict[category].Add(queueNum);
+                                }
+                            }
+                        }
+                    }
+
+                    // Ensure each category has exactly 3 slots (fill with "---" if needed)
+                    foreach (var category in nextQueuesDict.Keys.ToList())
+                    {
+                        while (nextQueuesDict[category].Count < 3)
+                        {
+                            nextQueuesDict[category].Add("---");
+                        }
+                    }
+
+                    // Send categorized data to Queue Preview
+                    var previewData = new
+                    {
+                        checkup = new
+                        {
+                            nowServing = nowServingDict["checkup"],
+                            next = nextQueuesDict["checkup"].ToArray()
+                        },
+                        vaccine = new
+                        {
+                            nowServing = nowServingDict["vaccine"],
+                            next = nextQueuesDict["vaccine"].ToArray()
+                        },
+                        cashier = new
+                        {
+                            nowServing = nowServingDict["cashier"],
+                            next = nextQueuesDict["cashier"].ToArray()
+                        },
+                        timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    };
+
+                    string json = Newtonsoft.Json.JsonConvert.SerializeObject(previewData);
+                    
+                    // Send to WebView
+                    if (webView?.CoreWebView2 != null)
+                    {
+                        webView.CoreWebView2.PostWebMessageAsString("queuePreview:" + json);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Silent fail - don't interrupt the preview
+                System.Diagnostics.Debug.WriteLine($"Queue Preview Error: {ex.Message}");
+            }
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            refreshTimer?.Stop();
+            refreshTimer?.Dispose();
+            base.OnFormClosing(e);
         }
     }
 }

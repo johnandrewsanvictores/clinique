@@ -3,147 +3,465 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Queue Preview </title>
+    <title>Queue Preview</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7fb;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: #333;
-        }
-
-        .container {
-            display: flex;
-            gap: 30px;
-            width: 90%;
-            max-width: 1200px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            padding: 30px;
-        }
-
-        .left {
-            flex: 2;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f0f4f8 50%, #e8f0fe 100%);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: #eaf2ff;
-            border-radius: 10px;
-            padding: 20px;
+            padding: 25px;
+            color: #2c3e50;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .right {
-            flex: 1;
-            background: #007bff;
-            border-radius: 10px;
-            padding: 20px;
-            color: white;
+        /* Subtle background pattern */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(30, 58, 138, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(21, 128, 61, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(194, 65, 12, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header-container {
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: start;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #1e3a8a 0%, #15803d 50%, #c2410c 100%);
+            border-radius: 12px 12px 0 0;
         }
 
         .header-time {
-            font-size: 28px;
-            font-weight: bold;
-            color: #007bff;
-            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e3a8a 0%, #15803d 50%, #c2410c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1800px;
+            width: 100%;
+            margin: 0 auto;
+            flex-grow: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-column {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .category-column:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Top accent gradient bar */
+        .category-column::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            z-index: 2;
+        }
+
+        .category-column.checkup::before {
+            background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+
+        .category-column.vaccine::before {
+            background: linear-gradient(90deg, #15803d 0%, #22c55e 100%);
+        }
+
+        .category-column.cashier::before {
+            background: linear-gradient(90deg, #c2410c 0%, #f97316 100%);
+        }
+
+        .category-header {
+            padding: 22px 20px;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .category-column:hover .category-header::before {
+            left: 100%;
+        }
+
+        .category-header.checkup {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+        }
+
+        .category-header.vaccine {
+            background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+            box-shadow: 0 4px 15px rgba(21, 128, 61, 0.3);
+        }
+
+        .category-header.cashier {
+            background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+            box-shadow: 0 4px 15px rgba(194, 65, 12, 0.3);
+        }
+
+        .category-content {
+            padding: 30px 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
         }
 
         .now-serving-label {
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 20px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            padding: 0 15px;
+        }
+
+        .now-serving-label::before,
+        .now-serving-label::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #cbd5e1);
+        }
+
+        .now-serving-label::before {
+            right: 100%;
+        }
+
+        .now-serving-label::after {
+            left: 100%;
+            background: linear-gradient(90deg, #cbd5e1, transparent);
         }
 
         .now-serving-box {
-            font-size: 100px;
-            font-weight: 900;
+            font-size: 38px;
+            font-weight: 700;
             color: white;
-            background-color: #007bff;
-            padding: 40px 60px;
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            min-width: 300px;
+            padding: 22px 32px;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 340px;
             text-align: center;
-            transition: transform 0.4s;
+            margin-bottom: 28px;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            line-height: 1.1;
+            word-break: keep-all;
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
         }
 
-            .now-serving-box.flash {
-                animation: flashEffect 1s ease-in-out 4;
-            }
+        /* Shine effect on serving box */
+        .now-serving-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .now-serving-box.checkup {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            box-shadow: 0 6px 20px rgba(30, 58, 138, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        .now-serving-box.vaccine {
+            background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+            box-shadow: 0 6px 20px rgba(21, 128, 61, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        .now-serving-box.cashier {
+            background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+            box-shadow: 0 6px 20px rgba(194, 65, 12, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        .now-serving-box.flash {
+            animation: flashEffect 0.6s ease-in-out 3;
+        }
 
         @keyframes flashEffect {
             0%, 100% {
-                background-color: #007bff;
                 transform: scale(1);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
             }
-
             50% {
-                background-color: #0056b3;
-                transform: scale(1.1);
+                transform: scale(1.05);
+                box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
             }
+        }
+
+        .next-section {
+            width: 100%;
+            max-width: 380px;
         }
 
         .next-title {
-            font-size: 30px;
-            font-weight: bold;
+            font-size: 15px;
+            font-weight: 700;
+            color: #64748b;
+            text-align: center;
             margin-bottom: 15px;
-            border-bottom: 2px solid white;
             padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+        }
+
+        .next-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #64748b, transparent);
         }
 
         .next-item {
-            background: rgba(255,255,255,0.2);
-            margin: 10px 0;
-            padding: 15px;
-            font-size: 26px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            margin: 8px 0;
+            padding: 13px 18px;
+            font-size: 22px;
+            font-weight: 600;
             border-radius: 8px;
-            width: 80%;
+            text-align: center;
+            color: #2c3e50;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
         }
 
-            .next-item.na {
-                color: #cccccc;
-            }
+        .next-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .next-item:hover::before {
+            width: 100%;
+            opacity: 0.1;
+        }
+
+        .next-item.checkup {
+            border-left-color: #1e3a8a;
+        }
+
+        .next-item.checkup::before {
+            background: #1e3a8a;
+        }
+
+        .next-item.vaccine {
+            border-left-color: #15803d;
+        }
+
+        .next-item.vaccine::before {
+            background: #15803d;
+        }
+
+        .next-item.cashier {
+            border-left-color: #c2410c;
+        }
+
+        .next-item.cashier::before {
+            background: #c2410c;
+        }
+
+        .next-item.na {
+            color: #cbd5e1;
+            font-weight: 400;
+            border-left-color: #e2e8f0;
+            background: #f8fafc;
+            box-shadow: none;
+        }
 
         audio {
             display: none;
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 1400px) {
+            .now-serving-box {
+                font-size: 34px;
+                padding: 18px 28px;
+            }
+            
+            .next-item {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .now-serving-box {
+                font-size: 42px;
+                max-width: 100%;
+            }
+            
+            .next-section {
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="header-container">
+        <div class="header-time" id="live-time">--:--:-- --</div>
+    </div>
+
     <div class="container">
-        <div class="left">
-            <div class="header-time" id="live-time">--:--:--</div>
-            <div class="now-serving-label">NOW SERVING</div>
-            <div class="now-serving-box" id="nowServing">--</div>
+        <!-- CHECK-UP COLUMN -->
+        <div class="category-column checkup">
+            <div class="category-header checkup">Check-Up</div>
+            <div class="category-content">
+                <div class="now-serving-label">Now Serving</div>
+                <div class="now-serving-box checkup" id="checkup-serving">--</div>
+                <div class="next-section">
+                    <div class="next-title">Next in Line</div>
+                    <div class="next-item checkup" id="checkup-next1">---</div>
+                    <div class="next-item checkup" id="checkup-next2">---</div>
+                    <div class="next-item checkup" id="checkup-next3">---</div>
+                </div>
+            </div>
         </div>
 
-        <div class="right">
-            <div class="next-title">NEXT IN LINE</div>
-            <div id="next1" class="next-item na">---</div>
-            <div id="next2" class="next-item na">---</div>
-            <div id="next3" class="next-item na">---</div>
+        <!-- VACCINE COLUMN -->
+        <div class="category-column vaccine">
+            <div class="category-header vaccine">Vaccine</div>
+            <div class="category-content">
+                <div class="now-serving-label">Now Serving</div>
+                <div class="now-serving-box vaccine" id="vaccine-serving">--</div>
+                <div class="next-section">
+                    <div class="next-title">Next in Line</div>
+                    <div class="next-item vaccine" id="vaccine-next1">---</div>
+                    <div class="next-item vaccine" id="vaccine-next2">---</div>
+                    <div class="next-item vaccine" id="vaccine-next3">---</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CASHIER COLUMN -->
+        <div class="category-column cashier">
+            <div class="category-header cashier">Cashier</div>
+            <div class="category-content">
+                <div class="now-serving-label">Now Serving</div>
+                <div class="now-serving-box cashier" id="cashier-serving">--</div>
+                <div class="next-section">
+                    <div class="next-title">Next in Line</div>
+                    <div class="next-item cashier" id="cashier-next1">---</div>
+                    <div class="next-item cashier" id="cashier-next2">---</div>
+                    <div class="next-item cashier" id="cashier-next3">---</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- ✅ Corrected path to your sound file -->
     <audio id="beepSound" src="Sound Effect/beepbeep.mp3" preload="auto"></audio>
 
     <script>
-        const nowBox = document.getElementById("nowServing");
         const beepSound = document.getElementById("beepSound");
-        let lastNowServing = null;
+        
+        // Track last serving numbers per category to detect changes
+        let lastServing = {
+            checkup: null,
+            vaccine: null,
+            cashier: null
+        };
 
-        // --- Unlock sound playback when user clicks anywhere once ---
+        // Unlock sound playback when user clicks anywhere once
         document.body.addEventListener("click", () => {
             beepSound.play().then(() => {
                 beepSound.pause();
@@ -151,6 +469,9 @@
             }).catch(() => { });
         }, { once: true });
 
+        /**
+         * Update live clock display
+         */
         function updateClock() {
             const now = new Date();
             let hrs = now.getHours();
@@ -161,13 +482,16 @@
             document.getElementById("live-time").textContent = `${hrs}:${mins}:${secs} ${ampm}`;
         }
 
+        /**
+         * Play beep sound for queue call
+         */
         function playBeep() {
             beepSound.currentTime = 0;
             beepSound.play().catch(() => { });
         }
 
         /**
-         * Request queue preview data from database via C# backend
+         * Request queue preview data from backend
          */
         function requestQueueUpdate() {
             if (window.chrome && window.chrome.webview) {
@@ -176,27 +500,53 @@
         }
 
         /**
-         * Update display with data from backend
+         * Update a specific category's display
          */
-        function updateQueueDisplay(data) {
-            const nowServing = data.nowServing || "--";
-            const next1 = data.next1 || "---";
-            const next2 = data.next2 || "---";
-            const next3 = data.next3 || "---";
+        function updateCategory(categoryName, categoryData) {
+            const servingElement = document.getElementById(`${categoryName}-serving`);
+            const next1Element = document.getElementById(`${categoryName}-next1`);
+            const next2Element = document.getElementById(`${categoryName}-next2`);
+            const next3Element = document.getElementById(`${categoryName}-next3`);
 
-            // Check if now serving changed (new call)
-            if (nowServing !== lastNowServing && nowServing !== "--") {
+            if (!servingElement || !next1Element || !next2Element || !next3Element) return;
+
+            const nowServing = categoryData.nowServing || "--";
+            const nextQueues = categoryData.next || ["---", "---", "---"];
+
+            // Check if NOW SERVING changed (trigger beep and flash)
+            if (nowServing !== lastServing[categoryName] && nowServing !== "--") {
                 playBeep();
-                nowBox.classList.add("flash");
-                setTimeout(() => nowBox.classList.remove("flash"), 3000);
-                lastNowServing = nowServing;
+                servingElement.classList.add("flash");
+                setTimeout(() => servingElement.classList.remove("flash"), 3200);
+                lastServing[categoryName] = nowServing;
+            } else if (nowServing === "--") {
+                lastServing[categoryName] = null;
             }
 
-            // Update display
-            nowBox.textContent = nowServing;
-            document.getElementById("next1").textContent = next1;
-            document.getElementById("next2").textContent = next2;
-            document.getElementById("next3").textContent = next3;
+            // Update NOW SERVING display
+            servingElement.textContent = nowServing;
+
+            // Update NEXT queues
+            next1Element.textContent = nextQueues[0] || "---";
+            next2Element.textContent = nextQueues[1] || "---";
+            next3Element.textContent = nextQueues[2] || "---";
+
+            // Toggle 'na' class for styling
+            next1Element.classList.toggle('na', nextQueues[0] === "---");
+            next2Element.classList.toggle('na', nextQueues[1] === "---");
+            next3Element.classList.toggle('na', nextQueues[2] === "---");
+        }
+
+        /**
+         * Update all categories with data from backend
+         */
+        function updateQueueDisplay(data) {
+            if (!data) return;
+
+            // Update each category independently
+            if (data.checkup) updateCategory('checkup', data.checkup);
+            if (data.vaccine) updateCategory('vaccine', data.vaccine);
+            if (data.cashier) updateCategory('cashier', data.cashier);
         }
 
         // Listen for messages from C# backend
