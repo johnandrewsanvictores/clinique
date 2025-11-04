@@ -3495,6 +3495,28 @@
                     // Render categorized list
                     renderCategorizedQueueList();
                     
+                    const stillCalled = !!(servingQueue.number && ['checkup','vaccine','cashier'].some(cat => {
+                        const list = queuesByCategory[cat] || [];
+                        return list.some(q => (q.QueueNumber || q.queueNumber) === servingQueue.number && (q.Status || q.status) === 'Called');
+                    }));
+
+                    if (stillCalled) {
+                        updateNowServingDisplay(servingQueue.number);
+                        if (servingQueue.category) updateCategoryStatus(servingQueue.category);
+                    } else {
+                        const nextCalled = findNextCalledQueue();
+                        if (nextCalled) {
+                            const nextNum = nextCalled.QueueNumber || nextCalled.queueNumber;
+                            const nextCat = categorizeQueueNumber(nextNum);
+                            servingQueue = { number: nextNum, category: nextCat, id: nextCalled.Id || nextCalled.id };
+                            updateNowServingDisplay(nextNum);
+                            if (nextCat) updateCategoryStatus(nextCat);
+                        } else {
+                            servingQueue = { number: null, category: null, id: null };
+                            updateNowServingDisplay("--");
+                        }
+                    }
+
                     console.log('Queue list updated:', queuesByCategory);
                     
                 } catch (e) {
