@@ -117,6 +117,10 @@
                         string role = message.Split(':')[1];
                         NavigateTo(role == "admin" ? "admin.html" : "staff.html");
                     }
+                    else if (message == "goDoctorTest")
+                    {
+                        NavigateTo("doctor-test.html");
+                    }
                     else if (message.StartsWith("createStaff:"))
                     {
                         string[] parts = message.Split(':');
@@ -501,6 +505,93 @@ else if (message.StartsWith("incrementActivity:"))
                         // Notify frontend
                         webView21.CoreWebView2.PostWebMessageAsString($"totalGenerated:{username}:0");
                     }
+                    // ============================================================
+                    // DOCTOR MODULE - New Handlers for Mobile App
+                    // ============================================================
+                    else if (message == "doctor:getCurrentQueue")
+                    {
+                        // Get the first Called queue (oldest)
+                        string selectQuery = "SELECT TOP 1 Id, QueueNumber, Service, ServiceType, CreatedAt FROM Queue WHERE Status='Called' ORDER BY CreatedAt ASC";
+                        using (SqlCommand cmd = new SqlCommand(selectQuery, conn))
+                        {
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    var queueData = new
+                                    {
+                                        id = reader.GetInt32(0),
+                                        queueNumber = reader.GetString(1),
+                                        service = reader.GetString(2),
+                                        serviceType = reader.GetString(3),
+                                        createdAt = reader.GetDateTime(4).ToString("yyyy-MM-dd HH:mm:ss")
+                                    };
+                                    string json = Newtonsoft.Json.JsonConvert.SerializeObject(queueData);
+                                    webView21.CoreWebView2.PostWebMessageAsString($"doctor:currentQueue:{json}");
+                                }
+                                else
+                                {
+                                    // No queue currently called
+                                    webView21.CoreWebView2.PostWebMessageAsString("doctor:currentQueue:null");
+                                }
+                            }
+                        }
+                    }
+                    else if (message.StartsWith("doctor:completeQueue:"))
+                    {
+                        // Doctor marks queue as completed
+                        string queueNumber = message.Substring("doctor:completeQueue:".Length);
+                        string updateQuery = "UPDATE Queue SET Status='Completed' WHERE QueueNumber=@queueNumber AND Status='Called'";
+                        using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@queueNumber", queueNumber);
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                webView21.CoreWebView2.PostWebMessageAsString($"doctor:queueCompleted:{queueNumber}");
+                                SendMessage($"Queue {queueNumber} marked as completed by doctor.");
+                            }
+                            else
+                            {
+                                webView21.CoreWebView2.PostWebMessageAsString("doctor:error:Queue not found or already completed");
+                            }
+                        }
+                    }
+                    else if (message.StartsWith("doctor:deleteQueue:"))
+                    {
+                        // Doctor deletes current queue
+                        string queueNumber = message.Substring("doctor:deleteQueue:".Length);
+                        string deleteQuery = "DELETE FROM Queue WHERE QueueNumber=@queueNumber AND Status='Called'";
+                        using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@queueNumber", queueNumber);
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                webView21.CoreWebView2.PostWebMessageAsString($"doctor:queueDeleted:{queueNumber}");
+                                SendMessage($"Queue {queueNumber} deleted by doctor.");
+                            }
+                            else
+                            {
+                                webView21.CoreWebView2.PostWebMessageAsString("doctor:error:Queue not found or not in Called status");
+                            }
+                        }
+                    }
+                    else if (message == "doctor:getAllCalledQueues")
+                    {
+                        // Get all queues with Status='Called' for doctor to choose from
+                        string selectQuery = "SELECT Id, QueueNumber, Service, ServiceType, CreatedAt FROM Queue WHERE Status='Called' ORDER BY CreatedAt ASC";
+                        using (SqlDataAdapter da = new SqlDataAdapter(selectQuery, conn))
+                        {
+                            DataTable dt = new DataTable();
+                            da.Fill(dt);
+                            string json = Newtonsoft.Json.JsonConvert.SerializeObject(dt);
+                            webView21.CoreWebView2.PostWebMessageAsString($"doctor:calledQueues:{json}");
+                        }
+                    }
+                    // ============================================================
+                    // END DOCTOR MODULE
+                    // ============================================================
                     else if (message == "getQueuePreview")
                     {
                         // Helper function to get category prefix
