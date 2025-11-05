@@ -100,7 +100,7 @@
     <!-- Section 3: Complete Queue -->
     <div class="section">
         <h3>3. Complete Queue (Mark as Done)</h3>
-        <input type="text" id="complete-queue-number" placeholder="e.g., CHK-001" />
+        <input type="text" id="complete-queue-number" placeholder="e.g., 1 (Queue ID)" />
         <button class="btn-complete" onclick="completeQueue()">
             ✅ Mark as Completed
         </button>
@@ -109,7 +109,7 @@
     <!-- Section 4: Delete Queue -->
     <div class="section">
         <h3>4. Delete Queue</h3>
-        <input type="text" id="delete-queue-number" placeholder="e.g., CHK-001" />
+        <input type="text" id="delete-queue-number" placeholder="e.g., 1 (Queue ID)" />
         <button class="btn-delete" onclick="deleteQueue()">
             🗑️ Delete Queue
         </button>
@@ -185,17 +185,18 @@
                 display.innerHTML = `
                     <div class="queue-item" style="margin-top:10px;">
                         <div style="font-size:24px; font-weight:bold; color:#2196F3;">${queue.queueNumber}</div>
+                        <div><strong>ID:</strong> ${queue.id}</div>
                         <div><strong>Service:</strong> ${queue.service}</div>
                         <div><strong>Type:</strong> ${queue.serviceType}</div>
                         <div><strong>Created:</strong> ${queue.createdAt}</div>
                         <div style="margin-top:10px;">
-                            <button class="btn-complete" onclick="completeQueueById('${queue.queueNumber}')">✅ Complete</button>
-                            <button class="btn-delete" onclick="deleteQueueById('${queue.queueNumber}')">🗑️ Delete</button>
+                            <button class="btn-complete" onclick="completeQueueById(${queue.id})">✅ Complete</button>
+                            <button class="btn-delete" onclick="deleteQueueById(${queue.id})">🗑️ Delete</button>
                         </div>
                     </div>
                 `;
                 
-                log(`Found current queue: ${queue.queueNumber}`);
+                log(`Found current queue: ${queue.queueNumber} (ID: ${queue.id})`);
             } catch (e) {
                 log(`Error parsing response: ${e.message}`, true);
             }
@@ -225,6 +226,7 @@
                     html += `
                         <div class="queue-item" style="margin-top:8px;">
                             <div style="font-size:18px; font-weight:bold; color:#2196F3;">${queue.QueueNumber}</div>
+                            <div><strong>ID:</strong> ${queue.Id}</div>
                             <div><strong>Service:</strong> ${queue.Service}</div>
                             <div><strong>Type:</strong> ${queue.ServiceType}</div>
                             <div><strong>Created:</strong> ${queue.CreatedAt}</div>
@@ -241,38 +243,48 @@
 
         // 3. Complete Queue
         function completeQueue() {
-            const queueNumber = document.getElementById('complete-queue-number').value.trim();
-            if (!queueNumber) {
-                alert('Please enter a queue number');
+            const input = document.getElementById('complete-queue-number').value.trim();
+            if (!input) {
+                alert('Please enter a queue ID');
                 return;
             }
-            completeQueueById(queueNumber);
+            const queueId = parseInt(input);
+            if (isNaN(queueId)) {
+                alert('Please enter a valid numeric queue ID');
+                return;
+            }
+            completeQueueById(queueId);
         }
 
-        function completeQueueById(queueNumber) {
-            log(`Marking ${queueNumber} as completed...`);
-            window.chrome.webview.postMessage(`doctor:completeQueue:${queueNumber}`);
+        function completeQueueById(queueId) {
+            log(`Marking queue ID ${queueId} as completed...`);
+            window.chrome.webview.postMessage(`doctor:completeQueue:${queueId}`);
             document.getElementById('complete-queue-number').value = '';
         }
 
         // 4. Delete Queue
         function deleteQueue() {
-            const queueNumber = document.getElementById('delete-queue-number').value.trim();
-            if (!queueNumber) {
-                alert('Please enter a queue number');
+            const input = document.getElementById('delete-queue-number').value.trim();
+            if (!input) {
+                alert('Please enter a queue ID');
+                return;
+            }
+            const queueId = parseInt(input);
+            if (isNaN(queueId)) {
+                alert('Please enter a valid numeric queue ID');
                 return;
             }
             
-            if (!confirm(`Are you sure you want to delete ${queueNumber}?`)) {
+            if (!confirm(`Are you sure you want to delete queue ID ${queueId}?`)) {
                 return;
             }
             
-            deleteQueueById(queueNumber);
+            deleteQueueById(queueId);
         }
 
-        function deleteQueueById(queueNumber) {
-            log(`Deleting ${queueNumber}...`);
-            window.chrome.webview.postMessage(`doctor:deleteQueue:${queueNumber}`);
+        function deleteQueueById(queueId) {
+            log(`Deleting queue ID ${queueId}...`);
+            window.chrome.webview.postMessage(`doctor:deleteQueue:${queueId}`);
             document.getElementById('delete-queue-number').value = '';
         }
 

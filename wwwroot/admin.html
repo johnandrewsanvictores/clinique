@@ -3171,12 +3171,19 @@
                 return (firstQueue.QueueNumber || firstQueue.queueNumber) === selectedQueue.number;
             };
             
+            const categoryHasCalledQueue = () => {
+                const queues = queuesByCategory[category] || [];
+                return queues.some(q => (q.Status || q.status) === 'Called');
+            };
+            
             if (status === 'Called') {
                 if (callBtn) callBtn.disabled = true;
                 if (nextBtn) nextBtn.disabled = false;
                 if (deleteBtn) deleteBtn.disabled = true;
             } else if (status === 'Pending') {
-                if (callBtn) callBtn.disabled = !isFirstInQueue();
+                // Can only call if: (1) first in queue AND (2) no other queue in this category is already Called
+                const canCall = isFirstInQueue() && !categoryHasCalledQueue();
+                if (callBtn) callBtn.disabled = !canCall;
                 if (nextBtn) nextBtn.disabled = true;
                 if (deleteBtn) deleteBtn.disabled = false;
             } else {
@@ -3201,8 +3208,8 @@
                 return;
             }
 
-            // Send to backend to update status to 'Called'
-            window.chrome.webview.postMessage(`callQueue:${selectedQueue.number}`);
+            // Send to backend to update status to 'Called' using unique ID
+            window.chrome.webview.postMessage(`callQueue:${selectedQueue.id}`);
 
             // Update serving queue
             servingQueue = {
@@ -3259,9 +3266,11 @@
             }
             
             const queueToComplete = selectedQueue.number;
+            const queueIdToComplete = selectedQueue.id;
             const categoryToUpdate = selectedQueue.category;
             
-            window.chrome.webview.postMessage(`completeQueue:${queueToComplete}`);
+            // Send ID instead of queue number
+            window.chrome.webview.postMessage(`completeQueue:${queueIdToComplete}`);
             
             console.log(`Completed: ${queueToComplete}`);
             
@@ -3324,11 +3333,12 @@
             }
 
             const queueToDelete = selectedQueue.number;
+            const queueIdToDelete = selectedQueue.id;
             const categoryToUpdate = selectedQueue.category;
             const isServingQueue = servingQueue.number === queueToDelete;
 
-            // Send to backend to delete
-            window.chrome.webview.postMessage(`deleteQueue:${queueToDelete}`);
+            // Send ID instead of queue number to backend
+            window.chrome.webview.postMessage(`deleteQueue:${queueIdToDelete}`);
 
             // If deleting the serving queue, clear NOW SERVING
             if (isServingQueue) {
@@ -3495,6 +3505,35 @@
                     // Render categorized list
                     renderCategorizedQueueList();
                     
+                    // Check if current serving queue is still valid (still in Called status)
+                    const stillCalled = !!(servingQueue.number && ['checkup','vaccine','cashier'].some(cat => {
+                        const list = queuesByCategory[cat] || [];
+                        return list.some(q => (q.QueueNumber || q.queueNumber) === servingQueue.number && (q.Status || q.status) === 'Called');
+                    }));
+
+                    if (stillCalled) {
+                        // Current serving is still valid, just refresh display
+                        updateNowServingDisplay(servingQueue.number);
+                        if (servingQueue.category) updateCategoryStatus(servingQueue.category);
+                    } else {
+                        // Current serving is no longer Called (e.g., manually changed to Completed in DB)
+                        // Find next Called queue across all categories
+                        const nextCalled = findNextCalledQueue();
+                        if (nextCalled) {
+                            const nextNum = nextCalled.QueueNumber || nextCalled.queueNumber;
+                            const nextCat = categorizeQueueNumber(nextNum);
+                            servingQueue = { number: nextNum, category: nextCat, id: nextCalled.Id || nextCalled.id };
+                            updateNowServingDisplay(nextNum);
+                            if (nextCat) updateCategoryStatus(nextCat);
+                            console.log(`Now Serving updated to: ${nextNum} (previous was no longer Called)`);
+                        } else {
+                            // No Called queues at all, clear Now Serving
+                            servingQueue = { number: null, category: null, id: null };
+                            updateNowServingDisplay("--");
+                            console.log('Now Serving cleared (no Called queues found)');
+                        }
+                    }
+                    
                     console.log('Queue list updated:', queuesByCategory);
                     
                 } catch (e) {
@@ -3502,19 +3541,30 @@
                     queuesByCategory = { checkup: [], vaccine: [], cashier: [] };
                 }
             } else if (data.startsWith("queueCalled:")) {
-                // Backend confirmed queue was called
-                const queueNumber = data.replace("queueCalled:", "");
-                console.log(`Backend confirmed call: ${queueNumber}`);
+                // Backend confirmed queue was called (returns ID)
+                const queueId = parseInt(data.replace("queueCalled:", ""));
+                console.log(`Backend confirmed call for queue ID: ${queueId}`);
             } else if (data.startsWith("queueCompleted:")) {
-                const queueNumber = data.replace("queueCompleted:", "");
-                console.log(`Backend confirmed completion: ${queueNumber}`);
+                // Backend confirmed completion (returns ID)
+                const queueId = parseInt(data.replace("queueCompleted:", ""));
+                console.log(`Backend confirmed completion for queue ID: ${queueId}`);
                 
-                const category = categorizeQueueNumber(queueNumber);
-                if (category) {
-                    queuesByCategory[category] = queuesByCategory[category].filter(q =>
-                        (q.QueueNumber || q.queueNumber) !== queueNumber
-                    );
-                    renderCategorySection(category);
+                // Find and remove from local array by ID
+                let removedQueue = null;
+                let categoryToUpdate = null;
+                
+                for (const [category, queues] of Object.entries(queuesByCategory)) {
+                    const index = queues.findIndex(q => (q.Id || q.id) === queueId);
+                    if (index !== -1) {
+                        removedQueue = queues[index];
+                        categoryToUpdate = category;
+                        queuesByCategory[category] = queues.filter(q => (q.Id || q.id) !== queueId);
+                        break;
+                    }
+                }
+                
+                if (categoryToUpdate) {
+                    renderCategorySection(categoryToUpdate);
                     
                     const nextCalled = findNextCalledQueue();
                     if (nextCalled) {
@@ -3535,9 +3585,9 @@
                     }
                 }
             } else if (data.startsWith("queueDeleted:")) {
-                // Backend confirmed queue was deleted
-                const queueNumber = data.replace("queueDeleted:", "");
-                console.log(`Backend confirmed deletion: ${queueNumber}`);
+                // Backend confirmed deletion (returns ID)
+                const queueId = parseInt(data.replace("queueDeleted:", ""));
+                console.log(`Backend confirmed deletion for queue ID: ${queueId}`);
             } else if (data.startsWith("totalGenerated:")) {
                 // Format: totalGenerated:username:value
                 const parts = data.split(":");

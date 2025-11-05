@@ -1,9 +1,5 @@
-2025/11/04-19:48:05.012 5c1c Reusing MANIFEST C:\Users\sanvi\Downloads\SYSTEM02 (2)\SYSTEM02\SYSTEM02\SYSTEM02\bin\Debug\net8.0-windows\Queue System.exe.WebView2\EBWebView\Default\Local Storage\leveldb/MANIFEST-000001
-2025/11/04-19:48:05.016 5c1c Recovering log #13
-2025/11/04-19:48:05.018 5c1c Reusing old log C:\Users\sanvi\Downloads\SYSTEM02 (2)\SYSTEM02\SYSTEM02\SYSTEM02\bin\Debug\net8.0-windows\Queue System.exe.WebView2\EBWebView\Default\Local Storage\leveldb/000013.log 
-2025/11/04-19:53:24.277 4898 Level-0 table #17: started
-2025/11/04-19:53:24.282 4898 Level-0 table #17: 11375 bytes OK
-2025/11/04-19:53:24.284 4898 Delete type=0 #13
-2025/11/04-20:56:17.910 5c1c Level-0 table #19: started
-2025/11/04-20:56:17.916 5c1c Level-0 table #19: 10103 bytes OK
-2025/11/04-20:56:17.919 5c1c Delete type=0 #16
+2025/11/05-13:01:16.140 a80 Reusing MANIFEST C:\Users\sanvi\Downloads\SYSTEM02 (2)\SYSTEM02\SYSTEM02\SYSTEM02\bin\Debug\net8.0-windows\Queue System.exe.WebView2\EBWebView\Default\Local Storage\leveldb/MANIFEST-000001
+2025/11/05-13:01:16.149 a80 Recovering log #18
+2025/11/05-13:01:16.150 a80 Level-0 table #21: started
+2025/11/05-13:01:16.156 a80 Level-0 table #21: 10822 bytes OK
+2025/11/05-13:01:16.163 a80 Delete type=0 #18

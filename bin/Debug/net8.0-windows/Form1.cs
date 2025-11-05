@@ -450,45 +450,45 @@ else if (message.StartsWith("incrementActivity:"))
                     else if (message.StartsWith("callQueue:"))
                     {
                         // Admin calls a queue - set status to 'Called'
-                        string queueNumber = message.Substring("callQueue:".Length);
-                        string updateQuery = "UPDATE Queue SET Status='Called' WHERE QueueNumber=@queueNumber";
+                        int queueId = Convert.ToInt32(message.Substring("callQueue:".Length));
+                        string updateQuery = "UPDATE Queue SET Status='Called' WHERE Id=@id";
                         using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
                         {
-                            cmd.Parameters.AddWithValue("@queueNumber", queueNumber);
+                            cmd.Parameters.AddWithValue("@id", queueId);
                             int rowsAffected = cmd.ExecuteNonQuery();
                             if (rowsAffected > 0)
                             {
-                                webView21.CoreWebView2.PostWebMessageAsString($"queueCalled:{queueNumber}");
+                                webView21.CoreWebView2.PostWebMessageAsString($"queueCalled:{queueId}");
                             }
                         }
                     }
                     else if (message.StartsWith("completeQueue:"))
                     {
                         // Admin clicks NEXT - mark queue as completed
-                        string queueNumber = message.Substring("completeQueue:".Length);
-                        string updateQuery = "UPDATE Queue SET Status='Completed' WHERE QueueNumber=@queueNumber";
+                        int queueId = Convert.ToInt32(message.Substring("completeQueue:".Length));
+                        string updateQuery = "UPDATE Queue SET Status='Completed' WHERE Id=@id";
                         using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
                         {
-                            cmd.Parameters.AddWithValue("@queueNumber", queueNumber);
+                            cmd.Parameters.AddWithValue("@id", queueId);
                             int rowsAffected = cmd.ExecuteNonQuery();
                             if (rowsAffected > 0)
                             {
-                                webView21.CoreWebView2.PostWebMessageAsString($"queueCompleted:{queueNumber}");
+                                webView21.CoreWebView2.PostWebMessageAsString($"queueCompleted:{queueId}");
                             }
                         }
                     }
                     else if (message.StartsWith("deleteQueue:"))
                     {
                         // Admin clicks DELETE - remove queue from database
-                        string queueNumber = message.Substring("deleteQueue:".Length);
-                        string deleteQuery = "DELETE FROM Queue WHERE QueueNumber=@queueNumber";
+                        int queueId = Convert.ToInt32(message.Substring("deleteQueue:".Length));
+                        string deleteQuery = "DELETE FROM Queue WHERE Id=@id";
                         using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
                         {
-                            cmd.Parameters.AddWithValue("@queueNumber", queueNumber);
+                            cmd.Parameters.AddWithValue("@id", queueId);
                             int rowsAffected = cmd.ExecuteNonQuery();
                             if (rowsAffected > 0)
                             {
-                                webView21.CoreWebView2.PostWebMessageAsString($"queueDeleted:{queueNumber}");
+                                webView21.CoreWebView2.PostWebMessageAsString($"queueDeleted:{queueId}");
                             }
                         }
                     }
@@ -540,16 +540,16 @@ else if (message.StartsWith("incrementActivity:"))
                     else if (message.StartsWith("doctor:completeQueue:"))
                     {
                         // Doctor marks queue as completed
-                        string queueNumber = message.Substring("doctor:completeQueue:".Length);
-                        string updateQuery = "UPDATE Queue SET Status='Completed' WHERE QueueNumber=@queueNumber AND Status='Called'";
+                        int queueId = Convert.ToInt32(message.Substring("doctor:completeQueue:".Length));
+                        string updateQuery = "UPDATE Queue SET Status='Completed' WHERE Id=@id AND Status='Called'";
                         using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
                         {
-                            cmd.Parameters.AddWithValue("@queueNumber", queueNumber);
+                            cmd.Parameters.AddWithValue("@id", queueId);
                             int rowsAffected = cmd.ExecuteNonQuery();
                             if (rowsAffected > 0)
                             {
-                                webView21.CoreWebView2.PostWebMessageAsString($"doctor:queueCompleted:{queueNumber}");
-                                SendMessage($"Queue {queueNumber} marked as completed by doctor.");
+                                webView21.CoreWebView2.PostWebMessageAsString($"doctor:queueCompleted:{queueId}");
+                                SendMessage($"Queue {queueId} marked as completed by doctor.");
                             }
                             else
                             {
@@ -560,16 +560,16 @@ else if (message.StartsWith("incrementActivity:"))
                     else if (message.StartsWith("doctor:deleteQueue:"))
                     {
                         // Doctor deletes current queue
-                        string queueNumber = message.Substring("doctor:deleteQueue:".Length);
-                        string deleteQuery = "DELETE FROM Queue WHERE QueueNumber=@queueNumber AND Status='Called'";
+                        int queueId = Convert.ToInt32(message.Substring("doctor:deleteQueue:".Length));
+                        string deleteQuery = "DELETE FROM Queue WHERE Id=@id AND Status='Called'";
                         using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
                         {
-                            cmd.Parameters.AddWithValue("@queueNumber", queueNumber);
+                            cmd.Parameters.AddWithValue("@id", queueId);
                             int rowsAffected = cmd.ExecuteNonQuery();
                             if (rowsAffected > 0)
                             {
-                                webView21.CoreWebView2.PostWebMessageAsString($"doctor:queueDeleted:{queueNumber}");
-                                SendMessage($"Queue {queueNumber} deleted by doctor.");
+                                webView21.CoreWebView2.PostWebMessageAsString($"doctor:queueDeleted:{queueId}");
+                                SendMessage($"Queue {queueId} deleted by doctor.");
                             }
                             else
                             {
