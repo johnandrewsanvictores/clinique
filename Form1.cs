@@ -6,18 +6,27 @@
     using System.IO;
     using System.Linq;
     using System.Windows.Forms;
+    using Microsoft.Extensions.Configuration;
 
     namespace Queue_System
     {
     public partial class Form1 : Form
     {
         private System.Windows.Forms.Timer queueRefreshTimer;
-        private string connectionString = @"Server=tcp:mynameisjohnandrew.database.windows.net,1433;Initial Catalog=QueueSystemDB111;Persist Security Info=False;User ID=johnandrew;Password=Password#123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";  //original
-        //private string connectionString = @"Server=localhost\SQLEXPRESS;Database=QueueSystemDB;Trusted_Connection=True;";
+        private readonly string connectionString;
         private QueuePreviewForm queuePreviewForm;
 
         public Form1()
         {
+            // Load configuration from appsettings.json
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Application.StartupPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found in configuration.");
+
             InitializeComponent();
             InitializeWebView();
             this.WindowState = FormWindowState.Maximized;
@@ -782,29 +791,8 @@ else if (message.StartsWith("incrementActivity:"))
                             cmd.Parameters.AddWithValue("@name", name);
                             cmd.Parameters.AddWithValue("@contact", data["contact"]?.ToString() ?? "");
                             cmd.Parameters.AddWithValue("@birthday", data.ContainsKey("birthday") && data["birthday"] != null && !string.IsNullOrEmpty(data["birthday"].ToString()) ? (object)data["birthday"].ToString() : DBNull.Value);
-                            
-                            // Handle Weight with proper precision (max DECIMAL(10,2))
-                            if (data.ContainsKey("weight") && data["weight"] != null && !string.IsNullOrEmpty(data["weight"].ToString()))
-                            {
-                                decimal weight = Math.Round(Convert.ToDecimal(data["weight"]), 2);
-                                cmd.Parameters.Add("@weight", SqlDbType.Decimal).Value = weight;
-                            }
-                            else
-                            {
-                                cmd.Parameters.Add("@weight", SqlDbType.Decimal).Value = DBNull.Value;
-                            }
-                            
-                            // Handle Height with proper precision (max DECIMAL(10,2))
-                            if (data.ContainsKey("height") && data["height"] != null && !string.IsNullOrEmpty(data["height"].ToString()))
-                            {
-                                decimal height = Math.Round(Convert.ToDecimal(data["height"]), 2);
-                                cmd.Parameters.Add("@height", SqlDbType.Decimal).Value = height;
-                            }
-                            else
-                            {
-                                cmd.Parameters.Add("@height", SqlDbType.Decimal).Value = DBNull.Value;
-                            }
-                            
+                            cmd.Parameters.AddWithValue("@weight", data.ContainsKey("weight") && data["weight"] != null && !string.IsNullOrEmpty(data["weight"].ToString()) ? (object)Convert.ToDecimal(data["weight"]) : DBNull.Value);
+                            cmd.Parameters.AddWithValue("@height", data.ContainsKey("height") && data["height"] != null && !string.IsNullOrEmpty(data["height"].ToString()) ? (object)Convert.ToDecimal(data["height"]) : DBNull.Value);
                             cmd.Parameters.AddWithValue("@age", data.ContainsKey("age") && data["age"] != null && !string.IsNullOrEmpty(data["age"].ToString()) ? (object)Convert.ToInt32(data["age"]) : DBNull.Value);
                             cmd.Parameters.AddWithValue("@notes", data.ContainsKey("notes") && data["notes"] != null ? (object)data["notes"].ToString() : DBNull.Value);
                             patientId = (int)cmd.ExecuteScalar();
@@ -935,29 +923,8 @@ else if (message.StartsWith("incrementActivity:"))
                             cmd.Parameters.AddWithValue("@name", newName);
                             cmd.Parameters.AddWithValue("@contact", data["contact"]?.ToString() ?? "");
                             cmd.Parameters.AddWithValue("@birthday", data.ContainsKey("birthday") && data["birthday"] != null && !string.IsNullOrEmpty(data["birthday"].ToString()) ? (object)data["birthday"].ToString() : DBNull.Value);
-                            
-                            // Handle Weight with proper precision (max DECIMAL(10,2))
-                            if (data.ContainsKey("weight") && data["weight"] != null && !string.IsNullOrEmpty(data["weight"].ToString()))
-                            {
-                                decimal weight = Math.Round(Convert.ToDecimal(data["weight"]), 2);
-                                cmd.Parameters.Add("@weight", SqlDbType.Decimal).Value = weight;
-                            }
-                            else
-                            {
-                                cmd.Parameters.Add("@weight", SqlDbType.Decimal).Value = DBNull.Value;
-                            }
-                            
-                            // Handle Height with proper precision (max DECIMAL(10,2))
-                            if (data.ContainsKey("height") && data["height"] != null && !string.IsNullOrEmpty(data["height"].ToString()))
-                            {
-                                decimal height = Math.Round(Convert.ToDecimal(data["height"]), 2);
-                                cmd.Parameters.Add("@height", SqlDbType.Decimal).Value = height;
-                            }
-                            else
-                            {
-                                cmd.Parameters.Add("@height", SqlDbType.Decimal).Value = DBNull.Value;
-                            }
-                            
+                            cmd.Parameters.AddWithValue("@weight", data.ContainsKey("weight") && data["weight"] != null && !string.IsNullOrEmpty(data["weight"].ToString()) ? (object)Convert.ToDecimal(data["weight"]) : DBNull.Value);
+                            cmd.Parameters.AddWithValue("@height", data.ContainsKey("height") && data["height"] != null && !string.IsNullOrEmpty(data["height"].ToString()) ? (object)Convert.ToDecimal(data["height"]) : DBNull.Value);
                             cmd.Parameters.AddWithValue("@age", data.ContainsKey("age") && data["age"] != null && !string.IsNullOrEmpty(data["age"].ToString()) ? (object)Convert.ToInt32(data["age"]) : DBNull.Value);
                             cmd.Parameters.AddWithValue("@notes", data.ContainsKey("notes") && data["notes"] != null ? (object)data["notes"].ToString() : DBNull.Value);
                             

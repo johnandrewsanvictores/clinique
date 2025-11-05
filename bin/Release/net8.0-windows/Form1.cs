@@ -117,10 +117,6 @@
                         string role = message.Split(':')[1];
                         NavigateTo(role == "admin" ? "admin.html" : "staff.html");
                     }
-                    else if (message == "goDoctorTest")
-                    {
-                        NavigateTo("doctor-test.html");
-                    }
                     else if (message.StartsWith("createStaff:"))
                     {
                         string[] parts = message.Split(':');

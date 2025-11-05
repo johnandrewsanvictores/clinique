@@ -1,1 +1,18 @@
+# Sensitive configuration files - DO NOT COMMIT
+appsettings.json
+appsettings.*.json
+
+# Visual Studio cache/options directory
 .vs/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
