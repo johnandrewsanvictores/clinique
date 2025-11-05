@@ -443,7 +443,7 @@
         }
 
         /**
-         * UPDATED FUNCTION: Magpi-print at awtomatikong isasara ang popup.
+         * UPDATED FUNCTION: Direct print without dialog via C# backend
          */
         function printQueue() {
             const popupElement = document.getElementById("queue-message");
@@ -454,16 +454,16 @@
             console.log("Timestamp:", new Date().toISOString());
 
             try {
-                const printWindow = window.open('', '', 'width=800,height=600');
-                console.log("Print window opened successfully");
-                
-                printWindow.document.write('<html><head><title>Queue Ticket</title>');
-                printWindow.document.write('<style>');
-                printWindow.document.write(`
+                // Prepare complete HTML document for printing
+                const printContent = `
+                    <html>
+                    <head>
+                        <title>Queue Ticket</title>
+                        <style>
                             @media print {
                                 @page {
                                     size: auto;
-                                    margin: 0;
+                                    margin: 10mm;
                                 }
                                 body {
                                     margin: 0;
@@ -486,33 +486,38 @@
                                 display: block;
                                 text-align: center;
                                 margin: 10px 0;
+                                color: #FAB12F;
                             }
                             .queue-details {
                                 text-align: center;
                                 font-size: 12px;
                                 margin-bottom: 10px;
+                                color: #333;
                             }
-                        `);
-                printWindow.document.write('</style>');
-                printWindow.document.write('</head><body>');
-                printWindow.document.write(popupHTML);
-                printWindow.document.write('</body></html>');
-                printWindow.document.close();
-                
-                console.log("Print window document prepared");
-                
-                printWindow.focus();
-                console.log("Print window focused");
-                
-                setTimeout(() => {
-                    printWindow.print();
-                    console.log("Print dialog triggered");
-                    
+                        </style>
+                    </head>
+                    <body>
+                        ${popupHTML}
+                    </body>
+                    </html>
+                `;
+
+                // Send print request to C# backend for silent printing
+                if (window.chrome && window.chrome.webview) {
+                    window.chrome.webview.postMessage(`printQueue:${printContent}`);
+                    console.log("Print request sent to C# backend");
+                } else {
+                    console.error("WebView2 not available, falling back to dialog");
+                    // Fallback: open print dialog if WebView2 is not available
+                    const printWindow = window.open('', '', 'width=800,height=600');
+                    printWindow.document.write(printContent);
+                    printWindow.document.close();
+                    printWindow.focus();
                     setTimeout(() => {
-                        printWindow.close();
-                        console.log("Print window closed");
-                    }, 500);
-                }, 100);
+                        printWindow.print();
+                        setTimeout(() => printWindow.close(), 500);
+                    }, 100);
+                }
                 
                 console.log("Print process initiated successfully");
             } catch (error) {

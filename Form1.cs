@@ -7,12 +7,14 @@
     using System.Linq;
     using System.Windows.Forms;
     using Microsoft.Extensions.Configuration;
+    using System.Drawing.Printing;
+    using System.Drawing;
+    using System.Threading.Tasks;
 
     namespace Queue_System
     {
     public partial class Form1 : Form
     {
-        private System.Windows.Forms.Timer queueRefreshTimer;
         private readonly string connectionString;
         private QueuePreviewForm queuePreviewForm;
 
@@ -514,6 +516,15 @@ else if (message.StartsWith("incrementActivity:"))
                         // Notify frontend
                         webView21.CoreWebView2.PostWebMessageAsString($"totalGenerated:{username}:0");
                     }
+                    else if (message.StartsWith("printQueue:"))
+                    {
+                        // Handle silent printing request from staff
+                        string htmlContent = message.Substring("printQueue:".Length);
+                        this.Invoke((Action)(() =>
+                        {
+                            PrintQueueTicketSilently(htmlContent);
+                        }));
+                    }
                     // ============================================================
                     // DOCTOR MODULE - New Handlers for Mobile App
                     // ============================================================
@@ -982,6 +993,117 @@ else if (message.StartsWith("incrementActivity:"))
         private void webView21_Click(object sender, EventArgs e)
         {
 
+        }
+
+        /// <summary>
+        /// Prints queue ticket silently without showing print dialog
+        /// </summary>
+        private async void PrintQueueTicketSilently(string htmlContent)
+        {
+            try
+            {
+                // Extract queue number and details from HTML
+                string queueNumber = ExtractTextBetween(htmlContent, "<span class=\"queue-number\">", "</span>");
+                string queueDetails = ExtractTextBetween(htmlContent, "<span class=\"queue-details\">", "</span>");
+                
+                // Clean up the details (remove HTML tags and decode HTML entities)
+                queueDetails = System.Text.RegularExpressions.Regex.Replace(queueDetails, "<br>", "\n");
+                queueDetails = System.Text.RegularExpressions.Regex.Replace(queueDetails, "<[^>]+>", "");
+                queueDetails = System.Net.WebUtility.HtmlDecode(queueDetails); // Decode HTML entities like &amp;
+                
+                System.Diagnostics.Debug.WriteLine($"Printing: {queueNumber}");
+
+                // Create print document
+                PrintDocument printDoc = new PrintDocument();
+                printDoc.DocumentName = "Queue Ticket";
+                
+                // Set to use default printer
+                printDoc.PrinterSettings.PrinterName = printDoc.PrinterSettings.PrinterName; // Uses default
+                
+                // Handle the print page event
+                printDoc.PrintPage += (sender, e) =>
+                {
+                    try
+                    {
+                        Graphics graphics = e.Graphics;
+                        
+                        // Define fonts
+                        Font numberFont = new Font("Arial", 24, FontStyle.Bold);
+                        Font detailsFont = new Font("Arial", 10, FontStyle.Regular);
+                        
+                        // Define brushes
+                        Brush numberBrush = new SolidBrush(Color.FromArgb(250, 177, 47)); // #FAB12F
+                        Brush detailsBrush = Brushes.Black;
+                        
+                        // Calculate positions (centered)
+                        float yPos = 20;
+                        float pageWidth = e.MarginBounds.Width;
+                        
+                        // Print queue number (centered and large)
+                        SizeF numberSize = graphics.MeasureString(queueNumber, numberFont);
+                        float numberX = e.MarginBounds.Left + (pageWidth - numberSize.Width) / 2;
+                        graphics.DrawString(queueNumber, numberFont, numberBrush, numberX, yPos);
+                        yPos += numberSize.Height + 15;
+                        
+                        // Draw separator line
+                        Pen separatorPen = new Pen(Color.LightGray, 1);
+                        graphics.DrawLine(separatorPen, 
+                            e.MarginBounds.Left + 20, yPos, 
+                            e.MarginBounds.Right - 20, yPos);
+                        yPos += 10;
+                        
+                        // Print details (centered)
+                        string[] detailLines = queueDetails.Split('\n');
+                        foreach (string line in detailLines)
+                        {
+                            if (!string.IsNullOrWhiteSpace(line))
+                            {
+                                string trimmedLine = line.Trim();
+                                SizeF lineSize = graphics.MeasureString(trimmedLine, detailsFont);
+                                float lineX = e.MarginBounds.Left + (pageWidth - lineSize.Width) / 2;
+                                graphics.DrawString(trimmedLine, detailsFont, detailsBrush, lineX, yPos);
+                                yPos += lineSize.Height + 3;
+                            }
+                        }
+                        
+                        // Clean up
+                        numberFont.Dispose();
+                        detailsFont.Dispose();
+                        separatorPen.Dispose();
+                        
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Print page error: {ex.Message}");
+                    }
+                };
+                
+                // Print without showing dialog
+                printDoc.Print();
+                
+                System.Diagnostics.Debug.WriteLine("Queue ticket printed successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Print error: {ex.Message}");
+                MessageBox.Show($"Failed to print queue ticket: {ex.Message}\n\nPlease check if a printer is available.", 
+                    "Print Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+        
+        /// <summary>
+        /// Helper method to extract text between two strings
+        /// </summary>
+        private string ExtractTextBetween(string source, string start, string end)
+        {
+            int startIndex = source.IndexOf(start);
+            if (startIndex == -1) return "";
+            
+            startIndex += start.Length;
+            int endIndex = source.IndexOf(end, startIndex);
+            if (endIndex == -1) return "";
+            
+            return source.Substring(startIndex, endIndex - startIndex).Trim();
         }
     }
 
